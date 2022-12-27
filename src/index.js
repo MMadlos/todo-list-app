@@ -12,15 +12,26 @@ const init = (() => {
 	})
 
 	//Cuando hago click en una tarea:
-	// --> El icono cambia a completado
-	// --> Se tacha el título de la tarea
-	// --> Se transparenta todo el div al 50%
-	// --> El div se pasa al final de la lista
-
+	// [X] --> El icono cambia a completado
+	// [ ] --> Se tacha el título de la tarea
+	// [ ] --> Se transparenta todo el div al 50%
+	// [ ] --> El div se pasa al final de la lista
+	const tasksList = document.getElementById("tasksList")
 	const taskContainer = document.querySelectorAll(".taskContainer")
 	taskContainer.forEach((task) => {
 		task.addEventListener("click", () => {
-			toggleCheckIcon()
+			console.log(task)
+			const iconCheck = task.querySelector(".fa-square-check")
+			const iconNotCheck = task.querySelector(".fa-square")
+
+			iconCheck.classList.toggle("notVisible")
+			iconNotCheck.classList.toggle("notVisible")
+
+			const taskTitle = task.querySelector("p")
+			taskTitle.classList.toggle("textLineThrough")
+
+			task.classList.toggle("taskCompleted")
+			tasksList.appendChild(task)
 		})
 	})
 
@@ -50,11 +61,13 @@ function newTaskSettings() {
 	})
 }
 
-function toggleCheckIcon() {
-	// --> El icono cambia a completado
+function toggleTaskCompletion() {
 	const iconCheck = document.querySelector(".fa-square-check")
 	const iconNotCheck = document.querySelector(".fa-square")
 
 	iconCheck.classList.toggle("notVisible")
 	iconNotCheck.classList.toggle("notVisible")
+
+	const taskTitle = document.querySelector("p")
+	taskTitle.classList.toggle("textLineThrough")
 }
