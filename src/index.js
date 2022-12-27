@@ -1,29 +1,13 @@
 import "./styles.css"
-// import { test } from "./modules/test.js"
-import { allTasks, createTask } from "./modules/task.js"
-import { init, btnAddTask, addNewTask, printNewTask } from ".//modules/DOM.js"
+import { DOMSkeleton } from ".//modules/DOM.js"
+import { allTasks } from "./modules/task.js"
 
-// Default tasks
-const firstTask = createTask("Primera tarea")
-const secondTask = createTask("Segunda tarea", true)
-const thirdTask = createTask("Tercera tarea")
+const init = (() => {
+	const DOM = DOMSkeleton()
 
-init()
-printNewTask(firstTask.title)
-printNewTask(secondTask.title)
-printNewTask(thirdTask.title)
+	allTasks.forEach((task) => {
+		console.log(task.title)
 
-const getBtnAddTask = document.getElementById("btnAddTask")
-getBtnAddTask.addEventListener("click", () => {
-	printNewTask(addNewTask())
-})
-
-console.log(btnAddTask())
-console.dir(btnAddTask())
-console.table(allTasks)
-console.log(firstTask)
-
-// allTasks.forEach((element) => {
-// 	console.log("Task title: " + element.title)
-// 	DOM().addTask(element.title)
-// })
+		DOM.taskContainer(task.title, task.priority, task.project)
+	})
+})()
