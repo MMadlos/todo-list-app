@@ -2,6 +2,7 @@ const content = document.getElementById("content")
 
 const DOMSkeleton = () => {
 	const mainSection = document.createElement("main")
+	mainSection.id = "mainSection"
 	content.appendChild(mainSection)
 
 	const title = document.createElement("h1")
@@ -13,7 +14,7 @@ const DOMSkeleton = () => {
 	divTasksList.id = "tasksList"
 	mainSection.appendChild(divTasksList)
 
-	function taskContainer(title, priority, project) {
+	function addTaskContainer(title, priority, project) {
 		const taskContainer = document.createElement("div")
 
 		const iconTaskUncomplete = document.createElement("i")
@@ -49,13 +50,15 @@ const DOMSkeleton = () => {
 		taskContainer.appendChild(divProjectLabel)
 	}
 
-	function taskSettings() {
+	function openNewTaskSettings() {
 		const divSettings = document.createElement("div")
 
 		const divTaskTitle = document.createElement("div")
 		const iconTaskUncomplete = document.createElement("i")
 		const iconTaskComplete = document.createElement("i")
 		const inputTitle = document.createElement("input")
+
+		divSettings.id = "divSettings"
 
 		divSettings.classList.add("taskSettingsContainer")
 		divTaskTitle.classList.add("titleContainer")
@@ -119,10 +122,9 @@ const DOMSkeleton = () => {
 		return divSettings
 	}
 
-	// mainSection.appendChild(btnAddTask())
-	mainSection.appendChild(taskSettings())
+	mainSection.appendChild(btnAddTask())
 
-	return { taskContainer }
+	return { addTaskContainer, openNewTaskSettings }
 }
 
 function btnAddTask() {
