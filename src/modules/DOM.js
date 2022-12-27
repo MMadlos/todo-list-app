@@ -69,7 +69,7 @@ const DOMSkeleton = () => {
 		divTaskTitle.appendChild(iconTaskUncomplete)
 		divTaskTitle.appendChild(inputTitle)
 
-		// Etiquetas
+		// Labels
 		const labelsContainer = document.createElement("div")
 
 		const priorityLabelsContainer = document.createElement("div")
@@ -113,11 +113,13 @@ const DOMSkeleton = () => {
 		projectLabelsContainer.appendChild(divProjectLabel)
 		divProjectLabel.appendChild(textProjectLabel)
 
+		// Buttons
 		divSettings.appendChild(btnAddTask())
+		divSettings.appendChild(btnClose())
 		return divSettings
 	}
 
-	// mainSection.appendChild(btnAddTask("Añadir tarea"))
+	// mainSection.appendChild(btnAddTask())
 	mainSection.appendChild(taskSettings())
 
 	return { taskContainer }
@@ -130,6 +132,15 @@ function btnAddTask() {
 	btnAddTask.classList.add("btnBig")
 	btnAddTask.classList.add("btnAccent")
 	return btnAddTask
+}
+
+function btnClose() {
+	const btnClose = document.createElement("button")
+	btnClose.textContent = "Cerrar"
+	btnClose.id = "btnClose"
+	btnClose.classList.add("btnBig")
+	btnClose.classList.add("btnUnderlined")
+	return btnClose
 }
 
 export { DOMSkeleton }

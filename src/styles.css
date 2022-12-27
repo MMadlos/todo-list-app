@@ -215,3 +215,12 @@ i {
 	color: var(--text-labelHigh-color);
 	background-color: var(--bg-labelHigh-color);
 }
+
+.btnUnderlined {
+	background-color: transparent;
+	text-decoration: underline;
+	color: var(--text-main-color);
+	font-weight: 700;
+	font-size: 14px;
+	margin-left: 16px;
+}
