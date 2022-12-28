@@ -14,8 +14,9 @@ const DOMSkeleton = () => {
 	divTasksList.id = "tasksList"
 	mainSection.appendChild(divTasksList)
 
-	function addTaskContainer(title, priority, project) {
+	function addTaskContainer(title, priority, project, id) {
 		const taskContainer = document.createElement("div")
+		taskContainer.setAttribute("data-index", id)
 
 		const iconTaskUncomplete = document.createElement("i")
 		const iconTaskComplete = document.createElement("i")

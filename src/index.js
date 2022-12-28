@@ -5,22 +5,45 @@ import { allTasks } from "./modules/task.js"
 const init = (() => {
 	const DOM = DOMSkeleton()
 
-	allTasks.forEach((task) => {
-		console.log(task.title)
-
-		DOM.addTaskContainer(task.title, task.priority, task.project)
+	allTasks.sort((a, b) => {
+		return a.id - b.id
 	})
 
-	//Cuando hago click en una tarea:
-	// [X] --> El icono cambia a completado
-	// [ ] --> Se tacha el título de la tarea
-	// [ ] --> Se transparenta todo el div al 50%
-	// [ ] --> El div se pasa al final de la lista
+	allTasks.forEach((task) => {
+		DOM.addTaskContainer(task.title, task.priority, task.project, task.id)
+	})
+
+	// TODO: Cuando hago click en una tarea:
+	// * --> El icono cambia a completado
+	// * --> Se tacha el título de la tarea
+	// * --> Se transparenta todo el div al 50%
+	// * --> El div se pasa al final de la lista
+	// TODO --> Cuando hago click, cambiar la priopiedad de la tarea de "done: false" a "done: true"
+
 	const tasksList = document.getElementById("tasksList")
 	const taskContainer = document.querySelectorAll(".taskContainer")
+
+	console.table(allTasks)
+	console.table(
+		Object.values(allTasks).forEach((value) => {
+			console.log(value.title)
+		})
+	)
+
 	taskContainer.forEach((task) => {
 		task.addEventListener("click", () => {
-			console.log(task)
+			// Cambia la propiedad "done:" de la tarea de "false" a "true"
+			const taskID = Number(task.dataset.index)
+			let taskFromArray
+			Object.values(allTasks).forEach((value) => {
+				if (value.id === taskID) {
+					taskFromArray = value
+					return taskFromArray
+				}
+			})
+			taskFromArray.done ? (taskFromArray.done = false) : (taskFromArray.done = true)
+
+			// DOM
 			const iconCheck = task.querySelector(".fa-square-check")
 			const iconNotCheck = task.querySelector(".fa-square")
 
