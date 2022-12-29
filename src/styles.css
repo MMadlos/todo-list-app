@@ -149,10 +149,6 @@ i {
 	color: var(--accent-color);
 }
 
-.notVisible {
-	display: none;
-}
-
 /* TASK SETTINGS */
 .taskSettingsContainer {
 	background-color: var(--bg-task-color);

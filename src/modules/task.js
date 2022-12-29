@@ -5,7 +5,7 @@ const allTasks = [
 		title: "Primera tarea",
 		priority: "High",
 		project: "Not asigned",
-		done: false,
+		done: true,
 	},
 	{
 		id: 3,

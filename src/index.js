@@ -1,62 +1,83 @@
 import "./styles.css"
-import { DOMSkeleton } from ".//modules/DOM.js"
+import { DOMSkeleton, addTaskContainer } from ".//modules/DOM.js"
 import { allTasks } from "./modules/task.js"
 
 const init = (() => {
 	const DOM = DOMSkeleton()
+	console.table(allTasks)
 
-	allTasks.sort((a, b) => {
-		return a.id - b.id
+	// TODO: Filter only the tasks with done "false"
+	allTasks.forEach((task) => {
+		const taskArray = Object.entries(task)
 	})
+
+	// TODO: Sort tasks by its ID (but I only want to sort tasks with "done:" property as "false")
+	// allTasks.sort((a, b) => {
+	// 	return a.id - b.id
+	// })
 
 	allTasks.forEach((task) => {
-		DOM.addTaskContainer(task.title, task.priority, task.project, task.id)
+		const taskProperties = Object.values(task)
+		addTaskContainer(...taskProperties)
+
+		// ? Más legible pero no escalable (si en un futuro quiero añadir más propiedades, la tendría que añadir manualmente)
+		// const taskPropertiesExplicit = [task.id, task.title, task.priority, task.project, task.done]
+		// addTaskContainer(...taskPropertiesExplicit)
 	})
 
-	// TODO: Cuando hago click en una tarea:
-	// * --> El icono cambia a completado
-	// * --> Se tacha el título de la tarea
-	// * --> Se transparenta todo el div al 50%
-	// * --> El div se pasa al final de la lista
-	// TODO --> Cuando hago click, cambiar la priopiedad de la tarea de "done: false" a "done: true"
+	// const taskContainer = document.querySelectorAll(".taskContainer")
 
-	const tasksList = document.getElementById("tasksList")
-	const taskContainer = document.querySelectorAll(".taskContainer")
+	// taskContainer.forEach((task) => {
+	// 	task.addEventListener("click", () => {
+	// 		// Cambia la propiedad "done:" de la tarea de "false" a "true" o viceversa
+	// 		const taskID = Number(task.dataset.index)
+	// 		let taskFromArray
+	// 		Object.values(allTasks).forEach((value) => {
+	// 			if (value.id === taskID) {
+	// 				taskFromArray = value
+	// 				return taskFromArray
+	// 			}
+	// 		})
 
-	console.table(allTasks)
-	console.table(
-		Object.values(allTasks).forEach((value) => {
-			console.log(value.title)
-		})
-	)
+	// 		taskFromArray.done ? (taskFromArray.done = false) : (taskFromArray.done = true)
 
-	taskContainer.forEach((task) => {
-		task.addEventListener("click", () => {
-			// Cambia la propiedad "done:" de la tarea de "false" a "true"
-			const taskID = Number(task.dataset.index)
-			let taskFromArray
-			Object.values(allTasks).forEach((value) => {
-				if (value.id === taskID) {
-					taskFromArray = value
-					return taskFromArray
-				}
-			})
-			taskFromArray.done ? (taskFromArray.done = false) : (taskFromArray.done = true)
+	// 		// Añade el icono en función de si "done" es "true" o "false"
+	// 		// Añade los estilos cuando una tarea está completada
+	// 		const tasksList = document.getElementById("tasksList")
+	// 		const taskTitle = task.querySelector("p")
 
-			// DOM
-			const iconCheck = task.querySelector(".fa-square-check")
-			const iconNotCheck = task.querySelector(".fa-square")
+	// 		if (taskFromArray.done) {
+	// 			const currentIcon = task.querySelector("i")
 
-			iconCheck.classList.toggle("notVisible")
-			iconNotCheck.classList.toggle("notVisible")
+	// 			currentIcon.classList.remove("fa-square-check")
+	// 			currentIcon.classList.add("fa-square")
+	// 			taskTitle.classList.toggle("textLineThrough")
+	// 			task.classList.toggle("taskCompleted")
+	// 			tasksList.appendChild(task)
 
-			const taskTitle = task.querySelector("p")
-			taskTitle.classList.toggle("textLineThrough")
+	// 			// tasksList.remove()
+	// 		} else {
+	// 			const currentIcon = task.querySelector("i")
+	// 			currentIcon.classList.add("fa-square-check")
+	// 			currentIcon.classList.remove("fa-square")
+	// 			taskTitle.classList.toggle("textLineThrough")
+	// 			task.classList.toggle("taskCompleted")
+	// 			// Eliminar el listado actual
+	// 			// Volver a ordenar tal y como estaba la tarea
+	// 			// Imprimir listado en pantalla
 
-			task.classList.toggle("taskCompleted")
-			tasksList.appendChild(task)
-		})
-	})
+	// 			// allTasks.sort((a, b) => {
+	// 			// 	return a.id - b.id
+	// 			// })
+
+	// 			// allTasks.forEach((task) => {
+	// 			// 	DOM.addTaskContainer(task.title, task.priority, task.project, task.id)
+	// 			// })
+	// 		}
+
+	// 		// DOM
+	// 	})
+	// })
 
 	//Abrir la ventana de New Task Settings cuando hago click en "Añadir tarea"
 	const mainSection = document.getElementById("mainSection")

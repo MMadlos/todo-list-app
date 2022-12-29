@@ -1,5 +1,67 @@
 const content = document.getElementById("content")
 
+function addTaskContainer(id, title, priority, project, done) {
+	const divTasksList = document.getElementById("tasksList")
+	const taskContainer = document.createElement("div")
+	taskContainer.setAttribute("data-index", id)
+
+	if (done) {
+		const iconTaskComplete = document.createElement("i")
+		iconTaskComplete.classList.add("fa-regular", "fa-square-check")
+		taskContainer.appendChild(iconTaskComplete)
+	}
+
+	if (!done) {
+		const iconTaskUncomplete = document.createElement("i")
+		iconTaskUncomplete.classList.add("fa-regular", "fa-square")
+		taskContainer.appendChild(iconTaskUncomplete)
+	}
+
+	const taskTitle = document.createElement("p")
+
+	const divPriorityLabel = document.createElement("div")
+	const textPriorityLabel = document.createElement("p")
+
+	const divProjectLabel = document.createElement("div")
+	const textProjectLabel = document.createElement("p")
+
+	taskContainer.classList.add("taskContainer")
+
+	divPriorityLabel.classList.add("label", `${priority.toLowerCase()}Priority`)
+	divProjectLabel.classList.add("label", "disabled")
+
+	taskTitle.textContent = title
+	textPriorityLabel.textContent = priority
+	textProjectLabel.textContent = project
+
+	divTasksList.appendChild(taskContainer)
+	taskContainer.appendChild(taskTitle)
+
+	divPriorityLabel.appendChild(textPriorityLabel)
+	divProjectLabel.appendChild(textProjectLabel)
+
+	taskContainer.appendChild(divPriorityLabel)
+	taskContainer.appendChild(divProjectLabel)
+}
+
+function btnAddTask() {
+	const btnAddTask = document.createElement("button")
+	btnAddTask.textContent = "Añadir tarea"
+	btnAddTask.id = "btnAddTask"
+	btnAddTask.classList.add("btnBig")
+	btnAddTask.classList.add("btnAccent")
+	return btnAddTask
+}
+
+function btnClose() {
+	const btnClose = document.createElement("button")
+	btnClose.textContent = "Cerrar"
+	btnClose.id = "btnClose"
+	btnClose.classList.add("btnBig")
+	btnClose.classList.add("btnUnderlined")
+	return btnClose
+}
+
 const DOMSkeleton = () => {
 	const mainSection = document.createElement("main")
 	mainSection.id = "mainSection"
@@ -13,43 +75,6 @@ const DOMSkeleton = () => {
 	const divTasksList = document.createElement("div")
 	divTasksList.id = "tasksList"
 	mainSection.appendChild(divTasksList)
-
-	function addTaskContainer(title, priority, project, id) {
-		const taskContainer = document.createElement("div")
-		taskContainer.setAttribute("data-index", id)
-
-		const iconTaskUncomplete = document.createElement("i")
-		const iconTaskComplete = document.createElement("i")
-
-		const taskTitle = document.createElement("p")
-
-		const divPriorityLabel = document.createElement("div")
-		const textPriorityLabel = document.createElement("p")
-
-		const divProjectLabel = document.createElement("div")
-		const textProjectLabel = document.createElement("p")
-
-		taskContainer.classList.add("taskContainer")
-		iconTaskUncomplete.classList.add("fa-regular", "fa-square")
-		iconTaskComplete.classList.add("fa-regular", "fa-square-check", "notVisible")
-		divPriorityLabel.classList.add("label", `${priority.toLowerCase()}Priority`)
-		divProjectLabel.classList.add("label", "disabled")
-
-		taskTitle.textContent = title
-		textPriorityLabel.textContent = priority
-		textProjectLabel.textContent = project
-
-		divTasksList.appendChild(taskContainer)
-		taskContainer.appendChild(iconTaskUncomplete)
-		taskContainer.appendChild(iconTaskComplete)
-		taskContainer.appendChild(taskTitle)
-
-		divPriorityLabel.appendChild(textPriorityLabel)
-		divProjectLabel.appendChild(textProjectLabel)
-
-		taskContainer.appendChild(divPriorityLabel)
-		taskContainer.appendChild(divProjectLabel)
-	}
 
 	function openNewTaskSettings() {
 		const divSettings = document.createElement("div")
@@ -125,25 +150,7 @@ const DOMSkeleton = () => {
 
 	mainSection.appendChild(btnAddTask())
 
-	return { addTaskContainer, openNewTaskSettings }
+	return { openNewTaskSettings }
 }
 
-function btnAddTask() {
-	const btnAddTask = document.createElement("button")
-	btnAddTask.textContent = "Añadir tarea"
-	btnAddTask.id = "btnAddTask"
-	btnAddTask.classList.add("btnBig")
-	btnAddTask.classList.add("btnAccent")
-	return btnAddTask
-}
-
-function btnClose() {
-	const btnClose = document.createElement("button")
-	btnClose.textContent = "Cerrar"
-	btnClose.id = "btnClose"
-	btnClose.classList.add("btnBig")
-	btnClose.classList.add("btnUnderlined")
-	return btnClose
-}
-
-export { DOMSkeleton }
+export { DOMSkeleton, addTaskContainer }
