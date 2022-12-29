@@ -1,28 +1,42 @@
 import "./styles.css"
-import { DOMSkeleton, addTaskContainer } from ".//modules/DOM.js"
+import { DOMSkeleton, addTaskContainer, openNewTaskSettings } from ".//modules/DOM.js"
 import { allTasks } from "./modules/task.js"
 
 const init = (() => {
-	const DOM = DOMSkeleton()
+	DOMSkeleton()
 	console.table(allTasks)
 
-	// TODO: Filter only the tasks with done "false"
+	// * Filter only the tasks with property "done" = "false"
+	const tasksNotCompleted = []
+	const tasksCompleted = []
+
 	allTasks.forEach((task) => {
-		const taskArray = Object.entries(task)
+		const taskValues = Object.values(task)
+		taskValues.includes(false) ? tasksNotCompleted.push(task) : tasksCompleted.push(task)
 	})
 
-	// TODO: Sort tasks by its ID (but I only want to sort tasks with "done:" property as "false")
-	// allTasks.sort((a, b) => {
-	// 	return a.id - b.id
-	// })
+	// * Sort tasks by its ID (but I only want to sort tasks with "done:" property as "false")
+	tasksNotCompleted.sort((a, b) => {
+		return a.id - b.id
+	})
 
-	allTasks.forEach((task) => {
+	console.table(tasksNotCompleted)
+
+	// * Add at the begining of the list the not completed tasks ordered by its ID
+	tasksNotCompleted.forEach((task) => {
 		const taskProperties = Object.values(task)
 		addTaskContainer(...taskProperties)
 
 		// ? Más legible pero no escalable (si en un futuro quiero añadir más propiedades, la tendría que añadir manualmente)
 		// const taskPropertiesExplicit = [task.id, task.title, task.priority, task.project, task.done]
 		// addTaskContainer(...taskPropertiesExplicit)
+	})
+
+	// * Add at the bottom of the list the completed tasks ordered by completion
+
+	tasksCompleted.forEach((task) => {
+		const taskProperties = Object.values(task)
+		addTaskContainer(...taskProperties)
 	})
 
 	// const taskContainer = document.querySelectorAll(".taskContainer")
@@ -84,7 +98,7 @@ const init = (() => {
 	const btnAddTask = document.getElementById("btnAddTask")
 	btnAddTask.addEventListener("click", () => {
 		btnAddTask.style.display = "none"
-		mainSection.appendChild(DOM.openNewTaskSettings())
+		mainSection.appendChild(openNewTaskSettings())
 		newTaskSettings()
 	})
 })()
