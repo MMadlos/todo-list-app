@@ -15,6 +15,13 @@ const allTasks = [
 		done: false,
 	},
 	{
+		id: 4,
+		title: "Cuarta tarea",
+		priority: "Medium",
+		project: "Not asigned",
+		done: true,
+	},
+	{
 		id: 2,
 		title: "Segunda tarea",
 		priority: "Medium",

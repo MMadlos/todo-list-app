@@ -1,13 +1,11 @@
 import "./styles.css"
-import { DOMSkeleton, addTaskContainer, openNewTaskSettings } from ".//modules/DOM.js"
+import { DOMSkeleton, addTaskContainer, openNewTaskSettings, taskStyles } from ".//modules/DOM.js"
 import { allTasks } from "./modules/task.js"
 
 const init = (() => {
 	DOMSkeleton()
-	// console.log("This is allTasks")
-	// console.table(allTasks)
 
-	// * Filter only the tasks with property "done" = "false"
+	// * Filter tasks by property "done" -> false | true
 	const tasksNotCompleted = []
 	const tasksCompleted = []
 
@@ -16,7 +14,7 @@ const init = (() => {
 		taskValues.includes(false) ? tasksNotCompleted.push(task) : tasksCompleted.push(task)
 	})
 
-	// * Sort tasks by its ID (but I only want to sort tasks with "done:" property as "false")
+	// * Sort not completed tasks by its ID
 	tasksNotCompleted.sort((a, b) => {
 		return a.id - b.id
 	})
@@ -32,32 +30,25 @@ const init = (() => {
 	})
 
 	// * Add at the bottom of the list the completed tasks
-	// TODO: order by completion
-
 	tasksCompleted.forEach((task) => {
 		const taskProperties = Object.values(task)
 		addTaskContainer(...taskProperties)
 	})
 
+	// TODO: order by completion
+
 	const taskContainer = document.querySelectorAll(".taskContainer")
 	taskContainer.forEach((taskElement) => {
 		taskElement.addEventListener("click", () => {
-			// * Toggle its "done" property to "false" or "true"
+			// * Toggle "done" property to "false" or "true"
+			const taskID = Number(taskElement.dataset.index) // Get ID from the task container
+			const taskFromList = getTaskFromList() // Search the task in the list
+			const isTaskCompleted = taskFromList.done // Check if the task is completed
 
-			const taskID = Number(taskElement.dataset.index)
-			const taskFromList = getTaskFromList()
-			const isTaskCompleted = taskFromList.done
-
-			isTaskCompleted ? (taskFromList.done = false) : (taskFromList.done = true)
+			isTaskCompleted ? (taskFromList.done = false) : (taskFromList.done = true) // Toggle property "done"
 
 			// * Aplicar los estilos correspondientes a "true" o "false"
-			// * --> Toggle icon
-			const getCurrentIcon = taskElement.querySelector("i")
-			getCurrentIcon.classList.toggle("fa-square-check")
-			getCurrentIcon.classList.toggle("fa-square")
-
-			// * --> Toggle styles (.taskCompleted)
-			taskElement.classList.toggle("taskCompleted")
+			taskStyles(taskElement, isTaskCompleted)
 
 			// TODO: Sort task list
 			// --> If a task is marked as completed, it should be placed at the end of the list
@@ -78,62 +69,21 @@ const init = (() => {
 				return task
 			}
 		})
-
-		// ! BACKUP
-		// task.addEventListener("click", () => {
-
-		// 	// // Cambia la propiedad "done:" de la tarea de "false" a "true" o viceversa
-		// 	// const taskID = Number(task.dataset.index)
-		// 	// let taskFromArray
-		// 	// Object.values(allTasks).forEach((value) => {
-		// 	// 	if (value.id === taskID) {
-		// 	// 		taskFromArray = value
-		// 	// 		return taskFromArray
-		// 	// 	}
-		// 	// })
-		// 	// taskFromArray.done ? (taskFromArray.done = false) : (taskFromArray.done = true)
-		// 	// // Añade el icono en función de si "done" es "true" o "false"
-		// 	// // Añade los estilos cuando una tarea está completada
-		// 	// const tasksList = document.getElementById("tasksList")
-		// 	// const taskTitle = task.querySelector("p")
-		// 	// if (taskFromArray.done) {
-		// 	// 	const currentIcon = task.querySelector("i")
-		// 	// 	currentIcon.classList.remove("fa-square-check")
-		// 	// 	currentIcon.classList.add("fa-square")
-		// 	// 	taskTitle.classList.toggle("textLineThrough")
-		// 	// 	task.classList.toggle("taskCompleted")
-		// 	// 	tasksList.appendChild(task)
-		// 	// 	// tasksList.remove()
-		// 	// } else {
-		// 	// 	const currentIcon = task.querySelector("i")
-		// 	// 	currentIcon.classList.add("fa-square-check")
-		// 	// 	currentIcon.classList.remove("fa-square")
-		// 	// 	taskTitle.classList.toggle("textLineThrough")
-		// 	// 	task.classList.toggle("taskCompleted")
-		// 	// 	// Eliminar el listado actual
-		// 	// 	// Volver a ordenar tal y como estaba la tarea
-		// 	// 	// Imprimir listado en pantalla
-		// 	// 	// allTasks.sort((a, b) => {
-		// 	// 	// 	return a.id - b.id
-		// 	// 	// })
-		// 	// 	// allTasks.forEach((task) => {
-		// 	// 	// 	DOM.addTaskContainer(task.title, task.priority, task.project, task.id)
-		// 	// 	// })
-		// 	// }
-		// })
 	})
 
-	//Abrir la ventana de New Task Settings cuando hago click en "Añadir tarea"
-	const mainSection = document.getElementById("mainSection")
+	// * Btn add new task
 	const btnAddTask = document.getElementById("btnAddTask")
-	btnAddTask.addEventListener("click", () => {
-		btnAddTask.style.display = "none"
-		mainSection.appendChild(openNewTaskSettings())
-		newTaskSettings()
-	})
+	btnAddTask.addEventListener("click", newTaskSettings)
 })()
 
 function newTaskSettings() {
+	const mainSection = document.getElementById("mainSection")
+	btnAddTask.style.display = "none"
+	mainSection.appendChild(openNewTaskSettings())
+	setTaskSettings()
+}
+
+function setTaskSettings() {
 	//Cuando hago click en el tick, se completa la tarea
 
 	// Cuando hago click en los botones de prioridad, cambian de colores
@@ -147,15 +97,4 @@ function newTaskSettings() {
 		const taskSettingsContainer = document.getElementById("divSettings")
 		taskSettingsContainer.remove()
 	})
-}
-
-function toggleTaskCompletion() {
-	const iconCheck = document.querySelector(".fa-square-check")
-	const iconNotCheck = document.querySelector(".fa-square")
-
-	iconCheck.classList.toggle("notVisible")
-	iconNotCheck.classList.toggle("notVisible")
-
-	const taskTitle = document.querySelector("p")
-	taskTitle.classList.toggle("textLineThrough")
 }

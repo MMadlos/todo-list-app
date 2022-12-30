@@ -22,9 +22,14 @@ function addTaskContainer(id, title, priority, project, done) {
 	const taskContainer = document.createElement("div")
 	taskContainer.setAttribute("data-index", id)
 
+	const taskTitle = document.createElement("p")
+
 	if (done) {
 		const iconTaskComplete = document.createElement("i")
 		iconTaskComplete.classList.add("fa-regular", "fa-square-check")
+		taskTitle.classList.add("textLineThrough")
+		taskContainer.classList.add("taskCompleted")
+
 		taskContainer.appendChild(iconTaskComplete)
 	}
 
@@ -33,8 +38,6 @@ function addTaskContainer(id, title, priority, project, done) {
 		iconTaskUncomplete.classList.add("fa-regular", "fa-square")
 		taskContainer.appendChild(iconTaskUncomplete)
 	}
-
-	const taskTitle = document.createElement("p")
 
 	const divPriorityLabel = document.createElement("div")
 	const textPriorityLabel = document.createElement("p")
@@ -151,4 +154,23 @@ function btnClose() {
 	return btnClose
 }
 
-export { DOMSkeleton, addTaskContainer, openNewTaskSettings }
+function taskStyles(container, isCompleted) {
+	const getCurrentIcon = container.querySelector("i")
+	const getTaskTitle = container.querySelector("p")
+
+	if (isCompleted) {
+		getCurrentIcon.classList.remove("fa-square-check")
+		getCurrentIcon.classList.add("fa-square")
+		getTaskTitle.classList.remove("textLineThrough")
+		container.classList.remove("taskCompleted")
+	}
+
+	if (!isCompleted) {
+		getCurrentIcon.classList.add("fa-square-check")
+		getCurrentIcon.classList.remove("fa-square")
+		getTaskTitle.classList.add("textLineThrough")
+		container.classList.add("taskCompleted")
+	}
+}
+
+export { DOMSkeleton, addTaskContainer, openNewTaskSettings, taskStyles }
