@@ -1,92 +1,75 @@
 import "./styles.css"
-import { DOMSkeleton, addTaskContainer, openNewTaskSettings, taskStyles } from ".//modules/DOM.js"
-import { allTasks } from "./modules/task.js"
+import { DOMSkeleton, addTaskContainer, newTaskSettings, taskStyles } from ".//modules/DOM.js"
+import { allTasks, createTask, getTaskValuesForm, addTaskFromForm } from "./modules/task.js"
 
 const init = (() => {
 	DOMSkeleton()
 
-	// * Filter tasks by property "done" -> false | true
-	const tasksNotCompleted = []
-	const tasksCompleted = []
+	const nuevaTarea = createTask("Quinta tarea", "Medium", "Not asigned", true)
+	nuevaTarea.addToList()
 
-	allTasks.forEach((task) => {
-		const taskValues = Object.values(task)
-		taskValues.includes(false) ? tasksNotCompleted.push(task) : tasksCompleted.push(task)
-	})
+	sortTasksByID()
+	printTasks()
 
-	// * Sort not completed tasks by its ID
-	tasksNotCompleted.sort((a, b) => {
-		return a.id - b.id
-	})
-
-	// * Add at the begining of the list the not completed tasks ordered by its ID
-	tasksNotCompleted.forEach((task) => {
-		const taskProperties = Object.values(task)
-		addTaskContainer(...taskProperties)
-
-		// ? Más legible pero no escalable (si en un futuro quiero añadir más propiedades, la tendría que añadir manualmente)
-		// const taskPropertiesExplicit = [task.id, task.title, task.priority, task.project, task.done]
-		// addTaskContainer(...taskPropertiesExplicit)
-	})
-
-	// * Add at the bottom of the list the completed tasks
-	tasksCompleted.forEach((task) => {
-		const taskProperties = Object.values(task)
-		addTaskContainer(...taskProperties)
-	})
-
-	// TODO: order by completion
+	console.table(allTasks)
 
 	const taskContainer = document.querySelectorAll(".taskContainer")
 	taskContainer.forEach((taskElement) => {
 		taskElement.addEventListener("click", () => {
-			// * Toggle "done" property to "false" or "true"
-			const taskID = Number(taskElement.dataset.index) // Get ID from the task container
-			const taskFromList = getTaskFromList() // Search the task in the list
-			const isTaskCompleted = taskFromList.done // Check if the task is completed
-
-			isTaskCompleted ? (taskFromList.done = false) : (taskFromList.done = true) // Toggle property "done"
+			const taskFromList = getTaskFromList()
+			const isTaskCompleted = taskFromList.done
+			isTaskCompleted ? (taskFromList.done = false) : (taskFromList.done = true)
 
 			// * Aplicar los estilos correspondientes a "true" o "false"
 			taskStyles(taskElement, isTaskCompleted)
 
-			// TODO: Sort task list
-			// --> If a task is marked as completed, it should be placed at the end of the list
-			// --> If a task is completed and came back to uncompleted, it should be placed in its ID order
-
+			console.log(taskElement)
 			console.log(taskFromList)
-
-			function getTaskFromList() {
-				let task
-
-				allTasks.forEach((taskObject) => {
-					const matchID = taskID === taskObject.id
-					if (matchID) {
-						task = taskObject
-					}
-				})
-
-				return task
-			}
 		})
 	})
 
+	openNewTaskSettings()
+	setTaskSettings()
+
 	// * Btn add new task
 	const btnAddTask = document.getElementById("btnAddTask")
-	btnAddTask.addEventListener("click", newTaskSettings)
+	btnAddTask.addEventListener("click", () => {
+		openNewTaskSettings()
+		setTaskSettings()
+	})
 })()
 
-function newTaskSettings() {
+function openNewTaskSettings() {
 	const mainSection = document.getElementById("mainSection")
 	btnAddTask.style.display = "none"
-	mainSection.appendChild(openNewTaskSettings())
-	setTaskSettings()
+	mainSection.appendChild(newTaskSettings())
 }
 
 function setTaskSettings() {
 	//Cuando hago click en el tick, se completa la tarea
+	const currentIcon = document.querySelector("#divSettings > .titleContainer > i")
+	currentIcon.addEventListener("click", () => {
+		currentIcon.classList.toggle("fa-square")
+		currentIcon.classList.toggle("fa-square-check")
+
+		currentIcon.classList.contains("fa-square-check") ? (currentIcon.id = "taskCompleted") : currentIcon.removeAttribute("id")
+	})
 
 	// Cuando hago click en los botones de prioridad, cambian de colores
+	const priorityLabels = document.querySelectorAll(".btnSetting")
+	for (const button of priorityLabels) {
+		button.addEventListener("click", () => {
+			const currentBtnSelected = document.getElementById("btnLabelSelected")
+
+			if (button !== currentBtnSelected) {
+				currentBtnSelected.removeAttribute("id")
+				currentBtnSelected.classList.remove(`${currentBtnSelected.textContent.toLowerCase()}Priority`)
+
+				button.id = "btnLabelSelected"
+				button.classList.add(`${button.textContent.toLowerCase()}Priority`)
+			}
+		})
+	}
 
 	//Botón cerrar ventana
 	const btnClose = document.getElementById("btnClose")
@@ -97,4 +80,48 @@ function setTaskSettings() {
 		const taskSettingsContainer = document.getElementById("divSettings")
 		taskSettingsContainer.remove()
 	})
+
+	// Cuando hago click en añadir tarea, se añaden los valores a la tarea
+	const btnAddTaskForm = document.querySelector("#divSettings > #btnAddTask")
+	btnAddTaskForm.addEventListener("click", () => {
+		addTaskFromForm()
+		printTasks()
+
+		// Reset values
+		const taskSettingsContainer = document.getElementById("divSettings")
+		taskSettingsContainer.remove()
+		openNewTaskSettings()
+		setTaskSettings()
+	})
+}
+
+function sortTasksByID() {
+	allTasks.sort((a, b) => {
+		return a.id - b.id
+	})
+}
+
+function printTasks() {
+	const taskList = document.querySelectorAll(".taskContainer")
+	for (const task of taskList) {
+		task.remove()
+	}
+	for (const task of allTasks) {
+		addTaskContainer(task)
+	}
+}
+
+function getTaskFromList() {
+	const taskContainer = document.querySelector(".taskContainer")
+	const taskContainerID = Number(taskContainer.dataset.index)
+
+	let taskFromList
+
+	for (const task of allTasks) {
+		const hasSameID = taskContainerID === task.id
+		if (hasSameID) {
+			taskFromList = task
+		}
+	}
+	return taskFromList
 }

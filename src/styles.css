@@ -123,16 +123,19 @@ button:hover {
 	font-weight: 600;
 }
 
+.btnSetting.highPriority,
 .highPriority {
 	color: var(--text-labelHigh-color);
 	background-color: var(--bg-labelHigh-color);
 }
 
+.btnSetting.mediumPriority,
 .mediumPriority {
 	color: var(--text-labelMedium-color);
 	background-color: var(--bg-labelMedium-color);
 }
 
+.btnSetting.lowPriority,
 .lowPriority {
 	color: var(--text-labelLow-color);
 	background-color: var(--bg-labelLow-color);
@@ -213,11 +216,6 @@ i {
 	border-radius: 4px;
 	background-color: var(--bg-labelDisabled-color);
 	color: var(--text-labelDisabled-color);
-}
-
-.btnSetting.highPriority {
-	color: var(--text-labelHigh-color);
-	background-color: var(--bg-labelHigh-color);
 }
 
 .btnUnderlined {

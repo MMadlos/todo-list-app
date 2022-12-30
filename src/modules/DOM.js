@@ -17,7 +17,7 @@ const DOMSkeleton = () => {
 	mainSection.appendChild(btnAddTask())
 }
 
-function addTaskContainer(id, title, priority, project, done) {
+function addTaskContainer({ id, title, priority, project, done }) {
 	const divTasksList = document.getElementById("tasksList")
 	const taskContainer = document.createElement("div")
 	taskContainer.setAttribute("data-index", id)
@@ -64,12 +64,11 @@ function addTaskContainer(id, title, priority, project, done) {
 	taskContainer.appendChild(divProjectLabel)
 }
 
-function openNewTaskSettings() {
+function newTaskSettings() {
 	const divSettings = document.createElement("div")
 
 	const divTaskTitle = document.createElement("div")
 	const iconTaskUncomplete = document.createElement("i")
-	const iconTaskComplete = document.createElement("i")
 	const inputTitle = document.createElement("input")
 
 	divSettings.id = "divSettings"
@@ -77,7 +76,6 @@ function openNewTaskSettings() {
 	divSettings.classList.add("taskSettingsContainer")
 	divTaskTitle.classList.add("titleContainer")
 	iconTaskUncomplete.classList.add("fa-regular", "fa-square")
-	iconTaskComplete.classList.add("fa-regular", "fa-square-check", "notVisible")
 	inputTitle.classList.add("inputTitle")
 	inputTitle.placeholder = "Ej: poner lavadora"
 	inputTitle.id = "inputTitleSettings"
@@ -102,9 +100,10 @@ function openNewTaskSettings() {
 
 	labelsContainer.classList.add("labelsContainer")
 	priorityLabelsContainer.classList.add("priorityLabelsContainer")
-	btnLow.classList.add("btnSetting")
+	btnLow.classList.add("btnSetting", "lowPriority")
+	btnLow.id = "btnLabelSelected"
 	btnMedium.classList.add("btnSetting")
-	btnHigh.classList.add("btnSetting", "highPriority")
+	btnHigh.classList.add("btnSetting")
 
 	projectLabelsContainer.classList.add("projectLabelsContainer")
 	divProjectLabel.classList.add("projectLabel")
@@ -173,4 +172,4 @@ function taskStyles(container, isCompleted) {
 	}
 }
 
-export { DOMSkeleton, addTaskContainer, openNewTaskSettings, taskStyles }
+export { DOMSkeleton, addTaskContainer, newTaskSettings, taskStyles }
