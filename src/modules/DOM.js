@@ -162,6 +162,7 @@ function taskStyles(container, isCompleted) {
 		getCurrentIcon.classList.add("fa-square")
 		getTaskTitle.classList.remove("textLineThrough")
 		container.classList.remove("taskCompleted")
+		return
 	}
 
 	if (!isCompleted) {
@@ -169,6 +170,7 @@ function taskStyles(container, isCompleted) {
 		getCurrentIcon.classList.remove("fa-square")
 		getTaskTitle.classList.add("textLineThrough")
 		container.classList.add("taskCompleted")
+		return
 	}
 }
 

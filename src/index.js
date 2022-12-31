@@ -1,33 +1,18 @@
 import "./styles.css"
-import { DOMSkeleton, addTaskContainer, newTaskSettings, taskStyles } from ".//modules/DOM.js"
-import { allTasks, createTask, getTaskValuesForm, addTaskFromForm } from "./modules/task.js"
+import { DOMSkeleton, addTaskContainer, newTaskSettings, taskStyles } from ".//modules/DOM"
+import { allTasks, defaultTasks, createTask, getTaskValuesForm, addTaskToList } from "./modules/task.js"
 
 const init = (() => {
 	DOMSkeleton()
 
-	const nuevaTarea = createTask("Quinta tarea", "Medium", "Not asigned", true)
-	nuevaTarea.addToList()
+	for (const task of defaultTasks) {
+		addTaskToList(allTasks, task)
+	}
 
 	sortTasksByID()
 	printTasks()
 
-	console.table(allTasks)
-
-	const taskContainer = document.querySelectorAll(".taskContainer")
-	taskContainer.forEach((taskElement) => {
-		taskElement.addEventListener("click", () => {
-			const taskFromList = getTaskFromList()
-			const isTaskCompleted = taskFromList.done
-			isTaskCompleted ? (taskFromList.done = false) : (taskFromList.done = true)
-
-			// * Aplicar los estilos correspondientes a "true" o "false"
-			taskStyles(taskElement, isTaskCompleted)
-
-			console.log(taskElement)
-			console.log(taskFromList)
-		})
-	})
-
+	toggleTaskCompletion()
 	openNewTaskSettings()
 	setTaskSettings()
 
@@ -38,6 +23,19 @@ const init = (() => {
 		setTaskSettings()
 	})
 })()
+
+function toggleTaskCompletion() {
+	const taskContainer = document.querySelectorAll(".taskContainer")
+	for (const taskElement of taskContainer) {
+		taskElement.addEventListener("click", () => {
+			const taskFromList = getTaskFromList()
+			const isTaskCompleted = taskFromList.done
+			isTaskCompleted ? (taskFromList.done = false) : (taskFromList.done = true)
+
+			taskStyles(taskElement, isTaskCompleted)
+		})
+	}
+}
 
 function openNewTaskSettings() {
 	const mainSection = document.getElementById("mainSection")
@@ -84,9 +82,14 @@ function setTaskSettings() {
 	// Cuando hago click en añadir tarea, se añaden los valores a la tarea
 	const btnAddTaskForm = document.querySelector("#divSettings > #btnAddTask")
 	btnAddTaskForm.addEventListener("click", () => {
-		addTaskFromForm()
-		printTasks()
+		const values = getTaskValuesForm()
+		const newTask = createTask(values)
+		addTaskToList(newTask)
 
+		printTasks()
+		toggleTaskCompletion()
+
+		console.table(allTasks)
 		// Reset values
 		const taskSettingsContainer = document.getElementById("divSettings")
 		taskSettingsContainer.remove()
@@ -102,8 +105,8 @@ function sortTasksByID() {
 }
 
 function printTasks() {
-	const taskList = document.querySelectorAll(".taskContainer")
-	for (const task of taskList) {
+	const taskListContainer = document.querySelectorAll(".taskContainer")
+	for (const task of taskListContainer) {
 		task.remove()
 	}
 	for (const task of allTasks) {

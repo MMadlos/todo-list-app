@@ -1,5 +1,6 @@
-const allTasks = [
-	// Default tasks
+const allTasks = []
+
+const defaultTasks = [
 	{
 		id: 1,
 		title: "Primera tarea",
@@ -15,57 +16,51 @@ const allTasks = [
 		done: false,
 	},
 	{
-		id: 4,
-		title: "Cuarta tarea",
+		id: 2,
+		title: "Segunda tarea",
 		priority: "Medium",
 		project: "Not asigned",
 		done: true,
 	},
 	{
-		id: 2,
-		title: "Segunda tarea",
+		id: 5,
+		title: "Quinta tarea",
+		priority: "Medium",
+		project: "Not asigned",
+		done: true,
+	},
+	{
+		id: 4,
+		title: "Cuarta tarea",
 		priority: "Medium",
 		project: "Not asigned",
 		done: false,
 	},
 ]
 
-// TODO: Debo buscar el siguiente número en la lista.
-
 function getTaskValuesForm() {
-	// Title
-	const titleInput = document.getElementById("inputTitleSettings")
-	const title = titleInput.value
+	const title = document.getElementById("inputTitleSettings").value
+	if (title === "") {
+		return alert("Please put a name to your task")
+	}
 
-	// Priority
 	const priority = document.getElementById("btnLabelSelected").textContent
-
-	// Project
 	const project = "Not asigned"
-
-	// Tick
-	const tickIcon = document.querySelector("#divSettings > .titleContainer > i")
-	let done
-	tickIcon.id === "taskCompleted" ? (done = true) : (done = false)
+	const done = document.querySelector("#divSettings > .titleContainer > i").id === "taskCompleted"
 
 	return { title, priority, project, done }
 }
 
-function createTask(title, priority, project, done) {
-	const id = allTasks.length + 1
-	const info = { id: id, title, priority, project, done }
-	const addToList = () => {
-		allTasks.push(info)
+function createTask({ id, title, priority, project, done }) {
+	if (id === undefined) {
+		id = allTasks.length + 1
 	}
 
-	return { info, addToList }
+	return { id, title, priority, project, done }
 }
 
-function addTaskFromForm() {
-	const taskValues = getTaskValuesForm()
-	const taskValuesArray = Object.values(taskValues)
-
-	createTask(...taskValuesArray).addToList()
+function addTaskToList(project, task) {
+	project.push(task)
 }
 
-export { allTasks, createTask, getTaskValuesForm, addTaskFromForm }
+export { allTasks, defaultTasks, createTask, getTaskValuesForm, addTaskToList }
