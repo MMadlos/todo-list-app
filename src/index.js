@@ -11,9 +11,10 @@ const init = (() => {
 	Task.sortByID()
 	printTasks(TaskList)
 	toggleTaskCompletion()
+	openTaskSettings()
 
-	DOM.newTaskSettings()
-	settingsEventListeners()
+	// DOM.newTaskSettings()
+	// settingsEventListeners()
 
 	// * Btn add new task
 	const btnAddTask = document.getElementById("btnAddTask")
@@ -36,10 +37,32 @@ const init = (() => {
 		}
 	}
 
+	function openTaskSettings() {
+		const taskList = document.getElementById("tasksList")
+		const taskContainerAll = document.querySelectorAll(".taskContainer")
+		for (const taskContainer of taskContainerAll) {
+			const btnSettings = taskContainer.querySelector("#btnMoreOptions")
+			btnSettings.addEventListener("click", () => {
+				// Coger datos de la tarea (título, etc.)
+
+				// Abrir ventana settings debajo de la posición de taskContainer
+				taskContainer.remove()
+				const containerID = Number(taskContainer.dataset.index)
+				const nextContainerID = containerID + 1
+				const nextContainer = document.querySelector(`[data-index="${nextContainerID}"]`)
+
+				taskList.insertBefore(DOM.newTaskSettings(), nextContainer)
+
+				// Añadir los datos de la tarea a la ventana settings
+			})
+		}
+	}
+
 	function toggleTaskCompletion() {
 		const taskContainerAll = document.querySelectorAll(".taskContainer")
 		for (const taskContainer of taskContainerAll) {
-			taskContainer.addEventListener("click", () => {
+			const taskInfo = taskContainer.querySelector(".taskInfo")
+			taskInfo.addEventListener("click", () => {
 				const containerID = Number(taskContainer.dataset.index)
 				const taskFromList = Task.getByID(containerID)
 
