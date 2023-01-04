@@ -80,12 +80,35 @@ main {
 	border-radius: 4px;
 
 	display: flex;
-	gap: 24px;
-	align-items: center;
+	justify-content: space-between;
 }
 
 .taskContainer:hover {
 	background-color: var(--hover-color);
+}
+
+.taskInfo,
+.taskDetails {
+	display: flex;
+	align-items: center;
+	gap: 24px;
+}
+
+.taskInfo {
+	width: 100%;
+}
+
+#datePicker {
+	white-space: nowrap;
+}
+
+#btnMoreOptions {
+	color: var(--text-main-color);
+	padding: 4px 16px;
+}
+
+#btnMoreOptions:hover {
+	color: var(--accent-color);
 }
 
 .taskCompleted {

@@ -12,6 +12,9 @@ const init = (() => {
 	printTasks(TaskList)
 	toggleTaskCompletion()
 
+	DOM.newTaskSettings()
+	settingsEventListeners()
+
 	// * Btn add new task
 	const btnAddTask = document.getElementById("btnAddTask")
 	btnAddTask.addEventListener("click", () => {
