@@ -43,17 +43,58 @@ const init = (() => {
 		for (const taskContainer of taskContainerAll) {
 			const btnSettings = taskContainer.querySelector("#btnMoreOptions")
 			btnSettings.addEventListener("click", () => {
+				const containerID = Number(taskContainer.dataset.index)
 				// Coger datos de la tarea (título, etc.)
+				const task = Task.getByID(containerID)
+				const taskTitle = task.title
+				const taskPriority = task.priority
+				const taskProject = task.project
+				const taskDone = task.done
 
 				// Abrir ventana settings debajo de la posición de taskContainer
 				taskContainer.remove()
-				const containerID = Number(taskContainer.dataset.index)
 				const nextContainerID = containerID + 1
 				const nextContainer = document.querySelector(`[data-index="${nextContainerID}"]`)
 
 				taskList.insertBefore(DOM.newTaskSettings(), nextContainer)
 
 				// Añadir los datos de la tarea a la ventana settings
+				const titleSettings = document.querySelector("#inputTitleSettings")
+				titleSettings.value = taskTitle
+
+				const icon = document.querySelector(".titleContainer > i")
+				if (taskDone) {
+					icon.classList.add("fa-square-check")
+					icon.classList.remove("fa-square")
+				} else {
+					icon.classList.remove("fa-square-check")
+					icon.classList.add("fa-square")
+				}
+
+				const btnPriorityAll = document.querySelectorAll(".priorityLabelsContainer > button")
+				for (const btnPriority of btnPriorityAll) {
+					btnPriority.removeAttribute("id")
+					btnPriority.removeAttribute("class")
+
+					btnPriority.classList.add("btnSetting")
+
+					if (taskPriority === "Low" && btnPriority.textContent === "Low") {
+						btnPriority.id = "btnLabelSelected"
+						btnPriority.classList.add("lowPriority")
+					}
+					if (taskPriority === "Medium" && btnPriority.textContent === "Medium") {
+						btnPriority.id = "btnLabelSelected"
+						btnPriority.classList.add("mediumPriority")
+					}
+					if (taskPriority === "High" && btnPriority.textContent === "High") {
+						btnPriority.id = "btnLabelSelected"
+						btnPriority.classList.add("highPriority")
+					}
+				}
+
+				// Al guardar, debe actualizarse los datos de la tarea
+
+				// Al cerrar, debe aparecer de nuevo la tarea
 			})
 		}
 	}
