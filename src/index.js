@@ -1,200 +1,275 @@
 import "./styles.css"
-import { DOMSkeleton } from ".//modules/DOM"
-import { Todos } from "./modules/task.js"
+import { DOMSkeleton, taskSettings } from ".//modules/DOM"
+import { Todos, newProject, NewTask } from "./modules/task.js"
 
-const init = (() => {
-	const DOM = DOMSkeleton()
-	const Task = Todos()
-	const TaskList = Task.list
+//* INIT
+const DOM = DOMSkeleton()
+const allTasks = newProject()
+const taskList = allTasks.taskList
+let containerID
 
-	Task.addDefaultTasks()
-	Task.sortByID()
-	printTasks(TaskList)
-	toggleTaskCompletion()
-	openTaskSettings()
+const INIT = (() => {
+	// Default tasks
+	const defaultTasks = [
+		{
+			id: 1,
+			title: "Primera tarea",
+			priority: "High",
+			project: "Not asigned",
+			done: true,
+		},
+		{
+			id: 3,
+			title: "Tercera tarea",
+			priority: "Low",
+			project: "Not asigned",
+			done: false,
+		},
+		{
+			id: 2,
+			title: "Segunda tarea",
+			priority: "Medium",
+			project: "Not asigned",
+			done: true,
+		},
+		{
+			id: 5,
+			title: "Quinta tarea",
+			priority: "Medium",
+			project: "Not asigned",
+			done: true,
+		},
+		{
+			id: 4,
+			title: "Cuarta tarea",
+			priority: "Medium",
+			project: "Not asigned",
+			done: false,
+		},
+	]
 
-	// DOM.newTaskSettings()
-	// settingsEventListeners()
+	for (const task of defaultTasks) {
+		const defaultTask = NewTask(task)
+		allTasks.addTask(defaultTask)
+		allTasks.sortTasksByID()
+	}
 
-	// * Btn add new task
-	const btnAddTask = document.getElementById("btnAddTask")
-	btnAddTask.addEventListener("click", () => {
-		btnAddTask.style.display = "none"
+	printTasks(taskList)
 
-		DOM.newTaskSettings()
-		settingsEventListeners()
+	// TEST
+	const testTask = NewTask({
+		title: "Esta es la sexta tarea default sin ID predeterminado",
+		priority: "High",
+		project: "Not asigned",
+		done: true,
+	})
+	allTasks.addTask(testTask)
+	printTasks(taskList)
+	addNewTaskBtnEvents()
+})()
+
+function addNewTaskBtnEvents() {
+	const btnAddNewTask = document.getElementById("btnAddNewTask")
+	btnAddNewTask.addEventListener("click", () => {
+		btnAddNewTask.remove()
+		containerID = undefined
+
+		const taskSettings = DOM.taskSettings()
+		document.getElementById("mainSection")
+		mainSection.appendChild(taskSettings)
 		window.scrollBy(0, window.innerHeight)
+		addEventsToEditSettings()
+	})
+}
+
+//* FUNCTIONS
+
+function addEventsToEditSettings() {
+	// Icono y texto
+	const icon = document.querySelector("#divSettings > .titleContainer > i")
+	const input = document.querySelector("#divSettings > .titleContainer > #inputTitleSettings")
+
+	icon.onclick = () => {
+		icon.classList.toggle("fa-square")
+		icon.classList.toggle("fa-square-check")
+
+		const isIconChecked = icon.classList.contains("fa-square-check")
+
+		if (isIconChecked) {
+			icon.id = "taskCompleted"
+			input.classList.add("textLineThrough")
+			return
+		}
+		if (!isIconChecked) {
+			icon.removeAttribute("id")
+			input.classList.remove("textLineThrough")
+			return
+		}
+	}
+
+	// Priority labels
+	const btnPriorityAll = document.querySelectorAll(".priorityLabelsContainer > button")
+	for (const btnPriority of btnPriorityAll) {
+		btnPriority.addEventListener("click", () => {
+			const currentBtnSelected = document.getElementById("btnLabelSelected")
+			currentBtnSelected.removeAttribute("id")
+			currentBtnSelected.removeAttribute("class")
+			currentBtnSelected.classList.add("btnSetting")
+
+			btnPriority.id = "btnLabelSelected"
+			btnPriority.classList.add(`${btnPriority.textContent.toLowerCase()}Priority`)
+		})
+	}
+
+	// Add task
+	const btnAddEditedTask = document.querySelector("#divSettings > #btnAddTask")
+	btnAddEditedTask.addEventListener("click", () => {
+		// -> Get values from form
+		const settingsForm = document.getElementById("divSettings")
+		const icon = settingsForm.querySelector("i")
+		const isChecked = icon.classList.contains("fa-square-check")
+		const inputTitle = settingsForm.querySelector("#inputTitleSettings")
+		const priority = settingsForm.querySelector("#btnLabelSelected")
+
+		if (containerID) {
+			// -> Get task from tasksList and change values in task
+			const taskFromList = allTasks.getTaskByID(containerID)
+			taskFromList.done = isChecked
+			taskFromList.title = inputTitle.value
+			taskFromList.priority = priority.textContent
+		}
+
+		if (!containerID) {
+			// Add new task to list
+			const newTask = {
+				title: inputTitle.value,
+				priority: priority.textContent,
+				project: "Not asigned",
+				done: isChecked,
+			}
+			allTasks.addTask(newTask)
+
+			//Print add new task btn
+			const mainSection = document.getElementById("mainSection")
+			const btnAddNewTask = DOM.btnAddTask()
+			btnAddNewTask.id = "btnAddNewTask"
+			mainSection.appendChild(btnAddNewTask)
+			addNewTaskBtnEvents()
+		}
+
+		// -> Print task with applied changes
+		printTasks(taskList)
+
+		// -> Close edit task form
+		settingsForm.remove()
 	})
 
-	function printTasks(list) {
-		const taskContainerAll = document.querySelectorAll(".taskContainer")
-		for (const taskContainer of taskContainerAll) {
-			taskContainer.remove()
-		}
+	// Close settings
+	const settingsForm = document.querySelector("#divSettings")
+	const btnClose = document.querySelector("#btnClose")
+	btnClose.addEventListener("click", () => {
+		settingsForm.remove()
+		const mainSection = document.getElementById("mainSection")
+		const btnAddNewTask = DOM.btnAddTask()
+		btnAddNewTask.id = "btnAddNewTask"
+		mainSection.appendChild(btnAddNewTask)
+		addNewTaskBtnEvents()
+	})
+}
 
-		for (const task of list) {
-			DOM.createTaskContainer(task)
-		}
+function addValuesToEditSettings(taskID) {
+	const task = allTasks.getTaskByID(taskID)
+
+	const input = document.querySelector("#inputTitleSettings")
+	input.value = task.title
+
+	const icon = document.querySelector(".titleContainer > i")
+	const isTaskCompleted = task.done
+	if (isTaskCompleted) {
+		icon.classList.add("fa-square-check")
+		icon.classList.remove("fa-square")
+		input.classList.add("textLineThrough")
 	}
 
-	function openTaskSettings() {
-		const taskList = document.getElementById("tasksList")
-		const taskContainerAll = document.querySelectorAll(".taskContainer")
-		for (const taskContainer of taskContainerAll) {
-			const btnSettings = taskContainer.querySelector("#btnMoreOptions")
-			btnSettings.addEventListener("click", () => {
-				const containerID = Number(taskContainer.dataset.index)
-				// Coger datos de la tarea (título, etc.)
-				const task = Task.getByID(containerID)
-				const taskTitle = task.title
-				const taskPriority = task.priority
-				const taskProject = task.project
-				const taskDone = task.done
+	const priorityButtons = document.querySelectorAll(".priorityLabelsContainer > button")
+	for (const btn of priorityButtons) {
+		const priorityMatch = btn.textContent === task.priority
 
-				// Abrir ventana settings debajo de la posición de taskContainer
-				taskContainer.remove()
-				const nextContainerID = containerID + 1
-				const nextContainer = document.querySelector(`[data-index="${nextContainerID}"]`)
+		if (priorityMatch) {
+			btn.classList.add(`${btn.textContent.toLowerCase()}Priority`)
+			btn.id = "btnLabelSelected"
+		}
 
-				taskList.insertBefore(DOM.newTaskSettings(), nextContainer)
-
-				// Añadir los datos de la tarea a la ventana settings
-				const titleSettings = document.querySelector("#inputTitleSettings")
-				titleSettings.value = taskTitle
-
-				const icon = document.querySelector(".titleContainer > i")
-				if (taskDone) {
-					icon.classList.add("fa-square-check")
-					icon.classList.remove("fa-square")
-				} else {
-					icon.classList.remove("fa-square-check")
-					icon.classList.add("fa-square")
-				}
-
-				const btnPriorityAll = document.querySelectorAll(".priorityLabelsContainer > button")
-				for (const btnPriority of btnPriorityAll) {
-					btnPriority.removeAttribute("id")
-					btnPriority.removeAttribute("class")
-
-					btnPriority.classList.add("btnSetting")
-
-					if (taskPriority === "Low" && btnPriority.textContent === "Low") {
-						btnPriority.id = "btnLabelSelected"
-						btnPriority.classList.add("lowPriority")
-					}
-					if (taskPriority === "Medium" && btnPriority.textContent === "Medium") {
-						btnPriority.id = "btnLabelSelected"
-						btnPriority.classList.add("mediumPriority")
-					}
-					if (taskPriority === "High" && btnPriority.textContent === "High") {
-						btnPriority.id = "btnLabelSelected"
-						btnPriority.classList.add("highPriority")
-					}
-				}
-
-				// Al guardar, debe actualizarse los datos de la tarea
-
-				// Al cerrar, debe aparecer de nuevo la tarea
-			})
+		if (!priorityMatch) {
+			btn.classList.remove(`${btn.textContent.toLowerCase()}Priority`)
+			btn.removeAttribute("id")
 		}
 	}
+}
 
-	function toggleTaskCompletion() {
-		const taskContainerAll = document.querySelectorAll(".taskContainer")
-		for (const taskContainer of taskContainerAll) {
-			const taskInfo = taskContainer.querySelector(".taskInfo")
-			taskInfo.addEventListener("click", () => {
-				const containerID = Number(taskContainer.dataset.index)
-				const taskFromList = Task.getByID(containerID)
-
-				const isTaskCompleted = taskFromList.done
-				const icon = taskContainer.querySelector("i")
-				const title = taskContainer.querySelector("p")
-
-				if (isTaskCompleted) {
-					taskFromList.done = false
-					icon.classList.remove("fa-square-check")
-					icon.classList.add("fa-square")
-					title.classList.remove("textLineThrough")
-					taskContainer.classList.remove("taskCompleted")
-					return
-				}
-				if (!isTaskCompleted) {
-					taskFromList.done = true
-					icon.classList.add("fa-square-check")
-					icon.classList.remove("fa-square")
-					title.classList.add("textLineThrough")
-					taskContainer.classList.add("taskCompleted")
-					return
-				}
-			})
-		}
+function printTasks(list) {
+	const taskContainerAll = document.querySelectorAll(".taskContainer")
+	for (const taskContainer of taskContainerAll) {
+		taskContainer.remove()
 	}
 
-	function settingsEventListeners() {
-		//Cuando hago click en el tick, se completa la tarea
-		const currentIcon = document.querySelector("#divSettings > .titleContainer > i")
-		currentIcon.onclick = () => {
-			currentIcon.classList.toggle("fa-square")
-			currentIcon.classList.toggle("fa-square-check")
+	for (const task of list) {
+		DOM.createTaskContainer(task)
+	}
 
-			currentIcon.classList.contains("fa-square-check") ? (currentIcon.id = "taskCompleted") : currentIcon.removeAttribute("id")
-		}
+	taskContainerEvents()
+}
 
-		// Cuando hago click en los botones de prioridad, cambian de colores
-		const priorityLabels = document.querySelectorAll(".btnSetting")
-		for (const button of priorityLabels) {
-			button.addEventListener("click", () => {
-				const isBtnSelected = button.id === "btnLabelSelected"
+function taskContainerEvents() {
+	const taskContainerAll = document.querySelectorAll(".taskContainer")
 
-				if (!isBtnSelected) {
-					const currentBtnSelected = document.getElementById("btnLabelSelected")
-					currentBtnSelected.removeAttribute("id")
-					currentBtnSelected.classList.remove(`${currentBtnSelected.textContent.toLowerCase()}Priority`)
-
-					button.id = "btnLabelSelected"
-					button.classList.add(`${button.textContent.toLowerCase()}Priority`)
-				}
-			})
-		}
-
-		// Cuando hago click en añadir tarea, se añaden los valores a la tarea
-		const btnAddTaskForm = document.querySelector("#divSettings > #btnAddTask")
-		btnAddTaskForm.addEventListener("click", () => {
-			const values = getFormValues()
-			Task.addTask(values)
-			printTasks(TaskList)
-			toggleTaskCompletion()
-			window.scrollBy(0, window.innerHeight)
-
-			// Reset values
-			const taskSettingsContainer = document.getElementById("divSettings")
-			taskSettingsContainer.remove()
-			DOM.newTaskSettings()
-			settingsEventListeners()
+	for (const taskContainer of taskContainerAll) {
+		taskContainer.addEventListener("mouseenter", () => {
+			containerID = Number(taskContainer.dataset.index)
 		})
 
-		//Botón cerrar ventana
-		const btnClose = document.getElementById("btnClose")
-		btnClose.addEventListener("click", () => {
-			const btnAddTask = document.getElementById("btnAddTask")
-			btnAddTask.removeAttribute("style")
+		const taskInfo = taskContainer.querySelector(".taskInfo")
+		taskInfo.addEventListener("click", () => {
+			const taskFromList = allTasks.getTaskByID(containerID)
+			const isTaskCompleted = taskFromList.done
 
-			const taskSettingsContainer = document.getElementById("divSettings")
-			taskSettingsContainer.remove()
+			const icon = taskContainer.querySelector("i")
+			const title = taskContainer.querySelector("p")
+
+			icon.classList.toggle("fa-square-check")
+			icon.classList.toggle("fa-square")
+			title.classList.toggle("textLineThrough")
+			taskContainer.classList.toggle("taskCompleted")
+
+			taskFromList.done = isTaskCompleted ? false : true
+		})
+
+		const tasksList = document.getElementById("tasksList")
+		const iconEditTask = taskContainer.querySelector("#btnMoreOptions")
+
+		let counter = 0
+		iconEditTask.addEventListener("click", () => {
+			//Close any other taskSettings if there's one opened
+			const divSettings = document.getElementById("divSettings")
+			if (divSettings) {
+				divSettings.remove()
+			}
+
+			const nextContainerID = containerID + 1
+			const nextContainer = document.querySelector(`[data-index="${nextContainerID}"]`)
+
+			const newDivSettings = DOM.taskSettings()
+
+			tasksList.insertBefore(newDivSettings, nextContainer)
+			addValuesToEditSettings(containerID)
+			addEventsToEditSettings()
+
+			// If it's already open, it close the form
+			counter++
+			if (counter === 2) {
+				newDivSettings.remove()
+				counter = 0
+			}
 		})
 	}
-
-	function getFormValues() {
-		const title = document.getElementById("inputTitleSettings").value
-		if (title === "") {
-			return alert("Please put a name to your task")
-		}
-
-		const priority = document.getElementById("btnLabelSelected").textContent
-		const project = "Not asigned"
-		const done = document.querySelector("#divSettings > .titleContainer > i").id === "taskCompleted"
-
-		return { title, priority, project, done }
-	}
-})()
+}

@@ -54,6 +54,10 @@ video {
 	max-width: 100%;
 }
 
+.hide {
+	display: none !important;
+}
+
 /* Tasks list */
 main {
 	max-width: 1200px;
@@ -134,6 +138,7 @@ button:hover {
 
 .textLineThrough {
 	text-decoration: line-through;
+	color: var(--accent-color);
 }
 
 /* LABELS */
@@ -206,7 +211,12 @@ i {
 
 #inputTitleSettings:focus {
 	outline: none;
+	text-decoration: none;
 	border: 2px solid var(--accent-color);
+}
+
+#inputTitleSettings.textLineThrough {
+	color: var(--accent-color);
 }
 
 .labelsContainer,
