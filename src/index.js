@@ -1,9 +1,10 @@
 import "./styles.css"
-import { DOMSkeleton, taskSettings } from ".//modules/DOM"
-import { Todos, newProject, NewTask } from "./modules/task.js"
+import { DOMSkeleton, navigation } from ".//modules/DOM"
+import { newProject, NewTask } from "./modules/task.js"
 
 //* INIT
 const DOM = DOMSkeleton()
+
 const allTasks = newProject()
 const taskList = allTasks.taskList
 let containerID

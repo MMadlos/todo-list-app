@@ -1,5 +1,9 @@
+const content = document.getElementById("content")
+
 const DOMSkeleton = () => {
-	const content = document.getElementById("content")
+	const nav = navigation()
+	content.appendChild(nav)
+
 	const mainSection = document.createElement("main")
 	mainSection.id = "mainSection"
 
@@ -187,100 +191,58 @@ const DOMSkeleton = () => {
 	return { content, createTaskContainer, taskSettings, btnAddTask, btnClose }
 }
 
-function taskSettings() {
-	const settingsContainer = document.createElement("div")
-	settingsContainer.id = "divSettings"
-	settingsContainer.classList.add("taskSettingsContainer")
+function navigation() {
+	const nav = document.createElement("nav")
+	const contentWrapper = document.createElement("div")
+	const navTitle = document.createElement("p")
+	const separator = document.createElement("div")
+	const projectLabel = document.createElement("div")
+	const projectTitle = document.createElement("p")
 
-	// Title
-	const titleContainer = document.createElement("div")
-	titleContainer.classList.add("titleContainer")
+	nav.classList.add("nav")
+	contentWrapper.classList.add("navContainer")
+	navTitle.classList.add("navTitle")
+	separator.classList.add("nav_separator")
+	projectLabel.classList.add("projectContainer")
+	projectLabel.classList.add("selected")
+	projectTitle.classList.add("projectTitle")
 
-	const icon = document.createElement("i")
-	icon.classList.add("fa-regular", "fa-square")
+	navTitle.textContent = "PROJECTS"
+	// TEMPORAL
+	projectTitle.textContent = "Proyecto 1"
+	const project2 = AddNavProjectLabel()
+	project2.textContent = "Portfolio content test long title"
+	project2.classList.add("projectTitle")
 
-	const inputTitle = document.createElement("input")
-	inputTitle.classList.add("inputTitle")
-	inputTitle.placeholder = "Ej: poner lavadora"
-	inputTitle.id = "inputTitleSettings"
+	const project3 = AddNavProjectLabel()
+	project3.textContent = "Shopping List"
+	project3.classList.add("projectTitle")
 
-	settingsContainer.appendChild(titleContainer)
-	titleContainer.appendChild(icon)
-	titleContainer.appendChild(inputTitle)
+	const project4 = AddNavProjectLabel()
+	project4.textContent = "Wishlist"
+	project4.classList.add("projectTitle")
 
-	// Labels
-	const labelsContainer = document.createElement("div")
-	labelsContainer.classList.add("labelsContainer")
+	nav.appendChild(contentWrapper)
+	contentWrapper.appendChild(navTitle)
+	contentWrapper.appendChild(separator)
+	contentWrapper.appendChild(projectLabel)
+	projectLabel.appendChild(projectTitle)
+	contentWrapper.appendChild(project2)
+	contentWrapper.appendChild(project3)
+	contentWrapper.appendChild(project4)
 
-	const priorityLabelsContainer = document.createElement("div")
-	priorityLabelsContainer.classList.add("priorityLabelsContainer")
-
-	const priority = document.createElement("p")
-	priority.textContent = "Prioridad"
-
-	const btnLow = document.createElement("button")
-	btnLow.classList.add("btnSetting", "lowPriority")
-	btnLow.id = "btnLabelSelected"
-	btnLow.textContent = "Low"
-
-	const btnMedium = document.createElement("button")
-	btnMedium.classList.add("btnSetting")
-	btnMedium.textContent = "Medium"
-
-	const btnHigh = document.createElement("button")
-	btnHigh.classList.add("btnSetting")
-	btnHigh.textContent = "High"
-
-	const projectLabelsContainer = document.createElement("div")
-	projectLabelsContainer.classList.add("projectLabelsContainer")
-
-	const project = document.createElement("p")
-	project.textContent = "Proyecto"
-
-	const divProjectLabel = document.createElement("div")
-	divProjectLabel.classList.add("projectLabel")
-
-	const textProjectLabel = document.createElement("p")
-	textProjectLabel.textContent = "No disponible"
-
-	settingsContainer.appendChild(labelsContainer)
-
-	labelsContainer.appendChild(priorityLabelsContainer)
-	priorityLabelsContainer.appendChild(priority)
-	priorityLabelsContainer.appendChild(btnLow)
-	priorityLabelsContainer.appendChild(btnMedium)
-	priorityLabelsContainer.appendChild(btnHigh)
-
-	labelsContainer.appendChild(projectLabelsContainer)
-	projectLabelsContainer.appendChild(project)
-	projectLabelsContainer.appendChild(divProjectLabel)
-	divProjectLabel.appendChild(textProjectLabel)
-
-	//Buttons
-	const btnAddNewTask = btnAddTask()
-	const btnCloseSettings = btnClose()
-
-	settingsContainer.appendChild(btnAddNewTask)
-	settingsContainer.appendChild(btnCloseSettings)
-
-	return settingsContainer
+	return nav
 }
 
-function btnAddTask() {
-	const btnAddTask = document.createElement("button")
-	btnAddTask.textContent = "Añadir tarea"
-	btnAddTask.id = "btnAddTask"
-	btnAddTask.classList.add("btnBig", "btnAccent")
-	return btnAddTask
+function AddNavProjectLabel() {
+	const projectLabel = document.createElement("div")
+	const projectTitle = document.createElement("p")
+
+	projectLabel.classList.add("projectContainer")
+	projectTitle.classList.add("projectTitle")
+
+	projectLabel.appendChild(projectTitle)
+	return projectLabel
 }
 
-function btnClose() {
-	const btnClose = document.createElement("button")
-	btnClose.textContent = "Cerrar"
-	btnClose.id = "btnClose"
-	btnClose.classList.add("btnBig")
-	btnClose.classList.add("btnUnderlined")
-	return btnClose
-}
-
-export { DOMSkeleton, taskSettings }
+export { DOMSkeleton, navigation }

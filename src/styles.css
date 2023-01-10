@@ -57,6 +57,47 @@ video {
 .hide {
 	display: none !important;
 }
+/* LAYOUT */
+#content {
+	display: grid;
+	grid-template-columns: 300px 3fr;
+
+	height: 100vh;
+}
+
+/* NAV */
+.nav {
+	background-color: var(--bg-task-color);
+	padding: 40px 24px;
+	box-shadow: 6px 4px 0px rgba(62, 146, 204, 0.25);
+}
+
+.navContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.navTitle,
+.projectTitle {
+	font-weight: 700;
+	color: var(--text-main-color);
+}
+
+.nav_separator {
+	height: 1px;
+	background-color: #999999;
+}
+
+.projectContainer {
+	color: #808080;
+	padding: 10px 16px;
+	border-radius: 8px;
+}
+
+.projectContainer.selected {
+	background-color: var(--bg-labelDisabled-color);
+}
 
 /* Tasks list */
 main {
