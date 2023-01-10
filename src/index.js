@@ -255,12 +255,11 @@ function taskContainerEvents() {
 				divSettings.remove()
 			}
 
-			const nextContainerID = containerID + 1
-			const nextContainer = document.querySelector(`[data-index="${nextContainerID}"]`)
-
+			const currentContainer = document.querySelector(`[data-index="${containerID}"]`)
+			const containerNextSibling = currentContainer.nextSibling
 			const newDivSettings = DOM.taskSettings()
 
-			tasksList.insertBefore(newDivSettings, nextContainer)
+			tasksList.insertBefore(newDivSettings, containerNextSibling)
 			addValuesToEditSettings(containerID)
 			addEventsToEditSettings()
 
@@ -270,6 +269,16 @@ function taskContainerEvents() {
 				newDivSettings.remove()
 				counter = 0
 			}
+		})
+
+		const btnDelete = taskContainer.querySelector(".fa-trash-can")
+		btnDelete.addEventListener("click", () => {
+			// taskList.splice(containerID - 1, 1) --> NO FUNCIONA
+			const findTask = taskList.find((task) => task.id === containerID)
+			const indexOfTask = taskList.indexOf(findTask)
+			taskList.splice(indexOfTask, 1)
+
+			printTasks(taskList)
 		})
 	}
 }

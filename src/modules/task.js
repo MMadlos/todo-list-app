@@ -2,7 +2,15 @@ function newProject() {
 	const taskList = []
 
 	function addTask(task) {
-		task.id = task.id ?? taskList.length + 1
+		let arrayID = []
+
+		for (const task of taskList) {
+			arrayID.push(task.id)
+		}
+
+		const maxID = Math.max(...arrayID)
+
+		task.id = task.id ?? maxID + 1
 
 		taskList.push(task)
 	}

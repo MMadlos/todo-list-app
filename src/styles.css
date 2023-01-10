@@ -259,3 +259,11 @@ i {
 	font-size: 14px;
 	margin-left: 16px;
 }
+
+.fa-trash-can {
+	color: var(--bg-labelHigh-color);
+}
+
+.fa-trash-can:hover {
+	color: var(--text-labelHigh-color);
+}

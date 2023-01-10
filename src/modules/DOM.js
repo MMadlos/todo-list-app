@@ -81,6 +81,10 @@ const DOMSkeleton = () => {
 		iconMore.id = "btnMoreOptions"
 		taskDetails.appendChild(iconMore)
 
+		const btnDelete = document.createElement("i")
+		btnDelete.classList.add("fa-regular", "fa-trash-can")
+		taskDetails.appendChild(btnDelete)
+
 		return taskContainer
 	}
 
