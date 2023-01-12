@@ -1,74 +1,117 @@
 import "./styles.css"
-import { DOMSkeleton, navigation } from ".//modules/DOM"
-import { newProject, NewTask } from "./modules/task.js"
+import { DOMSkeleton, navigation, AddNavProjectLabel } from ".//modules/DOM"
+import { allProjects, newProject, NewTask } from "./modules/task.js"
 
-//* INIT
 const DOM = DOMSkeleton()
+const projects = allProjects
 
-const allTasks = newProject()
+// Default projects and tasks
+// --> FIRST DEFAULT PROJECT
+const allTasks = newProject("All tasks")
 const taskList = allTasks.taskList
-let containerID
 
-const INIT = (() => {
-	// Default tasks
-	const defaultTasks = [
-		{
-			id: 1,
-			title: "Primera tarea",
-			priority: "High",
-			project: "Not asigned",
-			done: true,
-		},
-		{
-			id: 3,
-			title: "Tercera tarea",
-			priority: "Low",
-			project: "Not asigned",
-			done: false,
-		},
-		{
-			id: 2,
-			title: "Segunda tarea",
-			priority: "Medium",
-			project: "Not asigned",
-			done: true,
-		},
-		{
-			id: 5,
-			title: "Quinta tarea",
-			priority: "Medium",
-			project: "Not asigned",
-			done: true,
-		},
-		{
-			id: 4,
-			title: "Cuarta tarea",
-			priority: "Medium",
-			project: "Not asigned",
-			done: false,
-		},
-	]
-
-	for (const task of defaultTasks) {
-		const defaultTask = NewTask(task)
-		allTasks.addTask(defaultTask)
-		allTasks.sortTasksByID()
-	}
-
-	printTasks(taskList)
-
-	// TEST
-	const testTask = NewTask({
-		title: "Esta es la sexta tarea default sin ID predeterminado",
+const defaultTasks = [
+	{
+		id: 1,
+		title: "Primera tarea",
 		priority: "High",
 		project: "Not asigned",
 		done: true,
-	})
-	allTasks.addTask(testTask)
-	printTasks(taskList)
-	addNewTaskBtnEvents()
-})()
+	},
+	{
+		id: 3,
+		title: "Tercera tarea",
+		priority: "Low",
+		project: "Not asigned",
+		done: false,
+	},
+	{
+		id: 2,
+		title: "Segunda tarea",
+		priority: "Medium",
+		project: "Not asigned",
+		done: true,
+	},
+	{
+		id: 5,
+		title: "Quinta tarea",
+		priority: "Medium",
+		project: "Not asigned",
+		done: true,
+	},
+	{
+		id: 4,
+		title: "Cuarta tarea",
+		priority: "Medium",
+		project: "Not asigned",
+		done: false,
+	},
+]
+for (const task of defaultTasks) {
+	const defaultTask = NewTask(task)
+	allTasks.addTask(defaultTask)
+	allTasks.sortTasksByID()
+}
+printTasks(taskList)
 
+const testTask = NewTask({
+	title: "Esta es la sexta tarea default sin ID predeterminado",
+	priority: "High",
+	project: "Not asigned",
+	done: true,
+})
+allTasks.addTask(testTask)
+printTasks(taskList)
+
+// Crear el main title
+const defaultProjectTitle = document.getElementById("mainTitle")
+defaultProjectTitle.textContent = allTasks.getName()
+
+// SECOND DEFAULT PROJECT
+const testProject = newProject("Test project")
+const secondDefaultTasks = [
+	{
+		id: 1,
+		title: "TEST Primera tarea",
+		priority: "High",
+		project: "Not asigned",
+		done: true,
+	},
+	{
+		id: 3,
+		title: "TEST Tercera tarea",
+		priority: "Low",
+		project: "Not asigned",
+		done: false,
+	},
+	{
+		id: 2,
+		title: "TEST Segunda tarea",
+		priority: "Medium",
+		project: "Not asigned",
+		done: true,
+	},
+]
+for (const task of secondDefaultTasks) {
+	const defaultTask = NewTask(task)
+	testProject.addTask(defaultTask)
+	testProject.sortTasksByID()
+}
+
+addNewTaskBtnEvents()
+
+// Añadir los proyectos en el nav
+for (const project in projects) {
+	const navProjectList = document.getElementById("projectList")
+
+	const projectLabel = AddNavProjectLabel(project)
+	navProjectList.appendChild(projectLabel)
+}
+
+const projectDefault = document.querySelector(".projectContainer")
+projectDefault.classList.add("selected")
+
+let containerID
 function addNewTaskBtnEvents() {
 	const btnAddNewTask = document.getElementById("btnAddNewTask")
 	btnAddNewTask.addEventListener("click", () => {
@@ -282,4 +325,80 @@ function taskContainerEvents() {
 			printTasks(taskList)
 		})
 	}
+}
+
+const btnAddNewProject = document.getElementById("btnAddProject")
+btnAddNewProject.addEventListener("click", () => {
+	// Create new project
+	const project = newProject()
+	const setProjectName = prompt("Project title")
+	project.setName(setProjectName)
+	const projectName = project.getName()
+
+	// PRINT TASK LABEL IN NAV
+	const projectLabel = AddNavProjectLabel(projectName)
+	const projectListContainer = document.getElementById("projectList")
+
+	// Add styles to current project label
+	const currentProjectSelected = document.querySelector(".projectContainer.selected")
+	currentProjectSelected.classList.remove("selected")
+	projectLabel.classList.add("selected")
+
+	projectListContainer.appendChild(projectLabel)
+
+	// PRINT TASKS IN MAIN SECTION
+	const defaultTasks = [
+		{
+			id: 1,
+			title: "Test Primera tarea",
+			priority: "High",
+			project: "Not asigned",
+			done: true,
+		},
+		{
+			id: 3,
+			title: "Test Tercera tarea",
+			priority: "Low",
+			project: "Not asigned",
+			done: false,
+		},
+		{
+			id: 2,
+			title: "Test Segunda tarea",
+			priority: "Medium",
+			project: "Not asigned",
+			done: true,
+		},
+	]
+	for (const task of defaultTasks) {
+		const defaultTask = NewTask(task)
+		project.addTask(defaultTask)
+		project.sortTasksByID()
+	}
+
+	const projectTitle = document.getElementById("mainTitle")
+	projectTitle.textContent = projectName
+	printTasks(project.taskList)
+})
+
+// TODO: Que pueda hacer click en otro título y se recargue el listado en la parte central
+const projectList = document.querySelectorAll(".projectContainer")
+for (const project of projectList) {
+	project.addEventListener("click", () => {
+		// Recuperar el proyecto
+		const projectTitleFromLabel = project.textContent
+		const taskList = projects[projectTitleFromLabel]
+
+		// Imprimir el título del proyecto
+		const mainTitle = document.getElementById("mainTitle")
+		mainTitle.textContent = projectTitleFromLabel
+
+		// Imprimir las tareas de ese proyecto
+		printTasks(taskList)
+
+		// Añadir estilo al botón
+		const currentProjectSelected = document.querySelector(".projectContainer.selected")
+		currentProjectSelected.classList.remove("selected")
+		project.classList.add("selected")
+	})
 }

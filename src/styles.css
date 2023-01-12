@@ -72,7 +72,8 @@ video {
 	box-shadow: 6px 4px 0px rgba(62, 146, 204, 0.25);
 }
 
-.navContainer {
+.navContainer,
+#projectList {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -90,20 +91,49 @@ video {
 }
 
 .projectContainer {
-	color: #808080;
 	padding: 10px 16px;
 	border-radius: 8px;
+	cursor: pointer;
+}
+
+.projectContainer:not(.selected) > p {
+	color: #808080;
+}
+
+.projectContainer:not(.selected):hover {
+	background-color: var(--bg-labelDisabled-color);
+}
+
+.projectContainer:not(.selected):hover > p {
+	color: var(--text-main-color);
 }
 
 .projectContainer.selected {
 	background-color: var(--bg-labelDisabled-color);
 }
 
+#btnAddProject {
+	cursor: pointer;
+	padding: 10px 16px;
+	border-radius: 8px;
+	border: transparent;
+	background-color: transparent;
+	text-align: left;
+	font-weight: 700;
+	color: var(--accent-color);
+}
+
+#btnAddProject:hover {
+	background-color: var(--accent-color);
+	color: var(--text-accent-color);
+	opacity: 100%;
+}
+
 /* Tasks list */
 main {
-	max-width: 1200px;
+	width: 100%;
 	margin: 0 auto;
-	padding: 120px 40px;
+	padding: 40px;
 }
 #mainTitle {
 	font-size: 32px;

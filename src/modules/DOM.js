@@ -23,8 +23,6 @@ const DOMSkeleton = () => {
 	mainSection.appendChild(btnAddNewTask)
 
 	function createTaskContainer({ id, title, priority, project, done }) {
-		// const taskList = document.getElementById("tasksList")
-
 		const taskContainer = document.createElement("div")
 		taskContainer.setAttribute("data-index", id)
 		taskContainer.classList.add("taskContainer")
@@ -196,53 +194,40 @@ function navigation() {
 	const contentWrapper = document.createElement("div")
 	const navTitle = document.createElement("p")
 	const separator = document.createElement("div")
-	const projectLabel = document.createElement("div")
-	const projectTitle = document.createElement("p")
+	const projectListContainer = document.createElement("div")
 
 	nav.classList.add("nav")
 	contentWrapper.classList.add("navContainer")
 	navTitle.classList.add("navTitle")
-	separator.classList.add("nav_separator")
-	projectLabel.classList.add("projectContainer")
-	projectLabel.classList.add("selected")
-	projectTitle.classList.add("projectTitle")
-
 	navTitle.textContent = "PROJECTS"
-	// TEMPORAL
-	projectTitle.textContent = "Proyecto 1"
-	const project2 = AddNavProjectLabel()
-	project2.textContent = "Portfolio content test long title"
-	project2.classList.add("projectTitle")
+	separator.classList.add("nav_separator")
+	projectListContainer.id = "projectList"
 
-	const project3 = AddNavProjectLabel()
-	project3.textContent = "Shopping List"
-	project3.classList.add("projectTitle")
-
-	const project4 = AddNavProjectLabel()
-	project4.textContent = "Wishlist"
-	project4.classList.add("projectTitle")
+	// ADD Project btn
+	const btnAddProject = document.createElement("button")
+	btnAddProject.textContent = "+ Add project"
+	btnAddProject.id = "btnAddProject"
 
 	nav.appendChild(contentWrapper)
 	contentWrapper.appendChild(navTitle)
 	contentWrapper.appendChild(separator)
-	contentWrapper.appendChild(projectLabel)
-	projectLabel.appendChild(projectTitle)
-	contentWrapper.appendChild(project2)
-	contentWrapper.appendChild(project3)
-	contentWrapper.appendChild(project4)
+	contentWrapper.appendChild(projectListContainer)
+	contentWrapper.appendChild(btnAddProject)
 
 	return nav
 }
 
-function AddNavProjectLabel() {
+function AddNavProjectLabel(title) {
 	const projectLabel = document.createElement("div")
 	const projectTitle = document.createElement("p")
 
 	projectLabel.classList.add("projectContainer")
 	projectTitle.classList.add("projectTitle")
+
+	projectTitle.textContent = title
 
 	projectLabel.appendChild(projectTitle)
 	return projectLabel
 }
 
-export { DOMSkeleton, navigation }
+export { DOMSkeleton, navigation, AddNavProjectLabel }
