@@ -1,5 +1,17 @@
 const TodoList = []
 
+export const NewTask = (titleText) => {
+	const title = titleText
+	const subtasks = []
+	const priority = false
+	const date = "Sin fecha"
+	const project = "Sin asignar"
+	const hasFile = false
+	const hasNote = false
+
+	return { title, subtasks, priority, date, project, hasFile, hasNote }
+}
+
 const Project = (projectName) => {
 	const project = {
 		name: projectName,

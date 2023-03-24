@@ -141,7 +141,7 @@ function label(iconType) {
 	return label
 }
 
-export function TaskComponent() {
+export function TaskComponent(title) {
 	const taskContainer = document.createElement("div")
 	taskContainer.className = "task-container"
 
@@ -152,7 +152,7 @@ export function TaskComponent() {
 	taskDetailsContainer.className = "task-details-container"
 
 	const taskText = document.createElement("p")
-	taskText.textContent = "Tarea de prueba"
+	taskText.textContent = title
 	taskText.className = "task-text"
 
 	const taskLabelsContainer = document.createElement("div")
@@ -160,8 +160,6 @@ export function TaskComponent() {
 
 	const taskIcon = icon("notChecked")
 	taskIcon.className = "task-icon"
-
-	console.log(taskIcon)
 
 	const moreOptionButton = Button().moreDetailsTask()
 
@@ -344,10 +342,9 @@ export function UI() {
 
 	section.appendChild(taskListContainer)
 	taskListContainer.appendChild(tasksSeparators())
-	taskListContainer.appendChild(TaskComponent())
+	// taskListContainer.appendChild(TaskComponent())
 
-	// Test
-	section.appendChild(TaskForm())
+	// section.appendChild(TaskForm()) //TODO <<----- TASKFORM
 
 	return content
 }

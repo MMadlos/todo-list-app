@@ -1,10 +1,52 @@
 import "./styles.css"
-import { content, Button, UserInterface, DOMSkeleton, navSection, AddNavProjectLabel, NewUI, UI } from ".//modules/DOM"
-import { allProjects, newProject, NewTask } from "./modules/task.js"
-import { Project, TodoList, defaultTasks } from "./modules/task-refactor"
+import { content, Button, UserInterface, DOMSkeleton, navSection, AddNavProjectLabel, NewUI, UI, TaskComponent } from ".//modules/DOM"
+// import { allProjects, newProject, NewTask } from "./modules/task.js"
+import { Project, TodoList, NewTask } from "./modules/task-refactor"
 
 // New APP //
 UI()
+
+const defaultTasks = {
+	primeraTarea: {
+		title: "Primera tarea por defecto",
+		subtasks: [],
+		priority: false,
+		date: "Sin fecha",
+		project: "Sin asignar",
+		hasFile: false,
+		hasNote: false,
+	},
+	segundaTarea: {
+		title: "Segunda tarea por defecto",
+		subtasks: [],
+		priority: false,
+		date: "Sin fecha",
+		project: "Sin asignar",
+		hasFile: false,
+		hasNote: false,
+	},
+}
+
+for (const [key, value] of Object.entries(defaultTasks)) {
+	console.log(`${key}: ${value["title"]}`)
+}
+
+console.log(defaultTasks.primeraTarea["title"])
+console.log(defaultTasks.segundaTarea["title"])
+
+const task = NewTask("Es una tarea de ejemplo")
+task.title = "Cambio de título"
+console.log(task)
+console.table(task)
+
+const taskList = document.querySelector(".task-list-container")
+
+const taskComponent = TaskComponent(task.title)
+const firstLabel = taskComponent.querySelector(".label")
+firstLabel.classList.add("blue")
+console.log(firstLabel)
+
+taskList.appendChild(taskComponent)
 
 // //! OLD <<-------------->> //
 

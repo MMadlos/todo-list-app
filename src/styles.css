@@ -208,6 +208,10 @@ img.drop-down {
 	gap: 8px;
 }
 
+.blue {
+	background-color: #3e92cc;
+}
+
 /* TASK COMPONENT */
 
 .task-details-container {
