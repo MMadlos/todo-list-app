@@ -1,20 +1,7 @@
 import "./styles.css"
-import {
-	content,
-	Button,
-	UserInterface,
-	DOMSkeleton,
-	navSection,
-	AddNavProjectLabel,
-	NewUI,
-	UI,
-	TaskComponent,
-	setSVGColor,
-	ReturnComponent,
-	TaskForm,
-} from ".//modules/DOM"
+import { UI, TaskComponent, setSVGColor, ReturnComponent, TaskForm } from ".//modules/DOM"
 // import { allProjects, newProject, NewTask } from "./modules/task.js"
-import { Project, TodoList, NewTask } from "./modules/task-refactor"
+// import { Project, TodoList, NewTask } from "./modules/task-refactor"
 
 // New APP //
 function defaultUI() {
@@ -48,32 +35,40 @@ function defaultUI() {
 	// Add components for each default tasks
 	for (const [key, value] of Object.entries(defaultTasks)) {
 		const taskTitle = value["title"]
-		const newTaskComponent = TaskComponent(taskTitle)
+		const taskContainer = TaskComponent(taskTitle)
 
-		// Check task properties and add labels
+		// Task properties and elements
 		const hasPriority = value["priority"]
 		if (hasPriority) {
-			const priorityLabel = newTaskComponent.querySelector(".label.priority")
+			const priorityLabel = taskContainer.querySelector(".label.priority")
 			priorityLabel.classList.add("has-priority")
 
-			const priorityText = newTaskComponent.querySelector(".label-text")
+			const priorityText = taskContainer.querySelector(".label-text")
 			priorityText.textContent = "Importante"
 
-			setSVGColor(priorityLabel, "#ed726f")
+			window.addEventListener("load", function () {
+				const objectElement = priorityLabel.querySelector("object")
+				const svg = objectElement.contentDocument.querySelector("svg")
+				const path = svg.querySelectorAll("path")
+
+				path.forEach((element) => {
+					element.setAttribute("fill", "#ed726f")
+				})
+			})
 		} else {
-			const priorityEl = newTaskComponent.querySelector(".priority > .label-text")
+			const priorityEl = taskContainer.querySelector(".priority > .label-text")
 			priorityEl.textContent = "Sin prioridad"
 		}
 
-		const date = value["date"]
-		const dateEl = newTaskComponent.querySelector(".calendar > .label-text")
-		dateEl.textContent = date
+		const dateProp = value["date"]
+		const dateEl = taskContainer.querySelector(".calendar > .label-text")
+		dateEl.textContent = dateProp
 
-		const project = value["project"]
-		const projectEl = newTaskComponent.querySelector(".folder > .label-text")
-		projectEl.textContent = project
+		const projectProp = value["project"]
+		const projectEl = taskContainer.querySelector(".folder > .label-text")
+		projectEl.textContent = projectProp
 
-		taskList.appendChild(newTaskComponent)
+		taskList.appendChild(taskContainer)
 	}
 
 	// Open new task form when clicking "Nueva tarea"
@@ -99,24 +94,24 @@ function defaultUI() {
 }
 
 defaultUI()
-// ;(function testTaskPage() {
-// 	const contentEl = document.getElementById("content")
-// 	const section = document.createElement("section")
-// 	section.id = "section"
 
-// 	const returnElement = returnComponent()
+// function taskAccordion() {}
+const taskAccordionContainer = document.querySelector(".task-accordion-container")
+taskAccordionContainer.addEventListener("click", () => {
+	const taskListContainer = taskAccordionContainer.parentElement
+	const taskContainers = taskListContainer.querySelectorAll(".task-container")
+	const accordionIcon = taskAccordionContainer.querySelector(".drop-down")
 
-// 	contentEl.appendChild(section)
-// 	section.appendChild(returnElement)
-// 	section.appendChild(TaskForm())
-
-// 	returnElement.addEventListener("click", () => {
-// 		section.remove()
-// 		defaultUI()
-// 	})
-// })()
-
-//! TEST //
+	taskContainers.forEach((element) => {
+		if (element.classList[1] === "hide") {
+			element.classList.remove("hide")
+			accordionIcon.classList.remove("rotate")
+		} else {
+			element.classList.add("hide")
+			accordionIcon.classList.add("rotate")
+		}
+	})
+})
 
 // //! OLD <<-------------->> //
 

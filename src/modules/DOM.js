@@ -10,7 +10,9 @@ import IconChevronLeft from "../icons/chevron-left.svg"
 import IconAttach from "../icons/attach.svg"
 import IconAdd from "../icons/add.svg"
 
-export const content = document.getElementById("content")
+const content = document.getElementById("content")
+
+// Elements for components
 
 export function Button() {
 	const btn = document.createElement("button")
@@ -94,56 +96,6 @@ function SVG(svgFile, className) {
 	return svgObject
 }
 
-export function setSVGColor(objectContainer, color) {
-	window.addEventListener("load", function () {
-		const objectElement = objectContainer.querySelector("object")
-		const svg = objectElement.contentDocument.querySelector("svg")
-		const path = svg.querySelectorAll("path")
-
-		path.forEach((element) => {
-			element.setAttribute("fill", color)
-		})
-	})
-}
-
-function separatorLine() {
-	const separatorLine = document.createElement("div")
-	separatorLine.className = "separator-line"
-
-	return separatorLine
-}
-
-function tasksSeparators() {
-	const separatorContainer = document.createElement("div")
-	separatorContainer.className = "separator-container"
-
-	const separatorInfoContainer = document.createElement("div")
-	separatorInfoContainer.className = "separator-info-container"
-
-	const dropDownIcon = icon("chevronDown")
-	dropDownIcon.className = "drop-down"
-
-	const text = document.createElement("p")
-	text.textContent = "Sin fecha" //TODO <<----- CAMBIAR
-	text.className = "separator-text"
-
-	const counterContainer = document.createElement("div")
-	counterContainer.className = "counter-container"
-
-	const counterText = document.createElement("p")
-	counterText.textContent = "8" //TODO <<----- CAMBIAR
-	counterText.className = "counter-text"
-
-	separatorContainer.appendChild(separatorInfoContainer)
-	separatorInfoContainer.appendChild(dropDownIcon)
-	separatorInfoContainer.appendChild(text)
-	separatorInfoContainer.appendChild(counterContainer)
-	counterContainer.appendChild(counterText)
-	separatorContainer.appendChild(separatorLine())
-
-	return separatorContainer
-}
-
 function label(iconType) {
 	const label = document.createElement("div")
 	label.className = "label"
@@ -162,6 +114,90 @@ function label(iconType) {
 	label.appendChild(text)
 
 	return label
+}
+
+export function setSVGColor(objectContainer, color) {
+	window.addEventListener("load", () => {
+		const objectElement = objectContainer.querySelector("object")
+		const svg = objectElement.contentDocument.querySelector("svg")
+		const path = svg.querySelectorAll("path")
+
+		path.forEach((element) => {
+			element.setAttribute("fill", color)
+		})
+	})
+}
+
+function separatorLine() {
+	const separatorLine = document.createElement("div")
+	separatorLine.className = "separator-line"
+
+	return separatorLine
+}
+
+// Components
+function header() {
+	const headerContainer = document.createElement("div")
+	headerContainer.className = "header-container"
+
+	const header = document.createElement("h1")
+	header.textContent = "Mis tareas"
+	header.className = "header"
+
+	const logo = icon("logo")
+	logo.className = "logo"
+
+	headerContainer.appendChild(logo)
+	headerContainer.appendChild(header)
+
+	return headerContainer
+}
+
+function buttonsSection() {
+	const sectionButtons = document.createElement("div")
+	sectionButtons.className = "buttons-section"
+
+	const dropDownContainer = document.createElement("div")
+	dropDownContainer.className = "dropDown-container"
+
+	sectionButtons.appendChild(dropDownContainer)
+	dropDownContainer.appendChild(Button().dropDown("Mostrar todo"))
+	dropDownContainer.appendChild(Button().dropDown("Todos los proyectos"))
+
+	sectionButtons.appendChild(Button().addTask())
+
+	return sectionButtons
+}
+
+function taskAccordion() {
+	const taskAccordionContainer = document.createElement("div")
+	taskAccordionContainer.className = "task-accordion-container"
+
+	const separatorInfoContainer = document.createElement("div")
+	separatorInfoContainer.className = "task-accordion-info-container"
+
+	const dropDownIcon = icon("chevronDown")
+	dropDownIcon.className = "drop-down"
+
+	const text = document.createElement("p")
+	text.textContent = "Sin fecha"
+	text.className = "separator-text"
+
+	const counterContainer = document.createElement("div")
+	counterContainer.className = "counter-container"
+
+	const counterText = document.createElement("p")
+	counterText.textContent = "8" //TODO <<----- CAMBIAR
+	counterText.className = "counter-text"
+
+	taskAccordionContainer.appendChild(separatorInfoContainer)
+	separatorInfoContainer.appendChild(dropDownIcon)
+	separatorInfoContainer.appendChild(text)
+	separatorInfoContainer.appendChild(counterContainer)
+	counterContainer.appendChild(counterText)
+	taskAccordionContainer.appendChild(separatorLine())
+
+	return taskAccordionContainer
 }
 
 export function TaskComponent(title) {
@@ -199,39 +235,6 @@ export function TaskComponent(title) {
 	taskLabelsContainer.appendChild(label("folder"))
 
 	return taskContainer
-}
-
-function header() {
-	const headerContainer = document.createElement("div")
-	headerContainer.className = "header-container"
-
-	const header = document.createElement("h1")
-	header.textContent = "Mis tareas"
-	header.className = "header"
-
-	const logo = icon("logo")
-	logo.className = "logo"
-
-	headerContainer.appendChild(logo)
-	headerContainer.appendChild(header)
-
-	return headerContainer
-}
-
-function buttonsSection() {
-	const sectionButtons = document.createElement("div")
-	sectionButtons.className = "buttons-section"
-
-	const dropDownContainer = document.createElement("div")
-	dropDownContainer.className = "dropDown-container"
-
-	sectionButtons.appendChild(dropDownContainer)
-	dropDownContainer.appendChild(Button().dropDown("Mostrar todo"))
-	dropDownContainer.appendChild(Button().dropDown("Todos los proyectos"))
-
-	sectionButtons.appendChild(Button().addTask())
-
-	return sectionButtons
 }
 
 export function ReturnComponent() {
@@ -373,6 +376,7 @@ export function TaskForm() {
 	return taskFormContainer
 }
 
+// Page Layout (Default)
 export function UI() {
 	const section = document.createElement("section")
 	section.id = "section"
@@ -385,369 +389,7 @@ export function UI() {
 	taskListContainer.className = "task-list-container"
 
 	section.appendChild(taskListContainer)
-	taskListContainer.appendChild(tasksSeparators())
+	taskListContainer.appendChild(taskAccordion())
 
 	return content
 }
-
-//! OLD <<-------->> //
-
-export function UserInterface() {
-	function navSection() {
-		const nav = document.createElement("nav")
-		nav.classList.add("nav-container")
-
-		const navTitle = document.createElement("p")
-		navTitle.classList.add("nav-title")
-		navTitle.textContent = "PROJECTS"
-		nav.appendChild(navTitle)
-
-		const separator = document.createElement("div")
-		separator.classList.add("nav-separator")
-		nav.appendChild(separator)
-
-		const projectListContainer = document.createElement("div")
-		projectListContainer.classList.add("project-list")
-		nav.appendChild(projectListContainer)
-
-		const btnAddProject = document.createElement("button")
-		btnAddProject.textContent = "+ Add project"
-		btnAddProject.id = "btnAddProject"
-		nav.appendChild(btnAddProject)
-
-		function addProject(title) {
-			const projectLabel = document.createElement("div")
-			const projectTitle = document.createElement("p")
-
-			projectLabel.classList.add("projectContainer")
-			projectTitle.classList.add("projectTitle")
-
-			projectTitle.textContent = title
-
-			projectLabel.appendChild(projectTitle)
-			return projectLabel
-		}
-
-		return { nav, addProject }
-	}
-
-	function mainSection() {}
-
-	return { navSection, mainSection }
-}
-
-const DOMSkeleton = () => {
-	const DOM = UserInterface()
-	content.appendChild(DOM.navSection().nav)
-
-	const mainSection = document.createElement("main")
-	mainSection.id = "mainSection"
-
-	const title = document.createElement("h1")
-	title.id = "mainTitle"
-
-	const taskList = document.createElement("div")
-	taskList.id = "tasksList"
-
-	const btnAddNewTask = btnAddTask()
-	btnAddNewTask.id = "btnAddNewTask"
-
-	const btn = document.createElement("button")
-	btn.className = "btn"
-	btn.textContent = "Hola"
-
-	content.appendChild(mainSection)
-	mainSection.appendChild(btn)
-
-	mainSection.appendChild(title)
-	mainSection.appendChild(taskList)
-	mainSection.appendChild(btnAddNewTask)
-
-	function createTaskContainer({ id, title, priority, project, done }) {
-		const taskContainer = document.createElement("div")
-		taskContainer.setAttribute("data-index", id)
-		taskContainer.classList.add("taskContainer")
-		taskList.appendChild(taskContainer)
-
-		const taskInfoContainer = document.createElement("div")
-		taskInfoContainer.classList.add("taskInfo")
-		taskContainer.appendChild(taskInfoContainer)
-
-		const icon = document.createElement("i")
-		icon.classList.add("fa-regular")
-		taskInfoContainer.appendChild(icon)
-
-		const taskTitle = document.createElement("p")
-		taskTitle.textContent = title
-		taskInfoContainer.appendChild(taskTitle)
-
-		if (done) {
-			taskContainer.classList.add("taskCompleted")
-			icon.classList.add("fa-square-check")
-			taskTitle.classList.add("textLineThrough")
-		}
-
-		if (!done) {
-			icon.classList.add("fa-square")
-		}
-
-		// Priority label
-		const labelPriority = document.createElement("div")
-		labelPriority.classList.add("label", `${priority.toLowerCase()}Priority`)
-		taskInfoContainer.appendChild(labelPriority)
-
-		const textPriorityLabel = document.createElement("p")
-		textPriorityLabel.textContent = priority
-		labelPriority.appendChild(textPriorityLabel)
-
-		// Project label
-		const labelProject = document.createElement("div")
-		labelProject.classList.add("label", "disabled")
-		taskInfoContainer.appendChild(labelProject)
-
-		const textProjectLabel = document.createElement("p")
-		textProjectLabel.textContent = project
-		labelProject.appendChild(textProjectLabel)
-
-		const taskDetails = document.createElement("div")
-		taskDetails.classList.add("taskDetails")
-		taskContainer.appendChild(taskDetails)
-
-		// More details info
-		const datePicker = document.createElement("div")
-		datePicker.textContent = "Aquí va selector fecha"
-		datePicker.id = "datePicker"
-		taskDetails.appendChild(datePicker)
-
-		const iconMore = document.createElement("i")
-		iconMore.classList.add("fa-solid", "fa-ellipsis-vertical")
-		iconMore.id = "btnMoreOptions"
-		taskDetails.appendChild(iconMore)
-
-		const btnDelete = document.createElement("i")
-		btnDelete.classList.add("fa-regular", "fa-trash-can")
-		taskDetails.appendChild(btnDelete)
-
-		return taskContainer
-	}
-
-	function taskSettings() {
-		const settingsContainer = document.createElement("div")
-		settingsContainer.id = "divSettings"
-		settingsContainer.classList.add("taskSettingsContainer")
-
-		// Title
-		const titleContainer = document.createElement("div")
-		titleContainer.classList.add("titleContainer")
-
-		const icon = document.createElement("i")
-		icon.classList.add("fa-regular", "fa-square")
-
-		const inputTitle = document.createElement("input")
-		inputTitle.classList.add("inputTitle")
-		inputTitle.placeholder = "Ej: poner lavadora"
-		inputTitle.id = "inputTitleSettings"
-
-		settingsContainer.appendChild(titleContainer)
-		titleContainer.appendChild(icon)
-		titleContainer.appendChild(inputTitle)
-
-		// Labels
-		const labelsContainer = document.createElement("div")
-		labelsContainer.classList.add("labelsContainer")
-
-		const priorityLabelsContainer = document.createElement("div")
-		priorityLabelsContainer.classList.add("priorityLabelsContainer")
-
-		const priority = document.createElement("p")
-		priority.textContent = "Prioridad"
-
-		const btnLow = document.createElement("button")
-		btnLow.classList.add("btnSetting", "lowPriority")
-		btnLow.id = "btnLabelSelected"
-		btnLow.textContent = "Low"
-
-		const btnMedium = document.createElement("button")
-		btnMedium.classList.add("btnSetting")
-		btnMedium.textContent = "Medium"
-
-		const btnHigh = document.createElement("button")
-		btnHigh.classList.add("btnSetting")
-		btnHigh.textContent = "High"
-
-		const projectLabelsContainer = document.createElement("div")
-		projectLabelsContainer.classList.add("projectLabelsContainer")
-
-		const project = document.createElement("p")
-		project.textContent = "Proyecto"
-
-		const divProjectLabel = document.createElement("div")
-		divProjectLabel.classList.add("projectLabel")
-
-		const textProjectLabel = document.createElement("p")
-		textProjectLabel.textContent = "No disponible"
-
-		settingsContainer.appendChild(labelsContainer)
-
-		labelsContainer.appendChild(priorityLabelsContainer)
-		priorityLabelsContainer.appendChild(priority)
-		priorityLabelsContainer.appendChild(btnLow)
-		priorityLabelsContainer.appendChild(btnMedium)
-		priorityLabelsContainer.appendChild(btnHigh)
-
-		labelsContainer.appendChild(projectLabelsContainer)
-		projectLabelsContainer.appendChild(project)
-		projectLabelsContainer.appendChild(divProjectLabel)
-		divProjectLabel.appendChild(textProjectLabel)
-
-		// Buttons
-		const btnAddNewTask = btnAddTask()
-		const btnCloseSettings = btnClose()
-
-		settingsContainer.appendChild(btnAddNewTask)
-		settingsContainer.appendChild(btnCloseSettings)
-
-		return settingsContainer
-	}
-
-	function btnAddTask() {
-		const btnAddTask = document.createElement("button")
-		btnAddTask.textContent = "Añadir tarea"
-		btnAddTask.id = "btnAddTask"
-		btnAddTask.classList.add("btnBig", "btnAccent")
-		return btnAddTask
-	}
-
-	function btnClose() {
-		const btnClose = document.createElement("button")
-		btnClose.textContent = "Cerrar"
-		btnClose.id = "btnClose"
-		btnClose.classList.add("btnBig")
-		btnClose.classList.add("btnUnderlined")
-		return btnClose
-	}
-
-	return { content, createTaskContainer, taskSettings, btnAddTask, btnClose }
-}
-
-function taskSettings() {
-	const settingsContainer = document.createElement("div")
-	settingsContainer.id = "divSettings"
-	settingsContainer.classList.add("taskSettingsContainer")
-
-	const titleContainer = document.createElement("div")
-	titleContainer.classList.add("titleContainer")
-
-	const icon = document.createElement("i")
-	icon.classList.add("fa-regular", "fa-square")
-
-	const inputTitle = document.createElement("input")
-	inputTitle.classList.add("inputTitle")
-	inputTitle.placeholder = "Ej: poner lavadora"
-	inputTitle.id = "inputTitleSettings"
-
-	settingsContainer.appendChild(titleContainer)
-	titleContainer.appendChild(icon)
-	titleContainer.appendChild(inputTitle)
-
-	// Labels
-	const labelsContainer = document.createElement("div")
-	labelsContainer.classList.add("labelsContainer")
-
-	const priorityLabelsContainer = document.createElement("div")
-	priorityLabelsContainer.classList.add("priorityLabelsContainer")
-
-	const priority = document.createElement("p")
-	priority.textContent = "Prioridad"
-
-	const btnLow = document.createElement("button")
-	btnLow.classList.add("btnSetting", "lowPriority")
-	btnLow.id = "btnLabelSelected"
-	btnLow.textContent = "Low"
-
-	const btnMedium = document.createElement("button")
-	btnMedium.classList.add("btnSetting")
-	btnMedium.textContent = "Medium"
-
-	const btnHigh = document.createElement("button")
-	btnHigh.classList.add("btnSetting")
-	btnHigh.textContent = "High"
-
-	const projectLabelsContainer = document.createElement("div")
-	projectLabelsContainer.classList.add("projectLabelsContainer")
-
-	const project = document.createElement("p")
-	project.textContent = "Proyecto"
-
-	const divProjectLabel = document.createElement("div")
-	divProjectLabel.classList.add("projectLabel")
-
-	const textProjectLabel = document.createElement("p")
-	textProjectLabel.textContent = "No disponible"
-
-	settingsContainer.appendChild(labelsContainer)
-
-	labelsContainer.appendChild(priorityLabelsContainer)
-	priorityLabelsContainer.appendChild(priority)
-	priorityLabelsContainer.appendChild(btnLow)
-	priorityLabelsContainer.appendChild(btnMedium)
-	priorityLabelsContainer.appendChild(btnHigh)
-
-	labelsContainer.appendChild(projectLabelsContainer)
-	projectLabelsContainer.appendChild(project)
-	projectLabelsContainer.appendChild(divProjectLabel)
-	divProjectLabel.appendChild(textProjectLabel)
-
-	// Buttons
-	const btnAddNewTask = btnAddTask()
-	const btnCloseSettings = btnClose()
-
-	settingsContainer.appendChild(btnAddNewTask)
-	settingsContainer.appendChild(btnCloseSettings)
-
-	return settingsContainer
-}
-
-//! Extraído
-function NavSection() {
-	const nav = document.createElement("nav")
-	nav.classList.add("nav-container")
-
-	const navTitle = document.createElement("p")
-	navTitle.classList.add("nav-title")
-	navTitle.textContent = "PROJECTS"
-
-	const separator = document.createElement("div")
-	separator.classList.add("nav-separator")
-
-	const projectListContainer = document.createElement("div")
-	projectListContainer.classList.add("project-list")
-
-	// ADD Project btn
-	const btnAddProject = document.createElement("button")
-	btnAddProject.textContent = "+ Add project"
-	btnAddProject.id = "btnAddProject"
-
-	nav.appendChild(navTitle)
-	nav.appendChild(separator)
-	nav.appendChild(projectListContainer)
-	nav.appendChild(btnAddProject)
-
-	return nav
-}
-
-//! Extraído
-function AddNavProjectLabel(title) {
-	const projectLabel = document.createElement("div")
-	const projectTitle = document.createElement("p")
-
-	projectLabel.classList.add("projectContainer")
-	projectTitle.classList.add("projectTitle")
-
-	projectTitle.textContent = title
-
-	projectLabel.appendChild(projectTitle)
-	return projectLabel
-}
-
-export { DOMSkeleton, NavSection, AddNavProjectLabel }

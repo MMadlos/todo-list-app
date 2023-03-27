@@ -150,16 +150,21 @@ p {
 	font-size: 16px;
 }
 
-/* SEPARADORES */
-.separator-info-container {
+/* TASK ACCORDION */
+.task-accordion-info-container {
 	display: flex;
 	align-items: center;
 	gap: 12px;
 	padding-bottom: 8px;
 }
 
-img.drop-down {
-	color: #999999;
+.task-accordion-info-container:hover {
+	opacity: 80%;
+	cursor: pointer;
+}
+
+.rotate {
+	transform: rotate(-90deg);
 }
 
 .separator-text,
@@ -321,8 +326,14 @@ img.drop-down {
 	color: #555555;
 }
 
+#task-title:hover {
+	cursor: pointer;
+	opacity: 80%;
+}
+
 #task-title:focus {
 	outline: none;
+	opacity: 100%;
 }
 
 .subtasks-container {
