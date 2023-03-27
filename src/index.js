@@ -33,15 +33,30 @@ const taskList = document.querySelector(".task-list-container")
 
 // Add components for each default tasks
 for (const [key, value] of Object.entries(defaultTasks)) {
-	const newTaskComponent = TaskComponent(value["title"])
+	const taskTitle = value["title"]
+	const newTaskComponent = TaskComponent(taskTitle)
+
 	const hasPriority = value["priority"]
-
 	if (hasPriority) {
-		const priorityInfo = newTaskComponent.querySelector(".label")
-		priorityInfo.classList.add("priority")
+		const priorityLabel = newTaskComponent.querySelector(".label.priority")
+		priorityLabel.classList.add("has-priority")
 
-		setSVGColor(priorityInfo, "#ed726f")
+		const priorityText = newTaskComponent.querySelector(".label-text")
+		priorityText.textContent = "Importante"
+
+		setSVGColor(priorityLabel, "#ed726f")
+	} else {
+		const priorityEl = newTaskComponent.querySelector(".priority > .label-text")
+		priorityEl.textContent = "Sin prioridad"
 	}
+
+	const date = value["date"]
+	const dateEl = newTaskComponent.querySelector(".calendar > .label-text")
+	dateEl.textContent = date
+
+	const project = value["project"]
+	const projectEl = newTaskComponent.querySelector(".folder > .label-text")
+	projectEl.textContent = project
 
 	taskList.appendChild(newTaskComponent)
 }

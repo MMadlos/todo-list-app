@@ -145,23 +145,25 @@ function tasksSeparators() {
 function label(iconType) {
 	const label = document.createElement("div")
 	label.className = "label"
+	label.classList.add(iconType)
 
 	const text = document.createElement("p")
 	text.className = "label-text"
-	text.classList.add("default")
-
-	const labelIcon = icon(iconType)
-	labelIcon.classList.add("label-icon")
 
 	if (iconType === "priority") {
 		const svg = SVG(IconPriority)
-		text.textContent = "Sin prioridad"
 		label.appendChild(svg)
 	}
-	if (iconType === "calendar") text.textContent = "Mar 31, 2023"
-	if (iconType === "folder") text.textContent = "Sin asignar"
 
-	label.appendChild(labelIcon)
+	if (iconType === "calendar") {
+		const svg = SVG(IconCalendar)
+		label.appendChild(svg)
+	}
+	if (iconType === "folder") {
+		const svg = SVG(IconFolder)
+		label.appendChild(svg)
+	}
+
 	label.appendChild(text)
 
 	return label

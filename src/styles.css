@@ -212,12 +212,8 @@ img.drop-down {
 	gap: 8px;
 }
 
-.priority {
+.label.has-priority {
 	color: #ed726f;
-}
-
-.icon-priority {
-	width: 30px;
 }
 
 /* TASK COMPONENT */
