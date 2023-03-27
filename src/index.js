@@ -95,11 +95,12 @@ function defaultUI() {
 
 defaultUI()
 
-// function taskAccordion() {}
+// Task Accordion
 const taskAccordionContainer = document.querySelector(".task-accordion-container")
+const taskListContainer = taskAccordionContainer.parentElement
+const taskContainers = taskListContainer.querySelectorAll(".task-container")
+
 taskAccordionContainer.addEventListener("click", () => {
-	const taskListContainer = taskAccordionContainer.parentElement
-	const taskContainers = taskListContainer.querySelectorAll(".task-container")
 	const accordionIcon = taskAccordionContainer.querySelector(".drop-down")
 
 	taskContainers.forEach((element) => {
@@ -112,6 +113,9 @@ taskAccordionContainer.addEventListener("click", () => {
 		}
 	})
 })
+
+const taskAccordionCounter = taskAccordionContainer.querySelector(".counter-text")
+taskAccordionCounter.textContent = taskContainers.length
 
 // //! OLD <<-------------->> //
 
