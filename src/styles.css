@@ -198,6 +198,10 @@ img.drop-down {
 	height: 16px;
 }
 
+.label-icon.icon-priority {
+	font-size: 16px;
+}
+
 .label-text {
 	font-size: 12px;
 	font-weight: 400px;
@@ -208,8 +212,12 @@ img.drop-down {
 	gap: 8px;
 }
 
-.blue {
-	background-color: #3e92cc;
+.priority {
+	color: #ed726f;
+}
+
+.icon-priority {
+	width: 30px;
 }
 
 /* TASK COMPONENT */

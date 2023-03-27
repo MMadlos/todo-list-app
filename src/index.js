@@ -1,5 +1,5 @@
 import "./styles.css"
-import { content, Button, UserInterface, DOMSkeleton, navSection, AddNavProjectLabel, NewUI, UI, TaskComponent } from ".//modules/DOM"
+import { content, Button, UserInterface, DOMSkeleton, navSection, AddNavProjectLabel, NewUI, UI, TaskComponent, setSVGColor } from ".//modules/DOM"
 // import { allProjects, newProject, NewTask } from "./modules/task.js"
 import { Project, TodoList, NewTask } from "./modules/task-refactor"
 
@@ -15,38 +15,38 @@ const defaultTasks = {
 		project: "Sin asignar",
 		hasFile: false,
 		hasNote: false,
+		isCompleted: false,
 	},
 	segundaTarea: {
 		title: "Segunda tarea por defecto",
 		subtasks: [],
-		priority: false,
+		priority: true,
 		date: "Sin fecha",
 		project: "Sin asignar",
 		hasFile: false,
 		hasNote: false,
+		isCompleted: false,
 	},
 }
 
-for (const [key, value] of Object.entries(defaultTasks)) {
-	console.log(`${key}: ${value["title"]}`)
-}
-
-console.log(defaultTasks.primeraTarea["title"])
-console.log(defaultTasks.segundaTarea["title"])
-
-const task = NewTask("Es una tarea de ejemplo")
-task.title = "Cambio de título"
-console.log(task)
-console.table(task)
-
 const taskList = document.querySelector(".task-list-container")
 
-const taskComponent = TaskComponent(task.title)
-const firstLabel = taskComponent.querySelector(".label")
-firstLabel.classList.add("blue")
-console.log(firstLabel)
+// Add components for each default tasks
+for (const [key, value] of Object.entries(defaultTasks)) {
+	const newTaskComponent = TaskComponent(value["title"])
+	const hasPriority = value["priority"]
 
-taskList.appendChild(taskComponent)
+	if (hasPriority) {
+		const priorityInfo = newTaskComponent.querySelector(".label")
+		priorityInfo.classList.add("priority")
+
+		setSVGColor(priorityInfo, "#ed726f")
+	}
+
+	taskList.appendChild(newTaskComponent)
+}
+
+//! TEST //
 
 // //! OLD <<-------------->> //
 

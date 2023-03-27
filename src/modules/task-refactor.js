@@ -8,8 +8,9 @@ export const NewTask = (titleText) => {
 	const project = "Sin asignar"
 	const hasFile = false
 	const hasNote = false
+	const isCompleted = false
 
-	return { title, subtasks, priority, date, project, hasFile, hasNote }
+	return { title, subtasks, priority, date, project, hasFile, hasNote, isCompleted }
 }
 
 const Project = (projectName) => {

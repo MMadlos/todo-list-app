@@ -82,6 +82,28 @@ function icon(type) {
 	return icon
 }
 
+function SVG(svgFile, className) {
+	const svgObject = document.createElement("object")
+	svgObject.data = svgFile
+	svgObject.type = "image/svg+xml"
+	svgObject.className = "label-icon"
+	svgObject.classList.add(className)
+
+	return svgObject
+}
+
+export function setSVGColor(objectContainer, color) {
+	window.addEventListener("load", function () {
+		const objectElement = objectContainer.querySelector("object")
+		const svg = objectElement.contentDocument.querySelector("svg")
+		const path = svg.querySelectorAll("path")
+
+		path.forEach((element) => {
+			element.setAttribute("fill", color)
+		})
+	})
+}
+
 function separatorLine() {
 	const separatorLine = document.createElement("div")
 	separatorLine.className = "separator-line"
@@ -131,7 +153,11 @@ function label(iconType) {
 	const labelIcon = icon(iconType)
 	labelIcon.classList.add("label-icon")
 
-	if (iconType === "priority") text.textContent = "Sin prioridad"
+	if (iconType === "priority") {
+		const svg = SVG(IconPriority)
+		text.textContent = "Sin prioridad"
+		label.appendChild(svg)
+	}
 	if (iconType === "calendar") text.textContent = "Mar 31, 2023"
 	if (iconType === "folder") text.textContent = "Sin asignar"
 
