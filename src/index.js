@@ -1,65 +1,120 @@
 import "./styles.css"
-import { content, Button, UserInterface, DOMSkeleton, navSection, AddNavProjectLabel, NewUI, UI, TaskComponent, setSVGColor } from ".//modules/DOM"
+import {
+	content,
+	Button,
+	UserInterface,
+	DOMSkeleton,
+	navSection,
+	AddNavProjectLabel,
+	NewUI,
+	UI,
+	TaskComponent,
+	setSVGColor,
+	ReturnComponent,
+	TaskForm,
+} from ".//modules/DOM"
 // import { allProjects, newProject, NewTask } from "./modules/task.js"
 import { Project, TodoList, NewTask } from "./modules/task-refactor"
 
 // New APP //
-UI()
+function defaultUI() {
+	UI()
 
-const defaultTasks = {
-	primeraTarea: {
-		title: "Primera tarea por defecto",
-		subtasks: [],
-		priority: false,
-		date: "Sin fecha",
-		project: "Sin asignar",
-		hasFile: false,
-		hasNote: false,
-		isCompleted: false,
-	},
-	segundaTarea: {
-		title: "Segunda tarea por defecto",
-		subtasks: [],
-		priority: true,
-		date: "Sin fecha",
-		project: "Sin asignar",
-		hasFile: false,
-		hasNote: false,
-		isCompleted: false,
-	},
-}
-
-const taskList = document.querySelector(".task-list-container")
-
-// Add components for each default tasks
-for (const [key, value] of Object.entries(defaultTasks)) {
-	const taskTitle = value["title"]
-	const newTaskComponent = TaskComponent(taskTitle)
-
-	const hasPriority = value["priority"]
-	if (hasPriority) {
-		const priorityLabel = newTaskComponent.querySelector(".label.priority")
-		priorityLabel.classList.add("has-priority")
-
-		const priorityText = newTaskComponent.querySelector(".label-text")
-		priorityText.textContent = "Importante"
-
-		setSVGColor(priorityLabel, "#ed726f")
-	} else {
-		const priorityEl = newTaskComponent.querySelector(".priority > .label-text")
-		priorityEl.textContent = "Sin prioridad"
+	const defaultTasks = {
+		primeraTarea: {
+			title: "Primera tarea por defecto",
+			subtasks: [],
+			priority: false,
+			date: "Sin fecha",
+			project: "Sin asignar",
+			hasFile: false,
+			hasNote: false,
+			isCompleted: false,
+		},
+		segundaTarea: {
+			title: "Segunda tarea por defecto",
+			subtasks: [],
+			priority: true,
+			date: "Sin fecha",
+			project: "Sin asignar",
+			hasFile: false,
+			hasNote: false,
+			isCompleted: false,
+		},
 	}
 
-	const date = value["date"]
-	const dateEl = newTaskComponent.querySelector(".calendar > .label-text")
-	dateEl.textContent = date
+	const taskList = document.querySelector(".task-list-container")
 
-	const project = value["project"]
-	const projectEl = newTaskComponent.querySelector(".folder > .label-text")
-	projectEl.textContent = project
+	// Add components for each default tasks
+	for (const [key, value] of Object.entries(defaultTasks)) {
+		const taskTitle = value["title"]
+		const newTaskComponent = TaskComponent(taskTitle)
 
-	taskList.appendChild(newTaskComponent)
+		// Check task properties and add labels
+		const hasPriority = value["priority"]
+		if (hasPriority) {
+			const priorityLabel = newTaskComponent.querySelector(".label.priority")
+			priorityLabel.classList.add("has-priority")
+
+			const priorityText = newTaskComponent.querySelector(".label-text")
+			priorityText.textContent = "Importante"
+
+			setSVGColor(priorityLabel, "#ed726f")
+		} else {
+			const priorityEl = newTaskComponent.querySelector(".priority > .label-text")
+			priorityEl.textContent = "Sin prioridad"
+		}
+
+		const date = value["date"]
+		const dateEl = newTaskComponent.querySelector(".calendar > .label-text")
+		dateEl.textContent = date
+
+		const project = value["project"]
+		const projectEl = newTaskComponent.querySelector(".folder > .label-text")
+		projectEl.textContent = project
+
+		taskList.appendChild(newTaskComponent)
+	}
+
+	// Open new task form when clicking "Nueva tarea"
+	const addTaskBtn = document.getElementById("addTask")
+	addTaskBtn.addEventListener("click", () => {
+		const section = document.getElementById("section")
+		const buttonsSection = document.querySelector(".buttons-section")
+		const taskListContainer = document.querySelector(".task-list-container")
+
+		buttonsSection.remove()
+		taskListContainer.remove()
+
+		const returnComponent = ReturnComponent()
+
+		section.appendChild(returnComponent)
+		section.appendChild(TaskForm())
+
+		returnComponent.addEventListener("click", () => {
+			section.remove()
+			content.appendChild(defaultUI())
+		})
+	})
 }
+
+defaultUI()
+// ;(function testTaskPage() {
+// 	const contentEl = document.getElementById("content")
+// 	const section = document.createElement("section")
+// 	section.id = "section"
+
+// 	const returnElement = returnComponent()
+
+// 	contentEl.appendChild(section)
+// 	section.appendChild(returnElement)
+// 	section.appendChild(TaskForm())
+
+// 	returnElement.addEventListener("click", () => {
+// 		section.remove()
+// 		defaultUI()
+// 	})
+// })()
 
 //! TEST //
 

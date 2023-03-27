@@ -69,7 +69,6 @@ video {
 }
 
 #section {
-	height: 100%;
 	max-width: 80%;
 	margin: 0 auto;
 
@@ -270,6 +269,19 @@ img.drop-down {
 }
 
 /* FORMULARIO */
+.return-component {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.return-component:hover {
+	color: #3e92cc;
+	text-decoration: underline;
+}
+
 .info-container {
 	display: flex;
 	flex-direction: column;

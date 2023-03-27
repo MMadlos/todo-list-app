@@ -6,6 +6,7 @@ import IconCalendar from "../icons/calendar.svg"
 import IconFolder from "../icons/folder.svg"
 import IconChevronRight from "../icons/chevron-right.svg"
 import IconChevronDown from "../icons/chevron-down.svg"
+import IconChevronLeft from "../icons/chevron-left.svg"
 import IconAttach from "../icons/attach.svg"
 import IconAdd from "../icons/add.svg"
 
@@ -76,6 +77,7 @@ function icon(type) {
 	if (type === "folder") icon.src = IconFolder
 	if (type === "chevronRight") icon.src = IconChevronRight
 	if (type === "chevronDown") icon.src = IconChevronDown
+	if (type === "chevronLeft") icon.src = IconChevronLeft
 	if (type === "attach") icon.src = IconAttach
 	if (type === "add") icon.src = IconAdd
 
@@ -150,20 +152,13 @@ function label(iconType) {
 	const text = document.createElement("p")
 	text.className = "label-text"
 
-	if (iconType === "priority") {
-		const svg = SVG(IconPriority)
-		label.appendChild(svg)
-	}
+	let svg
 
-	if (iconType === "calendar") {
-		const svg = SVG(IconCalendar)
-		label.appendChild(svg)
-	}
-	if (iconType === "folder") {
-		const svg = SVG(IconFolder)
-		label.appendChild(svg)
-	}
+	if (iconType === "priority") svg = SVG(IconPriority)
+	if (iconType === "calendar") svg = SVG(IconCalendar)
+	if (iconType === "folder") svg = SVG(IconFolder)
 
+	label.appendChild(svg)
 	label.appendChild(text)
 
 	return label
@@ -223,7 +218,40 @@ function header() {
 	return headerContainer
 }
 
-function TaskForm() {
+function buttonsSection() {
+	const sectionButtons = document.createElement("div")
+	sectionButtons.className = "buttons-section"
+
+	const dropDownContainer = document.createElement("div")
+	dropDownContainer.className = "dropDown-container"
+
+	sectionButtons.appendChild(dropDownContainer)
+	dropDownContainer.appendChild(Button().dropDown("Mostrar todo"))
+	dropDownContainer.appendChild(Button().dropDown("Todos los proyectos"))
+
+	sectionButtons.appendChild(Button().addTask())
+
+	return sectionButtons
+}
+
+export function ReturnComponent() {
+	const returnComponent = document.createElement("div")
+	returnComponent.className = "return-component"
+
+	const returnIcon = SVG(IconChevronLeft)
+	returnIcon.className = "return-icon"
+
+	const returnText = document.createElement("p")
+	returnText.className = "return-text"
+	returnText.textContent = "Volver"
+
+	returnComponent.appendChild(returnIcon)
+	returnComponent.appendChild(returnText)
+
+	return returnComponent
+}
+
+export function TaskForm() {
 	const taskFormContainer = document.createElement("div")
 	taskFormContainer.className = "task-form-container"
 
@@ -351,28 +379,13 @@ export function UI() {
 
 	content.appendChild(section)
 	section.appendChild(header())
-
-	const sectionButtons = document.createElement("div")
-	sectionButtons.className = "buttons-section"
-
-	const dropDownContainer = document.createElement("div")
-	dropDownContainer.className = "dropDown-container"
-
-	section.appendChild(sectionButtons)
-	sectionButtons.appendChild(dropDownContainer)
-
-	dropDownContainer.appendChild(Button().dropDown("Mostrar todo"))
-	dropDownContainer.appendChild(Button().dropDown("Todos los proyectos"))
-	sectionButtons.appendChild(Button().addTask())
+	section.appendChild(buttonsSection())
 
 	const taskListContainer = document.createElement("div")
 	taskListContainer.className = "task-list-container"
 
 	section.appendChild(taskListContainer)
 	taskListContainer.appendChild(tasksSeparators())
-	// taskListContainer.appendChild(TaskComponent())
-
-	// section.appendChild(TaskForm()) //TODO <<----- TASKFORM
 
 	return content
 }
