@@ -71,7 +71,13 @@ function defaultUI() {
 		taskList.appendChild(taskContainer)
 	}
 
-	// Open new task form when clicking "Nueva tarea"
+	addTask() // Open new task page when clicking "Nueva tarea"
+	taskAccordion()
+}
+
+// defaultUI()
+
+function addTask() {
 	const addTaskBtn = document.getElementById("addTask")
 	addTaskBtn.addEventListener("click", () => {
 		const section = document.getElementById("section")
@@ -88,34 +94,42 @@ function defaultUI() {
 
 		returnComponent.addEventListener("click", () => {
 			section.remove()
-			content.appendChild(defaultUI())
+			defaultUI()
 		})
 	})
 }
 
-defaultUI()
-
 // Task Accordion
-const taskAccordionContainer = document.querySelector(".task-accordion-container")
-const taskListContainer = taskAccordionContainer.parentElement
-const taskContainers = taskListContainer.querySelectorAll(".task-container")
+function taskAccordion() {
+	const taskAccordionContainer = document.querySelector(".task-accordion-container")
+	const taskListContainer = taskAccordionContainer.parentElement
+	const taskContainers = taskListContainer.querySelectorAll(".task-container")
 
-taskAccordionContainer.addEventListener("click", () => {
-	const accordionIcon = taskAccordionContainer.querySelector(".drop-down")
+	taskAccordionContainer.addEventListener("click", () => {
+		const accordionIcon = taskAccordionContainer.querySelector(".drop-down")
 
-	taskContainers.forEach((element) => {
-		if (element.classList[1] === "hide") {
-			element.classList.remove("hide")
-			accordionIcon.classList.remove("rotate")
-		} else {
-			element.classList.add("hide")
-			accordionIcon.classList.add("rotate")
-		}
+		taskContainers.forEach((element) => {
+			if (element.classList[1] === "hide") {
+				element.classList.remove("hide")
+				accordionIcon.classList.remove("rotate")
+			} else {
+				element.classList.add("hide")
+				accordionIcon.classList.add("rotate")
+			}
+		})
 	})
-})
 
-const taskAccordionCounter = taskAccordionContainer.querySelector(".counter-text")
-taskAccordionCounter.textContent = taskContainers.length
+	const taskAccordionCounter = taskAccordionContainer.querySelector(".counter-text")
+	taskAccordionCounter.textContent = taskContainers.length
+}
+
+// !TEST //
+const content = document.getElementById("content")
+const section = document.createElement("section")
+section.id = "section"
+
+content.appendChild(section)
+section.appendChild(TaskForm())
 
 // //! OLD <<-------------->> //
 

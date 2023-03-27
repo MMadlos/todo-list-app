@@ -74,9 +74,9 @@ function icon(type) {
 
 	if (type === "notChecked") icon.src = IconNotChecked
 	if (type === "checked") icon.src = IconChecked
-	if (type === "priority") icon.src = IconPriority
-	if (type === "calendar") icon.src = IconCalendar
-	if (type === "folder") icon.src = IconFolder
+	// if (type === "priority") icon.src = IconPriority
+	// if (type === "calendar") icon.src = IconCalendar
+	// if (type === "folder") icon.src = IconFolder
 	if (type === "chevronRight") icon.src = IconChevronRight
 	if (type === "chevronDown") icon.src = IconChevronDown
 	if (type === "chevronLeft") icon.src = IconChevronLeft
@@ -125,6 +125,13 @@ export function setSVGColor(objectContainer, color) {
 		path.forEach((element) => {
 			element.setAttribute("fill", color)
 		})
+	})
+}
+
+function selectSVG(objectContainer) {
+	window.addEventListener("load", () => {
+		const svgEl = objectContainer.contentDocument.querySelector("svg")
+		return svgEl
 	})
 }
 
@@ -313,14 +320,24 @@ export function TaskForm() {
 		const container = document.createElement("div")
 		container.className = "info-detail-component-container"
 
-		const iconDetail = icon(type)
+		// const iconDetail = svg(type)
 		const textDetail = document.createElement("p")
 
-		if (type === "priority") textDetail.textContent = "Marcar como prioritario"
-		if (type === "calendar") textDetail.textContent = "Agregar fecha de vencimiento"
-		if (type === "folder") textDetail.textContent = "Asignar proyecto"
+		let svg
+		if (type === "priority") {
+			svg = SVG(IconPriority, "form-icon")
+			textDetail.textContent = "Marcar como prioritario"
+		}
+		if (type === "calendar") {
+			svg = SVG(IconCalendar, "form-icon")
+			textDetail.textContent = "Agregar fecha de vencimiento"
+		}
+		if (type === "folder") {
+			svg = SVG(IconFolder, "form-icon")
+			textDetail.textContent = "Asignar proyecto"
+		}
 
-		container.appendChild(iconDetail)
+		container.appendChild(svg)
 		container.appendChild(textDetail)
 
 		return container
@@ -344,9 +361,10 @@ export function TaskForm() {
 	const attachText = document.createElement("p")
 	attachText.textContent = "Adjuntar archivo"
 
-	attachContainer.appendChild(infoAttachContainer)
+	const attachIcon = SVG(IconAttach, "form-icon")
 
-	infoAttachContainer.appendChild(icon("attach"))
+	attachContainer.appendChild(infoAttachContainer)
+	infoAttachContainer.appendChild(attachIcon)
 	infoAttachContainer.appendChild(attachText)
 
 	infoContainer.appendChild(attachContainer)
