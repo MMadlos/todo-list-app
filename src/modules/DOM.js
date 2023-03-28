@@ -74,9 +74,6 @@ function icon(type) {
 
 	if (type === "notChecked") icon.src = IconNotChecked
 	if (type === "checked") icon.src = IconChecked
-	// if (type === "priority") icon.src = IconPriority
-	// if (type === "calendar") icon.src = IconCalendar
-	// if (type === "folder") icon.src = IconFolder
 	if (type === "chevronRight") icon.src = IconChevronRight
 	if (type === "chevronDown") icon.src = IconChevronDown
 	if (type === "chevronLeft") icon.src = IconChevronLeft
@@ -94,6 +91,18 @@ function SVG(svgFile, className) {
 	svgObject.classList.add(className)
 
 	return svgObject
+}
+
+export function setSVGColor(objectContainer, color) {
+	window.addEventListener("load", () => {
+		const objectElement = objectContainer.querySelector("object")
+		const svg = objectElement.contentDocument.querySelector("svg")
+		const path = svg.querySelectorAll("path")
+
+		path.forEach((element) => {
+			element.setAttribute("fill", color)
+		})
+	})
 }
 
 function label(iconType) {
@@ -114,25 +123,6 @@ function label(iconType) {
 	label.appendChild(text)
 
 	return label
-}
-
-export function setSVGColor(objectContainer, color) {
-	window.addEventListener("load", () => {
-		const objectElement = objectContainer.querySelector("object")
-		const svg = objectElement.contentDocument.querySelector("svg")
-		const path = svg.querySelectorAll("path")
-
-		path.forEach((element) => {
-			element.setAttribute("fill", color)
-		})
-	})
-}
-
-function selectSVG(objectContainer) {
-	window.addEventListener("load", () => {
-		const svgEl = objectContainer.contentDocument.querySelector("svg")
-		return svgEl
-	})
 }
 
 function separatorLine() {

@@ -1,14 +1,11 @@
 import "./styles.css"
 import { UI, TaskComponent, setSVGColor, ReturnComponent, TaskForm } from ".//modules/DOM"
 // import { allProjects, newProject, NewTask } from "./modules/task.js"
-// import { Project, TodoList, NewTask } from "./modules/task-refactor"
+import { TodoList, NewTask } from "./modules/task-refactor"
 
-// New APP //
-function defaultUI() {
-	UI()
-
-	const defaultTasks = {
-		primeraTarea: {
+function displayDefaultTasks() {
+	const defaultTasks = [
+		{
 			title: "Primera tarea por defecto",
 			subtasks: [],
 			priority: false,
@@ -18,7 +15,7 @@ function defaultUI() {
 			hasNote: false,
 			isCompleted: false,
 		},
-		segundaTarea: {
+		{
 			title: "Segunda tarea por defecto",
 			subtasks: [],
 			priority: true,
@@ -28,17 +25,19 @@ function defaultUI() {
 			hasNote: false,
 			isCompleted: false,
 		},
-	}
+	]
 
 	const taskList = document.querySelector(".task-list-container")
-
 	// Add components for each default tasks
-	for (const [key, value] of Object.entries(defaultTasks)) {
-		const taskTitle = value["title"]
+	defaultTasks.forEach((task) => {
+		// Add task to TodoList
+		NewTask(task)
+
+		// Display task
+		const taskTitle = task.title
 		const taskContainer = TaskComponent(taskTitle)
 
-		// Task properties and elements
-		const hasPriority = value["priority"]
+		const hasPriority = task.priority
 		if (hasPriority) {
 			const priorityLabel = taskContainer.querySelector(".label.priority")
 			priorityLabel.classList.add("has-priority")
@@ -46,36 +45,32 @@ function defaultUI() {
 			const priorityText = taskContainer.querySelector(".label-text")
 			priorityText.textContent = "Importante"
 
-			window.addEventListener("load", function () {
-				const objectElement = priorityLabel.querySelector("object")
-				const svg = objectElement.contentDocument.querySelector("svg")
-				const path = svg.querySelectorAll("path")
-
-				path.forEach((element) => {
-					element.setAttribute("fill", "#ed726f")
-				})
-			})
+			setSVGColor(priorityLabel, "#ed726f")
 		} else {
 			const priorityEl = taskContainer.querySelector(".priority > .label-text")
 			priorityEl.textContent = "Sin prioridad"
 		}
 
-		const dateProp = value["date"]
+		const dateProp = task.date
 		const dateEl = taskContainer.querySelector(".calendar > .label-text")
 		dateEl.textContent = dateProp
 
-		const projectProp = value["project"]
+		const projectProp = task.project
 		const projectEl = taskContainer.querySelector(".folder > .label-text")
 		projectEl.textContent = projectProp
 
 		taskList.appendChild(taskContainer)
-	}
+	})
+}
 
+function defaultUI() {
+	UI()
+	displayDefaultTasks()
 	addTask() // Open new task page when clicking "Nueva tarea"
 	taskAccordion()
 }
 
-// defaultUI()
+defaultUI()
 
 function addTask() {
 	const addTaskBtn = document.getElementById("addTask")
@@ -99,7 +94,6 @@ function addTask() {
 	})
 }
 
-// Task Accordion
 function taskAccordion() {
 	const taskAccordionContainer = document.querySelector(".task-accordion-container")
 	const taskListContainer = taskAccordionContainer.parentElement
@@ -124,12 +118,18 @@ function taskAccordion() {
 }
 
 // !TEST //
+
+console.table(TodoList)
+
+// --> FORM PAGE <--
+/* 
 const content = document.getElementById("content")
 const section = document.createElement("section")
 section.id = "section"
 
 content.appendChild(section)
 section.appendChild(TaskForm())
+*/
 
 // //! OLD <<-------------->> //
 
