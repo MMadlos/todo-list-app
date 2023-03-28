@@ -274,6 +274,7 @@ export function TaskForm() {
 	titleContainer.className = "title-container"
 
 	const tickIcon = icon("notChecked")
+	tickIcon.dataset.taskCompleted = "false"
 
 	const taskTitleLabel = document.createElement("label")
 	taskTitleLabel.htmlFor = "task-title"
@@ -332,6 +333,9 @@ export function TaskForm() {
 			svg = SVG(IconFolder, "form-icon")
 			textDetail.textContent = "Asignar proyecto"
 		}
+
+		svg.dataset.type = type
+		svg.dataset.state = "false"
 
 		container.appendChild(svg)
 		container.appendChild(textDetail)

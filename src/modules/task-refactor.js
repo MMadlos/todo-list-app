@@ -34,25 +34,7 @@ function NewTask({
 export { TodoList, NewTask }
 
 // <<---- OLD ------>
-/*
 
-function NewTask(titleText) {
-	let id
-	const title = titleText
-	const subtasks = []
-	const priority = false
-	const date = "Sin fecha"
-	const project = "Sin asignar"
-	const hasFile = false
-	const hasNote = false
-	const isCompleted = false
-
-	TodoList.push({ id, title, subtasks, priority, date, project, hasFile, hasNote, isCompleted })
-
-	return { id, title, subtasks, priority, date, project, hasFile, hasNote, isCompleted }
-}
-
-*/
 /*
 const Project = (projectName) => {
 	const project = {

@@ -48,8 +48,7 @@ function defaultUI() {
 	taskAccordion()
 	displayTaskFromTodoList()
 }
-
-defaultUI()
+// defaultUI()
 
 function addTaskButton() {
 	const addTaskBtn = document.getElementById("addTask")
@@ -94,12 +93,7 @@ function taskAccordion() {
 	})
 
 	const taskAccordionCounter = taskAccordionContainer.querySelector(".counter-text")
-	taskAccordionCounter.textContent = countTasksFromList()
-}
-
-function countTasksFromList() {
-	const counter = TodoList.length
-	return counter
+	taskAccordionCounter.textContent = TodoList.length
 }
 
 function displayTaskFromTodoList() {
@@ -147,6 +141,38 @@ import IconCheckedBorderBlue from "./icons/Checked-border-highlighted.svg"
 import IconCheckedNotSelected from "./icons/Checked-not-selected.svg"
 import IconCheckedDefault from "./icons/Checked-selected.svg"
 import IconNotChecked from "./icons/not-checked.svg"
+
+// TODO - ARREGLAR PARA QUE FUNCIONE CON DATASET
+function tickIconEventListeners(nodeListener, isCompleted) {
+	nodeListener.addEventListener("mouseover", () => {
+		if (isCompleted) nodeListener.src = IconCheckedBorderBlue
+		if (!isCompleted) nodeListener.src = IconCheckedDefault
+
+		taskText.classList.toggle("transparency-80")
+		taskText.classList.toggle("checked-task")
+	})
+
+	nodeListener.addEventListener("click", () => {
+		if (!isCompleted) {
+			nodeListener.src = IconCheckedDefault
+			isCompleted = true
+		} else {
+			nodeListener.src = IconNotChecked
+			isCompleted = false
+		}
+
+		taskText.classList.toggle("transparency-80")
+		taskText.classList.toggle("checked-task")
+	})
+
+	nodeListener.addEventListener("mouseout", () => {
+		if (isCompleted) nodeListener.src = IconCheckedNotSelected
+		if (!isCompleted) nodeListener.src = IconNotChecked
+
+		taskText.classList.toggle("transparency-80")
+		taskText.classList.toggle("checked-task")
+	})
+}
 
 const taskIcon = document.querySelectorAll(".task-icon")
 taskIcon.forEach((icon) => {
@@ -199,17 +225,51 @@ taskIcon.forEach((icon) => {
 
 // !TEST //
 
-console.table(TodoList)
-
 // --> FORM PAGE <--
-/* 
-const content = document.getElementById("content")
-const section = document.createElement("section")
-section.id = "section"
+function displayTaskForm() {
+	const content = document.getElementById("content")
+	const section = document.createElement("section")
+	section.id = "section"
 
-content.appendChild(section)
-section.appendChild(TaskForm())
-*/
+	content.appendChild(section)
+	section.appendChild(TaskForm())
+}
+displayTaskForm()
+
+function getFormValues() {
+	const taskFormContainer = document.querySelector(".task-form-container")
+
+	const tickIcon = taskFormContainer.querySelector(`[data-task-completed]`)
+	const isIconChecked = tickIcon.dataset.taskCompleted
+
+	// TODO - Añadir lógica al hacer click en cada elemento
+	if (isIconChecked === "true") {
+		console.log("Añadir lógica")
+	}
+
+	const taskTitle = document.getElementById("task-title").value
+
+	const priorityEl = document.querySelector(`[data-type="priority"]`)
+	const taskPriority = priorityEl.dataset.state
+
+	const dateEl = document.querySelector(`[data-type="calendar"]`)
+	const taskDate = dateEl.dataset.state
+
+	const projectEl = document.querySelector(`[data-type="folder"]`)
+	const taskProject = projectEl.dataset.state
+
+	// TODO - Añadir lógica para que cada propiedad se traspase a TodoList
+
+	const taskProperties = { taskTitle, isIconChecked, taskPriority, taskDate, taskProject }
+
+	// TODO - Pendiente añadir features subtasks, adjuntar archivo y notas
+
+	return taskProperties
+}
+
+const taskProperties = getFormValues()
+console.log(taskProperties)
+// console.table(TodoList)
 
 // //! OLD <<-------------->> //
 
