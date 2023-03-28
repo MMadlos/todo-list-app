@@ -3,7 +3,8 @@ import { icon, UI, TaskComponent, setSVGColor, ReturnComponent, TaskForm } from 
 // import { allProjects, newProject, NewTask } from "./modules/task.js"
 import { TodoList, NewTask } from "./modules/task-refactor"
 
-function displayDefaultTasks() {
+// Default tasks
+const DefaultTasks = (() => {
 	const defaultTasks = [
 		{
 			title: "Primera tarea por defecto",
@@ -36,53 +37,21 @@ function displayDefaultTasks() {
 			isCompleted: true,
 		},
 	]
-
-	const taskList = document.querySelector(".task-list-container")
-	// Add components for each default tasks
 	defaultTasks.forEach((task) => {
-		// Add task to TodoList
 		NewTask(task)
-
-		// Display task
-		const taskTitle = task.title
-		const taskContainer = TaskComponent(taskTitle)
-
-		const hasPriority = task.priority
-		if (hasPriority) {
-			const priorityLabel = taskContainer.querySelector(".label.priority")
-			priorityLabel.classList.add("has-priority")
-
-			const priorityText = taskContainer.querySelector(".label-text")
-			priorityText.textContent = "Importante"
-
-			setSVGColor(priorityLabel, "#ed726f")
-		} else {
-			const priorityEl = taskContainer.querySelector(".priority > .label-text")
-			priorityEl.textContent = "Sin prioridad"
-		}
-
-		const dateProp = task.date
-		const dateEl = taskContainer.querySelector(".calendar > .label-text")
-		dateEl.textContent = dateProp
-
-		const projectProp = task.project
-		const projectEl = taskContainer.querySelector(".folder > .label-text")
-		projectEl.textContent = projectProp
-
-		taskList.appendChild(taskContainer)
 	})
-}
+})()
 
 function defaultUI() {
 	UI()
-	displayDefaultTasks()
-	addTask() // Open new task page when clicking "Nueva tarea"
+	addTaskButton() // Open new task page when clicking "Nueva tarea"
 	taskAccordion()
+	displayTaskFromTodoList()
 }
 
 defaultUI()
 
-function addTask() {
+function addTaskButton() {
 	const addTaskBtn = document.getElementById("addTask")
 	addTaskBtn.addEventListener("click", () => {
 		const section = document.getElementById("section")
@@ -127,7 +96,47 @@ function taskAccordion() {
 	taskAccordionCounter.textContent = taskContainers.length
 }
 
-// Check icon behaviour
+function displayTaskFromTodoList() {
+	TodoList.forEach((task) => {
+		const taskList = document.querySelector(".task-list-container")
+
+		// Display task
+		const taskContainer = TaskComponent(task.title)
+		taskContainer.dataset.id = task.id
+
+		const hasPriority = task.priority
+		if (hasPriority) {
+			const priorityLabel = taskContainer.querySelector(".label.priority")
+			priorityLabel.classList.add("has-priority")
+
+			const priorityText = taskContainer.querySelector(".label-text")
+			priorityText.textContent = "Importante"
+
+			setSVGColor(priorityLabel, "#ed726f")
+		} else {
+			const priorityEl = taskContainer.querySelector(".priority > .label-text")
+			priorityEl.textContent = "Sin prioridad"
+		}
+
+		const dateProp = task.date
+		const dateEl = taskContainer.querySelector(".calendar > .label-text")
+		dateEl.textContent = dateProp
+
+		const projectProp = task.project
+		const projectEl = taskContainer.querySelector(".folder > .label-text")
+		projectEl.textContent = projectProp
+
+		const isCompleted = task.isCompleted
+		if (isCompleted) {
+			const icon = taskContainer.querySelector(".task-icon")
+			icon.src = IconCheckedDefault
+		}
+
+		taskList.appendChild(taskContainer)
+	})
+}
+
+// Behaviour when the task is/isn't completed
 import IconCheckedBorderBlue from "./icons/Checked-border-highlighted.svg"
 import IconCheckedNotSelected from "./icons/Checked-not-selected.svg"
 import IconCheckedDefault from "./icons/Checked-selected.svg"
@@ -135,27 +144,38 @@ import IconNotChecked from "./icons/not-checked.svg"
 
 const taskIcon = document.querySelectorAll(".task-icon")
 taskIcon.forEach((icon) => {
-	const iconContainer = icon.parentElement
-	const taskText = iconContainer.querySelector(".task-text")
+	const taskContainer = icon.parentElement.parentElement
+	const taskText = taskContainer.querySelector(".task-text")
 
-	// TODO Vincular hasClicked con la tarea en TodoList y cambiar el isCompleted
-	let hasClicked = false
+	//Link "isCompleted" with the task from the TodoList
+	const taskID = taskContainer.dataset.id
+	const taskFromList = TodoList.find((element) => element.id === Number(taskID))
 
+	let isCompleted = taskFromList.isCompleted
+
+	// Styling
+	if (isCompleted) {
+		icon.src = IconCheckedNotSelected
+		taskText.classList.add("transparency-80")
+		taskText.classList.add("checked-task")
+	}
+
+	// Mouse events
 	icon.addEventListener("mouseover", () => {
-		if (hasClicked) icon.src = IconCheckedBorderBlue
-		if (!hasClicked) icon.src = IconCheckedDefault
+		if (isCompleted) icon.src = IconCheckedBorderBlue
+		if (!isCompleted) icon.src = IconCheckedDefault
 
 		taskText.classList.toggle("transparency-80")
 		taskText.classList.toggle("checked-task")
 	})
 
 	icon.addEventListener("click", () => {
-		if (!hasClicked) {
+		if (!isCompleted) {
 			icon.src = IconCheckedDefault
-			hasClicked = true
+			isCompleted = true
 		} else {
 			icon.src = IconNotChecked
-			hasClicked = false
+			isCompleted = false
 		}
 
 		taskText.classList.toggle("transparency-80")
@@ -163,8 +183,8 @@ taskIcon.forEach((icon) => {
 	})
 
 	icon.addEventListener("mouseout", () => {
-		if (hasClicked) icon.src = IconCheckedNotSelected
-		if (!hasClicked) icon.src = IconNotChecked
+		if (isCompleted) icon.src = IconCheckedNotSelected
+		if (!isCompleted) icon.src = IconNotChecked
 
 		taskText.classList.toggle("transparency-80")
 		taskText.classList.toggle("checked-task")
