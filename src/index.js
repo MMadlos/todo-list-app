@@ -75,10 +75,11 @@ function addTaskButton() {
 
 function taskAccordion() {
 	const taskAccordionContainer = document.querySelector(".task-accordion-container")
-	const taskListContainer = taskAccordionContainer.parentElement
-	const taskContainers = taskListContainer.querySelectorAll(".task-container")
 
 	taskAccordionContainer.addEventListener("click", () => {
+		const taskListContainer = taskAccordionContainer.parentElement
+		const taskContainers = taskListContainer.querySelectorAll(".task-container")
+
 		const accordionIcon = taskAccordionContainer.querySelector(".drop-down")
 
 		taskContainers.forEach((element) => {
@@ -93,7 +94,12 @@ function taskAccordion() {
 	})
 
 	const taskAccordionCounter = taskAccordionContainer.querySelector(".counter-text")
-	taskAccordionCounter.textContent = taskContainers.length
+	taskAccordionCounter.textContent = countTasksFromList()
+}
+
+function countTasksFromList() {
+	const counter = TodoList.length
+	return counter
 }
 
 function displayTaskFromTodoList() {
