@@ -240,7 +240,7 @@ function getFormValues() {
 	const taskFormContainer = document.querySelector(".task-form-container")
 
 	const tickIcon = taskFormContainer.querySelector(`[data-task-completed]`)
-	const isIconChecked = tickIcon.dataset.taskCompleted
+	const isIconChecked = tickIcon.dataset.taskCompleted === "true" ? true : false
 
 	// TODO - Añadir lógica al hacer click en cada elemento
 	if (isIconChecked === "true") {
@@ -250,13 +250,13 @@ function getFormValues() {
 	const taskTitle = document.getElementById("task-title").value
 
 	const priorityEl = document.querySelector(`[data-type="priority"]`)
-	const taskPriority = priorityEl.dataset.state
+	const taskPriority = priorityEl.dataset.state === "true" ? true : false
 
 	const dateEl = document.querySelector(`[data-type="calendar"]`)
-	const taskDate = dateEl.dataset.state
+	const taskDate = dateEl.dataset.state === "true" ? true : "Sin asignar"
 
 	const projectEl = document.querySelector(`[data-type="folder"]`)
-	const taskProject = projectEl.dataset.state
+	const taskProject = projectEl.dataset.state === "true" ? true : "Sin asignar"
 
 	// TODO - Añadir lógica para que cada propiedad se traspase a TodoList
 
@@ -267,9 +267,24 @@ function getFormValues() {
 	return taskProperties
 }
 
-const taskProperties = getFormValues()
-console.log(taskProperties)
-// console.table(TodoList)
+function addNewTaskFromFormToList() {
+	const taskProperties = getFormValues()
+
+	const newTask = {
+		title: taskProperties.taskTitle,
+		subtasks: [],
+		priority: taskProperties.taskPriority,
+		date: taskProperties.taskDate,
+		project: taskProperties.taskProject,
+		hasFile: false,
+		hasNote: false,
+		isCompleted: taskProperties.isIconChecked,
+	}
+	NewTask(newTask)
+}
+
+const saveBtn = document.getElementById("saveTask")
+saveBtn.addEventListener("click", addNewTaskFromFormToList)
 
 // //! OLD <<-------------->> //
 
