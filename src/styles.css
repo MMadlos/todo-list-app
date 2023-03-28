@@ -56,8 +56,18 @@ video {
 	max-width: 100%;
 }
 
+/* UTILITIES */
+
 .hide {
 	display: none !important;
+}
+
+.transparency-80 {
+	opacity: 80%;
+}
+.checked-task {
+	color: #3e92cc;
+	text-decoration: line-through;
 }
 
 /* NEW UI */

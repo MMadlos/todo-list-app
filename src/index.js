@@ -1,5 +1,5 @@
 import "./styles.css"
-import { UI, TaskComponent, setSVGColor, ReturnComponent, TaskForm } from ".//modules/DOM"
+import { icon, UI, TaskComponent, setSVGColor, ReturnComponent, TaskForm } from ".//modules/DOM"
 // import { allProjects, newProject, NewTask } from "./modules/task.js"
 import { TodoList, NewTask } from "./modules/task-refactor"
 
@@ -24,6 +24,16 @@ function displayDefaultTasks() {
 			hasFile: false,
 			hasNote: false,
 			isCompleted: false,
+		},
+		{
+			title: "This is a completed task",
+			subtasks: [],
+			priority: true,
+			date: "Sin fecha",
+			project: "Sin asignar",
+			hasFile: false,
+			hasNote: false,
+			isCompleted: true,
 		},
 	]
 
@@ -116,6 +126,50 @@ function taskAccordion() {
 	const taskAccordionCounter = taskAccordionContainer.querySelector(".counter-text")
 	taskAccordionCounter.textContent = taskContainers.length
 }
+
+// Check icon behaviour
+import IconCheckedBorderBlue from "./icons/Checked-border-highlighted.svg"
+import IconCheckedNotSelected from "./icons/Checked-not-selected.svg"
+import IconCheckedDefault from "./icons/Checked-selected.svg"
+import IconNotChecked from "./icons/not-checked.svg"
+
+const taskIcon = document.querySelectorAll(".task-icon")
+taskIcon.forEach((icon) => {
+	const iconContainer = icon.parentElement
+	const taskText = iconContainer.querySelector(".task-text")
+
+	// TODO Vincular hasClicked con la tarea en TodoList y cambiar el isCompleted
+	let hasClicked = false
+
+	icon.addEventListener("mouseover", () => {
+		if (hasClicked) icon.src = IconCheckedBorderBlue
+		if (!hasClicked) icon.src = IconCheckedDefault
+
+		taskText.classList.toggle("transparency-80")
+		taskText.classList.toggle("checked-task")
+	})
+
+	icon.addEventListener("click", () => {
+		if (!hasClicked) {
+			icon.src = IconCheckedDefault
+			hasClicked = true
+		} else {
+			icon.src = IconNotChecked
+			hasClicked = false
+		}
+
+		taskText.classList.toggle("transparency-80")
+		taskText.classList.toggle("checked-task")
+	})
+
+	icon.addEventListener("mouseout", () => {
+		if (hasClicked) icon.src = IconCheckedNotSelected
+		if (!hasClicked) icon.src = IconNotChecked
+
+		taskText.classList.toggle("transparency-80")
+		taskText.classList.toggle("checked-task")
+	})
+})
 
 // !TEST //
 

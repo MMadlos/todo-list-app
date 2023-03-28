@@ -1,6 +1,8 @@
 import LogoTasks from "../icons/tasks.png"
 import IconNotChecked from "../icons/not-checked.svg"
-import IconChecked from "../icons/Checked-selected.svg"
+import IconCheckedDefault from "../icons/Checked-selected.svg"
+import IconCheckedBorderBlue from "../icons/Checked-border-highlighted.svg"
+import IconCheckedNotSelected from "../icons/Checked-not-selected.svg"
 import IconPriority from "../icons/priority.svg"
 import IconCalendar from "../icons/calendar.svg"
 import IconFolder from "../icons/folder.svg"
@@ -67,16 +69,20 @@ export function Button() {
 	return { btn, addTask, saveTask, dropDown, moreDetailsTask, deleteTask }
 }
 
-function icon(type) {
+export function icon(type) {
 	const icon = new Image()
 
 	if (type === "logo") icon.src = LogoTasks
 
 	if (type === "notChecked") icon.src = IconNotChecked
-	if (type === "checked") icon.src = IconChecked
+	if (type === "checkedDefault") icon.src = IconCheckedDefault
+	if (type === "checkedBorderBlue") icon.src = IconCheckedBorderBlue
+	if (type === "checkedNotSelected") icon.src = IconCheckedNotSelected
+
 	if (type === "chevronRight") icon.src = IconChevronRight
 	if (type === "chevronDown") icon.src = IconChevronDown
 	if (type === "chevronLeft") icon.src = IconChevronLeft
+
 	if (type === "attach") icon.src = IconAttach
 	if (type === "add") icon.src = IconAdd
 
