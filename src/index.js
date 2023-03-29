@@ -44,31 +44,26 @@ const DefaultTasks = (() => {
 
 function defaultUI() {
 	UI()
-	addTaskButton() // Open new task page when clicking "Nueva tarea"
 	taskAccordion()
 	displayTaskFromTodoList()
+	taskComponentIconStyles()
+
+	// Event listeners for buttons
+	addTaskButton()
 }
-// defaultUI()
+defaultUI()
 
 function addTaskButton() {
 	const addTaskBtn = document.getElementById("addTask")
 	addTaskBtn.addEventListener("click", () => {
-		const section = document.getElementById("section")
 		const buttonsSection = document.querySelector(".buttons-section")
 		const taskListContainer = document.querySelector(".task-list-container")
 
 		buttonsSection.remove()
 		taskListContainer.remove()
 
-		const returnComponent = ReturnComponent()
-
-		section.appendChild(returnComponent)
-		section.appendChild(TaskForm())
-
-		returnComponent.addEventListener("click", () => {
-			section.remove()
-			defaultUI()
-		})
+		displayTaskForm()
+		saveButton()
 	})
 }
 
@@ -143,104 +138,86 @@ import IconCheckedDefault from "./icons/Checked-selected.svg"
 import IconNotChecked from "./icons/not-checked.svg"
 
 // TODO - ARREGLAR PARA QUE FUNCIONE CON DATASET
-function tickIconEventListeners(nodeListener, isCompleted) {
-	nodeListener.addEventListener("mouseover", () => {
-		if (isCompleted) nodeListener.src = IconCheckedBorderBlue
-		if (!isCompleted) nodeListener.src = IconCheckedDefault
+function taskComponentIconStyles() {
+	const taskIcon = document.querySelectorAll(".task-icon")
+	taskIcon.forEach((icon) => {
+		const taskContainer = icon.parentElement.parentElement
+		const taskText = taskContainer.querySelector(".task-text")
 
-		taskText.classList.toggle("transparency-80")
-		taskText.classList.toggle("checked-task")
-	})
+		//Link "isCompleted" with the task from the TodoList
+		const taskID = taskContainer.dataset.id
+		const taskFromList = TodoList.find((element) => element.id === Number(taskID))
 
-	nodeListener.addEventListener("click", () => {
-		if (!isCompleted) {
-			nodeListener.src = IconCheckedDefault
-			isCompleted = true
-		} else {
-			nodeListener.src = IconNotChecked
-			isCompleted = false
+		let isCompleted = taskFromList.isCompleted
+
+		// Styling
+		if (isCompleted) {
+			icon.src = IconCheckedNotSelected
+			taskText.classList.add("transparency-80")
+			taskText.classList.add("checked-task")
 		}
 
-		taskText.classList.toggle("transparency-80")
-		taskText.classList.toggle("checked-task")
-	})
+		// Mouse events
+		icon.addEventListener("mouseover", () => {
+			if (isCompleted) icon.src = IconCheckedBorderBlue
+			if (!isCompleted) icon.src = IconCheckedDefault
 
-	nodeListener.addEventListener("mouseout", () => {
-		if (isCompleted) nodeListener.src = IconCheckedNotSelected
-		if (!isCompleted) nodeListener.src = IconNotChecked
+			taskText.classList.toggle("transparency-80")
+			taskText.classList.toggle("checked-task")
+		})
 
-		taskText.classList.toggle("transparency-80")
-		taskText.classList.toggle("checked-task")
+		icon.addEventListener("click", () => {
+			if (!isCompleted) {
+				icon.src = IconCheckedDefault
+				isCompleted = true
+			} else {
+				icon.src = IconNotChecked
+				isCompleted = false
+			}
+
+			taskText.classList.toggle("transparency-80")
+			taskText.classList.toggle("checked-task")
+		})
+
+		icon.addEventListener("mouseout", () => {
+			if (isCompleted) icon.src = IconCheckedNotSelected
+			if (!isCompleted) icon.src = IconNotChecked
+
+			taskText.classList.toggle("transparency-80")
+			taskText.classList.toggle("checked-task")
+		})
 	})
 }
-
-const taskIcon = document.querySelectorAll(".task-icon")
-taskIcon.forEach((icon) => {
-	const taskContainer = icon.parentElement.parentElement
-	const taskText = taskContainer.querySelector(".task-text")
-
-	//Link "isCompleted" with the task from the TodoList
-	const taskID = taskContainer.dataset.id
-	const taskFromList = TodoList.find((element) => element.id === Number(taskID))
-
-	let isCompleted = taskFromList.isCompleted
-
-	// Styling
-	if (isCompleted) {
-		icon.src = IconCheckedNotSelected
-		taskText.classList.add("transparency-80")
-		taskText.classList.add("checked-task")
-	}
-
-	// Mouse events
-	icon.addEventListener("mouseover", () => {
-		if (isCompleted) icon.src = IconCheckedBorderBlue
-		if (!isCompleted) icon.src = IconCheckedDefault
-
-		taskText.classList.toggle("transparency-80")
-		taskText.classList.toggle("checked-task")
-	})
-
-	icon.addEventListener("click", () => {
-		if (!isCompleted) {
-			icon.src = IconCheckedDefault
-			isCompleted = true
-		} else {
-			icon.src = IconNotChecked
-			isCompleted = false
-		}
-
-		taskText.classList.toggle("transparency-80")
-		taskText.classList.toggle("checked-task")
-	})
-
-	icon.addEventListener("mouseout", () => {
-		if (isCompleted) icon.src = IconCheckedNotSelected
-		if (!isCompleted) icon.src = IconNotChecked
-
-		taskText.classList.toggle("transparency-80")
-		taskText.classList.toggle("checked-task")
-	})
-})
 
 // !TEST //
 
 // --> FORM PAGE <--
 function displayTaskForm() {
-	const content = document.getElementById("content")
-	const section = document.createElement("section")
-	section.id = "section"
+	// const content = document.getElementById("content")
+	// const section = document.createElement("section")
+	// section.id = "section"
+	// content.appendChild(section)
 
-	content.appendChild(section)
+	const section = document.getElementById("section")
+	const returnComponent = ReturnComponent()
+	returnComponent.addEventListener("click", () => {
+		section.remove()
+		defaultUI()
+	})
+
+	section.appendChild(returnComponent)
 	section.appendChild(TaskForm())
+
+	saveButton()
 }
-displayTaskForm()
+// displayTaskForm()
 
 function getFormValues() {
-	const taskFormContainer = document.querySelector(".task-form-container")
+	const tickIcon = document.querySelector(`[data-type="isCompleted"]`)
+	const isIconChecked = tickIcon.dataset.state === "true" ? true : false
 
-	const tickIcon = taskFormContainer.querySelector(`[data-task-completed]`)
-	const isIconChecked = tickIcon.dataset.taskCompleted === "true" ? true : false
+	console.log(tickIcon)
+	console.log(isIconChecked)
 
 	// TODO - Añadir lógica al hacer click en cada elemento
 	if (isIconChecked === "true") {
@@ -269,6 +246,7 @@ function getFormValues() {
 
 function addNewTaskFromFormToList() {
 	const taskProperties = getFormValues()
+	console.log(taskProperties)
 
 	const newTask = {
 		title: taskProperties.taskTitle,
@@ -283,8 +261,17 @@ function addNewTaskFromFormToList() {
 	NewTask(newTask)
 }
 
-const saveBtn = document.getElementById("saveTask")
-saveBtn.addEventListener("click", addNewTaskFromFormToList)
+function saveButton() {
+	const saveBtn = document.getElementById("saveTask")
+	saveBtn.addEventListener("click", () => {
+		addNewTaskFromFormToList()
+
+		const section = document.getElementById("section")
+		section.remove()
+		defaultUI()
+		console.table(TodoList)
+	})
+}
 
 // //! OLD <<-------------->> //
 

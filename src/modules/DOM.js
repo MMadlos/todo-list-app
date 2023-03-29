@@ -274,7 +274,8 @@ export function TaskForm() {
 	titleContainer.className = "title-container"
 
 	const tickIcon = icon("notChecked")
-	tickIcon.dataset.taskCompleted = "false"
+	tickIcon.dataset.type = "isCompleted"
+	tickIcon.dataset.state = "false"
 
 	const taskTitleLabel = document.createElement("label")
 	taskTitleLabel.htmlFor = "task-title"
@@ -383,6 +384,7 @@ export function TaskForm() {
 	buttonsContainer.className = "buttons-container"
 
 	const saveButton = Button().saveTask()
+
 	const deleteButton = Button().deleteTask()
 
 	taskFormContainer.appendChild(infoContainer)
