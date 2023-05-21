@@ -1,4 +1,3 @@
-import LogoTasks from "../icons/tasks.png"
 import IconNotChecked from "../icons/not-checked.svg"
 import IconCheckedDefault from "../icons/Checked-selected.svg"
 import IconCheckedBorderBlue from "../icons/Checked-border-highlighted.svg"
@@ -12,7 +11,303 @@ import IconChevronLeft from "../icons/chevron-left.svg"
 import IconAttach from "../icons/attach.svg"
 import IconAdd from "../icons/add.svg"
 
+import tickIcon, { Label, Logo, SVG } from "./icons"
+
 const content = document.getElementById("content")
+
+//!! NEW UI
+
+function el(element) {
+	return document.createElement(element)
+}
+
+export function newUI() {
+	menuComponent()
+	mainSectionComponent()
+	taskPanelComponent()
+}
+
+function menuComponent() {
+	const menu = el("section")
+	menu.id = "menu"
+
+	const menuContainer = el("div")
+	menuContainer.className = "menu-container"
+
+	//CABECERA
+	const tituloContainer = el("div")
+	tituloContainer.className = "title-container"
+
+	const logo = Logo()
+
+	const titulo = el("h1")
+	titulo.textContent = "Mis tareas"
+	titulo.id = "app-name"
+
+	tituloContainer.appendChild(logo)
+	tituloContainer.appendChild(titulo)
+
+	menuContainer.appendChild(tituloContainer)
+
+	menu.appendChild(menuContainer)
+
+	//PROJECT LIST
+	//Default list
+	const projectListDefault = el("div")
+	projectListDefault.className = "project-list-container"
+
+	const projectItemSelected = projectItem()
+	projectItemSelected.classList.add("selected")
+
+	menuContainer.appendChild(projectListDefault)
+	projectListDefault.appendChild(projectItemSelected)
+	projectListDefault.appendChild(projectItem())
+	projectListDefault.appendChild(projectItem())
+	projectListDefault.appendChild(projectItem())
+
+	// Personalized list
+	const projectList = el("div")
+	projectList.className = "project-list-container"
+
+	const projectSeparator = el("p")
+	projectSeparator.textContent = "Proyectos"
+	projectSeparator.className = "project-list-separator"
+	menuContainer.appendChild(projectList)
+
+	projectList.appendChild(projectSeparator)
+	projectList.appendChild(projectItem())
+	projectList.appendChild(projectItem())
+
+	//BTN ADD PROJECT
+	const btnAddProject = el("button")
+	btnAddProject.className = "btn-solid-blue"
+	btnAddProject.id = "btn-add-project"
+
+	const icon = el("object")
+	icon.data = IconAdd
+	icon.type = "image/svg+xml"
+	icon.className = "add-icon"
+	// icon.id = "add-project"
+
+	//TODO - Cambiar a documento icons
+
+	console.log(icon)
+	window.addEventListener("load", () => {
+		console.log(icon.contentDocument.querySelector("svg"))
+		const svg = icon.contentDocument.querySelector("svg")
+		svg.id = "add-project"
+
+		svg.setAttribute("width", "16px")
+
+		const path = svg.querySelector("path")
+		path.setAttribute("fill", "#FFFFFF")
+	})
+
+	const btnText = el("p")
+	btnText.textContent = "Nuevo proyecto"
+
+	btnAddProject.appendChild(icon)
+	btnAddProject.appendChild(btnText)
+	menu.appendChild(btnAddProject)
+
+	return content.appendChild(menu)
+}
+
+function projectItem(iconImage) {
+	const menuContainer = el("div")
+	menuContainer.className = "project-item-container"
+
+	// Logo + titulo
+	const titleContainer = el("div")
+	titleContainer.className = "project-item-title-container"
+
+	const icon = el("p") //TODO --> Modificar
+	icon.textContent = "ICONO"
+
+	const projectTitle = el("p")
+	projectTitle.textContent = "Proyecto"
+
+	titleContainer.appendChild(icon)
+	titleContainer.appendChild(projectTitle)
+
+	// Contador
+	const counterContainer = el("div")
+	const counterText = el("p")
+	counterText.textContent = "23"
+	counterContainer.className = "project-item-counter-container"
+	counterContainer.appendChild(counterText)
+
+	menuContainer.appendChild(titleContainer)
+	menuContainer.appendChild(counterContainer)
+
+	return menuContainer
+}
+
+function taskPanelComponent() {
+	const taskPanel = el("section")
+	taskPanel.id = "task-panel"
+	// taskPanel.className = "hide"
+
+	const btnClosePanel = el("p") //TODO Sustituir
+	btnClosePanel.id = "btn-close-panel"
+	btnClosePanel.textContent = "Icono cerrar"
+	taskPanel.appendChild(btnClosePanel)
+
+	const taskPanelContainer = el("div")
+	taskPanelContainer.className = "task-panel-container"
+	taskPanel.appendChild(taskPanelContainer)
+
+	// Datos de la tarea
+	const taskInfoContainer = el("div")
+	taskInfoContainer.id = "task-info-container"
+	taskPanelContainer.appendChild(taskInfoContainer)
+
+	// -> Tareas y subtareas
+	// Tareas
+	const taskStepsContainer = el("div")
+	taskStepsContainer.className = "task-steps-container"
+
+	const taskTitleContainer = el("div")
+	taskTitleContainer.className = "task-title-container"
+
+	function addIcon(textContent) {
+		//TODO Sustituir
+		const tickIcon = el("p")
+		tickIcon.className = "icon"
+		tickIcon.textContent = textContent
+
+		return tickIcon
+	}
+
+	const taskTitle = el("p")
+	taskTitle.textContent = "Tarea por defecto"
+
+	taskInfoContainer.appendChild(taskStepsContainer)
+	taskStepsContainer.appendChild(taskTitleContainer)
+	taskTitleContainer.appendChild(addIcon("Tick icon"))
+	taskTitleContainer.appendChild(taskTitle)
+
+	// Subtareas
+	function subTaskItem() {
+		const subTaskContainer = el("div")
+		subTaskContainer.className = "sub-task-container"
+
+		const subTaskText = el("p")
+		subTaskText.textContent = "Sub-tarea por defecto"
+
+		subTaskContainer.appendChild(addIcon("Tick icon"))
+		subTaskContainer.appendChild(subTaskText)
+
+		return subTaskContainer
+	}
+
+	taskStepsContainer.appendChild(subTaskItem())
+	taskStepsContainer.appendChild(subTaskItem())
+	taskStepsContainer.appendChild(subTaskItem())
+
+	// Botón añadir paso
+	const addStepContainer = el("button")
+	addStepContainer.className = "btn-add-step"
+	addStepContainer.id = "btn-add-step"
+
+	const addStepText = el("p")
+	addStepText.textContent = "Agregar paso"
+
+	taskStepsContainer.appendChild(addStepContainer)
+	addStepContainer.appendChild(addIcon("Add Icon"))
+	addStepContainer.appendChild(addStepText)
+
+	// TASK DETAILS
+	const taskDetailsContainer = el("div")
+	taskDetailsContainer.id = "task-details-container"
+	taskInfoContainer.appendChild(taskDetailsContainer)
+
+	function taskDetailsItem(leftIconName, textContent, rightIconName) {
+		const taskDetailsItemContainer = el("div")
+		taskDetailsItemContainer.className = "task-details-item-container"
+
+		const taskDetailsInfoContainer = el("div")
+		taskDetailsInfoContainer.className = "task-details-info-container"
+
+		const taskDetailsIconLeft = addIcon(leftIconName)
+		const taskDetailsText = el("p")
+		taskDetailsText.textContent = textContent
+
+		const taskDetailsIconRigth = addIcon(rightIconName)
+
+		taskDetailsItemContainer.appendChild(taskDetailsInfoContainer)
+		taskDetailsInfoContainer.appendChild(taskDetailsIconLeft)
+		taskDetailsInfoContainer.appendChild(taskDetailsText)
+		taskDetailsItemContainer.appendChild(taskDetailsIconRigth)
+
+		return taskDetailsItemContainer
+	}
+	// -> Marcado como importante
+	const taskDetailsStarItem = taskDetailsItem("Star Icon", "Marcado como importante", "Close Icon")
+	// -> Vencimiento
+	const taskDetailsDueItem = taskDetailsItem("Clock Icon", "Vencimiento", "Close Icon")
+
+	// -> Proyecto
+	const taskDetailsProjectItem = taskDetailsItem("Folder Icon", "Proyecto", "Chevrolet Icon")
+
+	function separator() {
+		const _separator = el("div")
+		_separator.className = "separator"
+		return _separator
+	}
+
+	taskDetailsContainer.appendChild(taskDetailsStarItem)
+	taskDetailsContainer.appendChild(separator())
+	taskDetailsContainer.appendChild(taskDetailsDueItem)
+	taskDetailsContainer.appendChild(separator())
+	taskDetailsContainer.appendChild(taskDetailsProjectItem)
+
+	// -> Adjuntar archivo
+	const taskDetailsAttachContainer = el("div")
+	taskDetailsAttachContainer.id = "task-attach-container"
+
+	const taskDetailsAttachItem = taskDetailsItem("Clip Icon", "Adjuntar archivo", "Close Icon")
+
+	taskInfoContainer.appendChild(taskDetailsAttachContainer)
+	taskDetailsAttachContainer.appendChild(taskDetailsAttachItem)
+
+	// -> Agregar nota
+	const taskInputNote = el("textarea")
+	taskInputNote.id = "add-note-field"
+	taskInputNote.placeholder = "Agregar nota"
+
+	taskInfoContainer.appendChild(taskInputNote)
+
+	// Botones guardar y eliminar
+	const buttonsContainer = el("div")
+	buttonsContainer.className = "buttons-container"
+
+	// -> Guardar
+	const btnSave = el("button")
+	btnSave.textContent = "Guardar"
+	btnSave.id = "btn-save"
+	btnSave.className = "btn-solid-blue"
+
+	// -> Eliminar
+	const btnDelete = el("button")
+	btnDelete.textContent = "Eliminar"
+	btnDelete.id = "btn-delete"
+
+	buttonsContainer.appendChild(btnSave)
+	buttonsContainer.appendChild(btnDelete)
+
+	taskPanelContainer.appendChild(buttonsContainer)
+
+	content.appendChild(taskPanel)
+}
+
+function mainSectionComponent() {
+	const mainSection = el("main")
+	mainSection.id = "main-section"
+	content.appendChild(mainSection)
+}
+
+//! OLD UI ----------->
 
 // Elements for components
 
@@ -89,15 +384,29 @@ export function icon(type) {
 	return icon
 }
 
-function SVG(svgFile, className) {
-	const svgObject = document.createElement("object")
-	svgObject.data = svgFile
-	svgObject.type = "image/svg+xml"
-	svgObject.className = "label-icon"
-	svgObject.classList.add(className)
+// export function SVG() {
+// 	const add = (svgFile) => {
+// 		const svgObject = document.createElement("object")
+// 		svgObject.data = svgFile
+// 		svgObject.type = "image/svg+xml"
+// 		svgObject.className = "label-icon"
 
-	return svgObject
-}
+// 		return svgObject
+// 	}
+// 	const setColor = (color) => {
+// 		window.addEventListener("load", () => {
+// 			const objectElement = objectContainer.querySelector("object")
+// 			const svg = objectElement.contentDocument.querySelector("svg")
+// 			const path = svg.querySelectorAll("path")
+
+// 			path.forEach((element) => {
+// 				element.setAttribute("fill", color)
+// 			})
+// 		})
+// 	}
+
+// 	return { add, setColor }
+// }
 
 export function setSVGColor(objectContainer, color) {
 	window.addEventListener("load", () => {
@@ -117,13 +426,15 @@ function label(iconType) {
 	label.classList.add(iconType)
 
 	const text = document.createElement("p")
+	text.textContent = "Sin prioridad"
 	text.className = "label-text"
 
+	// Icon label
 	let svg
 
-	if (iconType === "priority") svg = SVG(IconPriority)
-	if (iconType === "calendar") svg = SVG(IconCalendar)
-	if (iconType === "folder") svg = SVG(IconFolder)
+	if (iconType === "priority") svg = SVG().add(IconPriority)
+	if (iconType === "calendar") svg = SVG().add(IconCalendar)
+	if (iconType === "folder") svg = SVG().add(IconFolder)
 
 	label.appendChild(svg)
 	label.appendChild(text)
@@ -203,7 +514,8 @@ function taskAccordion() {
 	return taskAccordionContainer
 }
 
-export function TaskComponent(title) {
+export function TaskComponent(title, taskStatus) {
+	// Template
 	const taskContainer = document.createElement("div")
 	taskContainer.className = "task-container"
 
@@ -220,22 +532,24 @@ export function TaskComponent(title) {
 	const taskLabelsContainer = document.createElement("div")
 	taskLabelsContainer.className = "labels-container"
 
-	const taskIcon = icon("notChecked")
-	taskIcon.className = "task-icon"
-
+	const iconContainer = document.createElement("div")
+	iconContainer.className = "icon-container"
+	const taskIcon = tickIcon("default")
 	const moreOptionButton = Button().moreDetailsTask()
 
 	taskContainer.appendChild(taskDataContainer)
 	taskContainer.appendChild(moreOptionButton)
 
-	taskDataContainer.appendChild(taskIcon)
+	taskDataContainer.appendChild(iconContainer)
+	iconContainer.appendChild(taskIcon)
 	taskDataContainer.appendChild(taskDetailsContainer)
 	taskDetailsContainer.appendChild(taskText)
 	taskDetailsContainer.appendChild(taskLabelsContainer)
 
-	taskLabelsContainer.appendChild(label("priority"))
-	taskLabelsContainer.appendChild(label("calendar"))
-	taskLabelsContainer.appendChild(label("folder"))
+	// Labels
+	taskLabelsContainer.appendChild(Label("hasNotPriority", taskStatus))
+	taskLabelsContainer.appendChild(Label("calendar", taskStatus))
+	taskLabelsContainer.appendChild(Label("folder", taskStatus))
 
 	return taskContainer
 }
