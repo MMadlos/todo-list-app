@@ -23,10 +23,11 @@ function menuComponent() {
 	menuContainer.className = "menu-container"
 
 	const tituloContainer = el("div")
-	const logo = Logo()
-	const titulo = el("h1")
-
 	tituloContainer.className = "title-container"
+
+	const logo = Logo()
+
+	const titulo = el("h1")
 	titulo.id = "app-name"
 	titulo.textContent = "Mis tareas"
 
@@ -149,12 +150,12 @@ function taskPanelComponent() {
 	// Steps
 	function subTaskItem() {
 		const subTaskContainer = el("div")
-		subTaskContainer.className = "sub-task-container"
-
-		const subTaskText = el("p")
-		subTaskText.textContent = "Sub-tarea por defecto"
+		subTaskContainer.className = "task-step-container"
 
 		const tickIcon = IconGenerator("checkEmpty", "size-16")
+
+		const subTaskText = el("p")
+		subTaskText.textContent = "Paso por defecto"
 
 		subTaskContainer.append(tickIcon, subTaskText)
 
@@ -191,12 +192,9 @@ function taskPanelComponent() {
 
 		return taskDetailsItemContainer
 	}
-	// -> Marcado como importante
-	const taskDetailsStarItem = taskDetailsItem("star", "Marcado como importante", "close")
-	// -> Vencimiento
-	const taskDetailsDueItem = taskDetailsItem("clock", "Vencimiento", "close")
 
-	// -> Proyecto
+	const taskDetailsStarItem = taskDetailsItem("star", "Marcado como importante", "close")
+	const taskDetailsDueItem = taskDetailsItem("clock", "Vencimiento", "close")
 	const taskDetailsProjectItem = taskDetailsItem("folder", "Proyecto", "chevronRight")
 
 	function separator() {
@@ -244,11 +242,10 @@ function mainSectionComponent() {
 	const mainSection = el("main")
 	mainSection.id = "main-section"
 
-	// Zona superior
 	const mainSectionContainer = el("div")
 	mainSectionContainer.className = "main-section-container"
 
-	// -> Título
+	// HEADER
 	const headerContainer = el("div")
 	headerContainer.className = "header-container"
 
@@ -259,30 +256,19 @@ function mainSectionComponent() {
 	const titleText = el("p")
 	titleText.textContent = "Planificado"
 
-	headerContainer.appendChild(projectIcon)
-	headerContainer.appendChild(titleContainer)
+	headerContainer.append(projectIcon, titleContainer)
 	titleContainer.appendChild(titleText)
 
 	mainSectionContainer.appendChild(headerContainer)
 
-	// -> Lista de tareas
+	// TASK LIST
 	const taskList = taskListComponent()
-
-	// Zona inferior - Añadir nueva tarea
-	const btnAddTask = el("button")
-	btnAddTask.id = "btn-add-task"
-	btnAddTask.className = "btn-regular-blue"
-
-	const btnAddIcon = IconGenerator("add", "size-16")
-	const btnText = el("p")
-	btnText.textContent = "Añadir tarea"
-
-	btnAddTask.appendChild(btnAddIcon)
-	btnAddTask.appendChild(btnText)
-
-	mainSection.appendChild(mainSectionContainer)
 	mainSectionContainer.appendChild(taskList)
-	mainSection.appendChild(btnAddTask)
+
+	// BTN ADD NEW TASK
+	const btnAddTask = createButton("addTask")
+
+	mainSection.append(mainSectionContainer, btnAddTask)
 	return mainSection
 }
 
@@ -338,7 +324,7 @@ function taskCardUI() {
 	taskInfoContainer.className = "task-info-container"
 
 	// -> Tick Icon
-	const tickIcon = IconGenerator("checkEmpty", "size-21") //TODO Sustituir
+	const tickIcon = IconGenerator("checkEmpty", "size-21")
 
 	// -> Task title and info
 	const taskTitleContainer = el("div")
@@ -356,23 +342,24 @@ function taskCardUI() {
 	const taskDetailTutorial = createDetailsChip("Tutorial")
 	const taskDetailAttach = createDetailsChip("Attach")
 
+	taskDetailsContainer.append(taskDetailHoy, taskDetailsSeparator(), taskDetailTutorial, taskDetailsSeparator(), taskDetailAttach)
+
 	function createDetailsChip(textContent) {
 		const detailContainer = el("div")
 		detailContainer.className = "detailContainer"
 
-		// ----> Icono
-		let iconName
-		if (textContent === "Hoy") iconName = "clock"
-		if (textContent === "Tutorial") iconName = "folder"
-		if (textContent === "Attach") iconName = "clip"
+		const chipName = {
+			Hoy: "clock",
+			Tutorial: "folder",
+			Attach: "clicp",
+		}
 
+		const iconName = chipName[textContent]
 		const detailIcon = IconGenerator(iconName, "size-16")
-		// ----> Texto
 		const detailText = el("p")
 		detailText.textContent = textContent
 
 		detailContainer.append(detailIcon, detailText)
-
 		return detailContainer
 	}
 
@@ -383,9 +370,8 @@ function taskCardUI() {
 		return _separator
 	}
 
-	taskInfoContainer.append(tickIcon, taskTitleContainer)
 	taskTitleContainer.append(taskTitle, taskDetailsContainer)
-	taskDetailsContainer.append(taskDetailHoy, taskDetailsSeparator(), taskDetailTutorial, taskDetailsSeparator(), taskDetailAttach)
+	taskInfoContainer.append(tickIcon, taskTitleContainer)
 
 	// Icon star
 	const iconStar = IconGenerator("star", "size-21")

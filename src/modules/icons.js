@@ -36,51 +36,54 @@ export function IconGenerator(iconName, size) {
 	return _icon
 }
 
-export function createButton(buttonName) {
-	//Button properties
-	const addProject = {
+// Buttons
+const buttonProperties = {
+	addProject: {
 		class: "btn-solid-blue",
 		id: "btn-add-project",
 		icon: ["add", "size-16"],
 		text: "Nuevo proyecto",
-	}
-
-	const deleteProject = {
+	},
+	deleteProject: {
 		class: "btn-underlined-red",
 		id: "btn-delete",
 		icon: false,
 		text: "Eliminar",
-	}
-
-	const saveTask = {
+	},
+	saveTask: {
 		class: "btn-solid-blue",
 		id: "btn-save",
 		icon: false,
 		text: "Guardar",
-	}
-
-	const addStep = {
+	},
+	addStep: {
 		class: "btn-add-step",
 		id: "btn-add-step",
 		icon: ["add", "size-16"],
 		text: "Agregar paso",
-	}
+	},
+	addTask: {
+		class: "btn-regular-blue",
+		id: "btn-add-task",
+		icon: ["add", "size-16"],
+		text: "Añadir tarea",
+	},
+}
 
-	// Button display
+export function createButton(buttonName) {
 	const _btn = document.createElement("button")
 	const _text = document.createElement("p")
 
-	const _btnName = eval(buttonName)
-	_btn.className = _btnName["class"]
-	_btn.id = _btnName["id"]
-	_text.textContent = _btnName["text"]
+	_btn.className = buttonProperties[buttonName]["class"]
+	_btn.id = buttonProperties[buttonName]["id"]
+	_text.textContent = buttonProperties[buttonName]["text"]
 
-	if (!_btnName["icon"]) {
+	if (!buttonProperties[buttonName]["icon"]) {
 		_btn.append(_text)
 		return _btn
 	}
 
-	const _icon = IconGenerator(..._btnName["icon"])
+	const _icon = IconGenerator(...buttonProperties[buttonName]["icon"])
 	_btn.append(_icon, _text)
 
 	return _btn

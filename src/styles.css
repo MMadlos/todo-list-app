@@ -280,7 +280,7 @@ i.size-12 {
 	font-weight: 600;
 }
 
-.sub-task-container {
+.task-step-container {
 	display: flex;
 	gap: 8px;
 	padding: 8px;
