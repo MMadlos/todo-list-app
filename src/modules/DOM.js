@@ -1,4 +1,4 @@
-import { Logo, IconGenerator } from "./icons"
+import { Logo, IconGenerator, createButton } from "./icons"
 
 const content = document.getElementById("content")
 
@@ -23,16 +23,16 @@ function menuComponent() {
 	menuContainer.className = "menu-container"
 
 	const tituloContainer = el("div")
-	tituloContainer.className = "title-container"
-
 	const logo = Logo()
 	const titulo = el("h1")
+
+	tituloContainer.className = "title-container"
 	titulo.id = "app-name"
 	titulo.textContent = "Mis tareas"
 
-	menu.appendChild(menuContainer)
-	menuContainer.appendChild(tituloContainer)
 	tituloContainer.append(logo, titulo)
+	menuContainer.appendChild(tituloContainer)
+	menu.appendChild(menuContainer)
 
 	//PROJECT LIST
 	//-> Default list
@@ -72,22 +72,11 @@ function menuComponent() {
 	const projectTutorial = projectItem("play", "Tutorial")
 	const projectDefecto = projectItem("bookmark", "Defecto")
 
+	projectList.append(projectSeparator, projectTutorial, projectDefecto)
 	menuContainer.appendChild(projectList)
-	projectList.appendChild(projectSeparator)
-	projectList.appendChild(projectTutorial)
-	projectList.appendChild(projectDefecto)
 
-	//BTN ADD PROJECT
-	const btnAddProject = el("button")
-	btnAddProject.className = "btn-solid-blue"
-	btnAddProject.id = "btn-add-project"
+	const btnAddProject = createButton().addProject()
 
-	const addIcon = IconGenerator("add", "size-16")
-	const btnText = el("p")
-	btnText.textContent = "Nuevo proyecto"
-
-	btnAddProject.appendChild(addIcon)
-	btnAddProject.appendChild(btnText)
 	menu.appendChild(btnAddProject)
 
 	return menu
@@ -149,22 +138,14 @@ function taskPanelComponent() {
 	const taskTitleContainer = el("div")
 	taskTitleContainer.className = "task-panel-title-container"
 
-	function addIcon(textContent) {
-		//TODO Sustituir
-		const tickIcon = el("p")
-		tickIcon.className = "icon"
-		tickIcon.textContent = textContent
-
-		return tickIcon
-	}
+	const tickIcon = IconGenerator("checkEmpty", "size-24")
 
 	const taskTitle = el("p")
 	taskTitle.textContent = "Tarea por defecto"
 
 	taskInfoContainer.appendChild(taskStepsContainer)
 	taskStepsContainer.appendChild(taskTitleContainer)
-	taskTitleContainer.appendChild(addIcon("Tick icon"))
-	taskTitleContainer.appendChild(taskTitle)
+	taskTitleContainer.append(tickIcon, taskTitle)
 
 	// Subtareas
 	function subTaskItem() {
@@ -174,27 +155,16 @@ function taskPanelComponent() {
 		const subTaskText = el("p")
 		subTaskText.textContent = "Sub-tarea por defecto"
 
-		subTaskContainer.appendChild(addIcon("Tick icon"))
-		subTaskContainer.appendChild(subTaskText)
+		const tickIcon = IconGenerator("checkEmpty", "size-16")
+
+		subTaskContainer.append(tickIcon, subTaskText)
 
 		return subTaskContainer
 	}
 
-	taskStepsContainer.appendChild(subTaskItem())
-	taskStepsContainer.appendChild(subTaskItem())
-	taskStepsContainer.appendChild(subTaskItem())
+	const btnAddStep = createButton().addStep()
 
-	// Botón añadir paso
-	const addStepContainer = el("button")
-	addStepContainer.className = "btn-add-step"
-	addStepContainer.id = "btn-add-step"
-
-	const addStepText = el("p")
-	addStepText.textContent = "Agregar paso"
-
-	taskStepsContainer.appendChild(addStepContainer)
-	addStepContainer.appendChild(IconGenerator("add", "size-16"))
-	addStepContainer.appendChild(addStepText)
+	taskStepsContainer.append(subTaskItem(), subTaskItem(), subTaskItem(), btnAddStep)
 
 	// TASK DETAILS
 	const taskDetailsContainer = el("div")
