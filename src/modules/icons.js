@@ -36,39 +36,52 @@ export function IconGenerator(iconName, size) {
 	return _icon
 }
 
-export function createButton() {
+export function createButton(buttonName) {
+	//Button properties
+	const addProject = {
+		class: "btn-solid-blue",
+		id: "btn-add-project",
+		icon: ["add", "size-16"],
+		text: "Nuevo proyecto",
+	}
+
+	const deleteProject = {
+		class: "btn-underlined-red",
+		id: "btn-delete",
+		icon: false,
+		text: "Eliminar",
+	}
+
+	const saveTask = {
+		class: "btn-solid-blue",
+		id: "btn-save",
+		icon: false,
+		text: "Guardar",
+	}
+
+	const addStep = {
+		class: "btn-add-step",
+		id: "btn-add-step",
+		icon: ["add", "size-16"],
+		text: "Agregar paso",
+	}
+
+	// Button display
 	const _btn = document.createElement("button")
-	let _icon
 	const _text = document.createElement("p")
 
-	// Nuevo proyecto
-	function addProject() {
-		_btn.className = "btn-solid-blue"
-		_btn.id = "btn-add-project"
+	const _btnName = eval(buttonName)
+	_btn.className = _btnName["class"]
+	_btn.id = _btnName["id"]
+	_text.textContent = _btnName["text"]
 
-		_icon = IconGenerator("add", "size-16")
-		_text.textContent = "Nuevo proyecto"
-
-		_btn.append(_icon, _text)
+	if (!_btnName["icon"]) {
+		_btn.append(_text)
 		return _btn
 	}
 
-	// Añadir tarea
+	const _icon = IconGenerator(..._btnName["icon"])
+	_btn.append(_icon, _text)
 
-	// Agregar paso
-	function addStep() {
-		_btn.className = "btn-add-step"
-		_btn.id = "btn-add-step"
-
-		_icon = IconGenerator("add", "size-16")
-		_text.textContent = "Agregar paso"
-
-		_btn.append(_icon, _text)
-
-		return _btn
-	}
-	// Guardar
-	// Eliminar
-
-	return { addProject, addStep }
+	return _btn
 }

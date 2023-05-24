@@ -75,7 +75,7 @@ function menuComponent() {
 	projectList.append(projectSeparator, projectTutorial, projectDefecto)
 	menuContainer.appendChild(projectList)
 
-	const btnAddProject = createButton().addProject()
+	const btnAddProject = createButton("addProject")
 
 	menu.appendChild(btnAddProject)
 
@@ -125,13 +125,12 @@ function taskPanelComponent() {
 	taskPanelContainer.className = "task-panel-container"
 	taskPanel.appendChild(taskPanelContainer)
 
-	// Datos de la tarea
+	// TASK AND STEPS
 	const taskInfoContainer = el("div")
 	taskInfoContainer.id = "task-info-container"
 	taskPanelContainer.appendChild(taskInfoContainer)
 
-	// -> Tareas y subtareas
-	// Tareas
+	// Task
 	const taskStepsContainer = el("div")
 	taskStepsContainer.className = "task-steps-container"
 
@@ -147,7 +146,7 @@ function taskPanelComponent() {
 	taskStepsContainer.appendChild(taskTitleContainer)
 	taskTitleContainer.append(tickIcon, taskTitle)
 
-	// Subtareas
+	// Steps
 	function subTaskItem() {
 		const subTaskContainer = el("div")
 		subTaskContainer.className = "sub-task-container"
@@ -162,7 +161,7 @@ function taskPanelComponent() {
 		return subTaskContainer
 	}
 
-	const btnAddStep = createButton().addStep()
+	const btnAddStep = createButton("addStep")
 
 	taskStepsContainer.append(subTaskItem(), subTaskItem(), subTaskItem(), btnAddStep)
 
@@ -228,24 +227,14 @@ function taskPanelComponent() {
 
 	taskInfoContainer.appendChild(taskInputNote)
 
-	// Botones guardar y eliminar
+	// Botones
 	const buttonsContainer = el("div")
 	buttonsContainer.className = "buttons-container"
 
-	// -> Guardar
-	const btnSave = el("button")
-	btnSave.textContent = "Guardar"
-	btnSave.id = "btn-save"
-	btnSave.className = "btn-solid-blue"
+	const btnSave = createButton("saveTask")
+	const btnDelete = createButton("deleteProject")
 
-	// -> Eliminar
-	const btnDelete = el("button")
-	btnDelete.textContent = "Eliminar"
-	btnDelete.id = "btn-delete"
-
-	buttonsContainer.appendChild(btnSave)
-	buttonsContainer.appendChild(btnDelete)
-
+	buttonsContainer.append(btnSave, btnDelete)
 	taskPanelContainer.appendChild(buttonsContainer)
 
 	return taskPanel
