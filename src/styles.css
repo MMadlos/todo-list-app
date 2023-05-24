@@ -13,25 +13,6 @@
 	--stroke-grey-dark: #ececec;
 	--hover-project: #e6e6e6;
 	--tick-grey: #b7b7b7;
-
-	/* OLD COLORS */
-
-	--bg-main-color: #c6ddec;
-	--bg-task-color: #ffffff;
-	--accent-color: #3e92cc;
-	--text-main-color: #555555;
-	--text-accent-color: #fff;
-	--hover-color: #edf1f5;
-
-	/* LABELS */
-	--bg-labelHigh-color: #f2a6a6;
-	--text-labelHigh-color: #f8e7e7;
-	--bg-labelMedium-color: #ffeecc;
-	--text-labelMedium-color: #ffa800;
-	--bg-labelLow-color: #a4cba6;
-	--text-labelLow-color: #3e7441;
-	--bg-labelDisabled-color: #edf1f5;
-	--text-labelDisabled-color: #999999;
 }
 
 /* CSS RESET */
