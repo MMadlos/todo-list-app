@@ -314,23 +314,19 @@ function taskListComponent() {
 
 export function taskCardUI() {
 	const taskCardContainer = el("div")
-	taskCardContainer.className = "task-card-container"
-
-	// Task tick and info
 	const taskInfoContainer = el("div")
-	taskInfoContainer.className = "task-info-container"
-
-	// -> Task title and info
 	const taskTitleContainer = el("div")
-	taskTitleContainer.className = "task-title-container"
-
-	// --> Task Title
 	const taskTitle = el("p")
-	taskTitle.textContent = "Título por defecto"
-	function title(title) {
-		taskTitle.textContent = title
-		return taskTitle
-	}
+	const taskDetailsContainer = el("div")
+
+	taskCardContainer.className = "task-card-container"
+	taskInfoContainer.className = "task-info-container"
+	taskTitleContainer.className = "task-title-container"
+	taskDetailsContainer.className = "task-details-container"
+
+	taskCardContainer.prepend(taskInfoContainer)
+	taskInfoContainer.append(taskTitleContainer)
+	taskTitleContainer.append(taskTitle, taskDetailsContainer)
 
 	function tickIcon(completion) {
 		const isCompleted = completion
@@ -346,33 +342,22 @@ export function taskCardUI() {
 		return taskInfoContainer
 	}
 
-	// --> Task Info
-	const taskDetailsContainer = el("div")
-	taskDetailsContainer.className = "task-details-container"
-
-	function chipInfo(isTrue, type) {
-		if (isTrue) {
-			if (type === "date") {
-				const chipDueDate = createDetailsChip("Hoy")
-				taskDetailsContainer.appendChild(chipDueDate)
-			}
-
-			if (type === "project") {
-				const chipProject = createDetailsChip("Tutorial")
-				taskDetailsContainer.appendChild(chipProject)
-			}
-
-			if (type === "file") {
-				const chipAttach = createDetailsChip("Attach")
-				taskDetailsContainer.appendChild(chipAttach)
-			}
-		}
+	function title(title = "Título por defecto") {
+		taskTitle.textContent = title
+		return taskTitle
 	}
 
-	taskTitleContainer.append(taskTitle, taskDetailsContainer)
-	taskInfoContainer.append(taskTitleContainer)
+	function chipInfo(isTrue, type) {
+		if (!isTrue) return
 
-	// Icon star
+		let _chip
+		if (type === "date") _chip = createDetailsChip("Hoy")
+		if (type === "project") _chip = createDetailsChip("Tutorial")
+		if (type === "file") _chip = createDetailsChip("Attach")
+
+		taskDetailsContainer.appendChild(_chip)
+	}
+
 	function iconImportant(isImportant) {
 		const _isImportant = isImportant
 		const _icon = _isImportant ? IconGenerator("starSolid", "size-21") : IconGenerator("star", "size-21")
@@ -381,11 +366,21 @@ export function taskCardUI() {
 		return taskCardContainer
 	}
 
-	taskCardContainer.prepend(taskInfoContainer)
+	function addChipSeparator() {
+		const detailContainers = taskDetailsContainer.querySelectorAll(".detailContainer")
+		const chipCount = detailContainers.length
+
+		if (chipCount === 0) taskDetailsContainer.remove()
+		if (chipCount > 1) {
+			for (let i = 0; i < chipCount - 1; i++) {
+				detailContainers[i].after(taskDetailsSeparator())
+			}
+		}
+	}
 
 	const display = () => taskCardContainer
 
-	return { display, title, tickIcon, iconImportant, chipInfo }
+	return { display, title, tickIcon, iconImportant, chipInfo, addChipSeparator }
 }
 
 export function createDetailsChip(textContent) {
