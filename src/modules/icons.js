@@ -14,6 +14,7 @@ const iconList = {
 	add: ["fa-solid", "fa-plus"],
 	list: ["fa-solid", "fa-list"],
 	star: ["fa-regular", "fa-star"],
+	starSolid: ["fa-solid", "fa-star", "is-important"],
 	play: ["fa-regular", "fa-circle-play"],
 	bookmark: ["fa-solid", "fa-bookmark"],
 	close: ["fa-solid", "fa-xmark"],

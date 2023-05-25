@@ -263,7 +263,7 @@ function mainSectionComponent() {
 
 	// TASK LIST
 	const taskList = taskListComponent()
-	mainSectionContainer.appendChild(taskList)
+	mainSectionContainer.append(taskList)
 
 	// BTN ADD NEW TASK
 	const btnAddTask = createButton("addTask")
@@ -282,13 +282,12 @@ function taskListComponent() {
 	// -> Group Name elements
 	const taskGroupNameContainer = el("div")
 	taskGroupNameContainer.className = "task-group-name-container"
-	// Chevron
+
 	const iconChevronDown = IconGenerator("chevronDown", "size-12")
-	// Text
+
 	const groupName = el("p")
 	groupName.textContent = "Hoy"
 
-	// Counter
 	const groupCounterContainer = el("div")
 	groupCounterContainer.className = "group-counter-container"
 
@@ -303,19 +302,17 @@ function taskListComponent() {
 	const taskCardListContainer = el("div")
 	taskCardListContainer.className = "task-card-list-container"
 
-	const taskCardOne = taskCardUI()
-	const taskCardTwo = taskCardUI()
+	// const taskCardOne = taskCardUI().display()
+	// const taskCardTwo = taskCardUI().display()
 
 	taskListContainer.appendChild(taskGroupContainer)
-	taskGroupContainer.appendChild(taskGroupNameContainer)
-	taskGroupContainer.appendChild(taskCardListContainer)
-	taskCardListContainer.appendChild(taskCardOne)
-	taskCardListContainer.appendChild(taskCardTwo)
+	taskGroupContainer.append(taskGroupNameContainer, taskCardListContainer)
+	// taskCardListContainer.append(taskCardOne, taskCardTwo)
 
 	return taskListContainer
 }
 
-function taskCardUI() {
+export function taskCardUI() {
 	const taskCardContainer = el("div")
 	taskCardContainer.className = "task-card-container"
 
@@ -323,60 +320,96 @@ function taskCardUI() {
 	const taskInfoContainer = el("div")
 	taskInfoContainer.className = "task-info-container"
 
-	// -> Tick Icon
-	const tickIcon = IconGenerator("checkEmpty", "size-21")
-
 	// -> Task title and info
 	const taskTitleContainer = el("div")
 	taskTitleContainer.className = "task-title-container"
 
 	// --> Task Title
 	const taskTitle = el("p")
-	taskTitle.textContent = "Tarea por defecto"
+	taskTitle.textContent = "Título por defecto"
+	function title(title) {
+		taskTitle.textContent = title
+		return taskTitle
+	}
+
+	function tickIcon(completion) {
+		const isCompleted = completion
+		let tickIcon
+
+		if (!isCompleted) tickIcon = IconGenerator("checkEmpty", "size-21")
+		if (isCompleted) {
+			tickIcon = IconGenerator("checkDone", "size-21")
+			taskTitle.classList.add("task-done")
+		}
+
+		taskInfoContainer.prepend(tickIcon)
+		return taskInfoContainer
+	}
 
 	// --> Task Info
 	const taskDetailsContainer = el("div")
 	taskDetailsContainer.className = "task-details-container"
 
-	const taskDetailHoy = createDetailsChip("Hoy")
-	const taskDetailTutorial = createDetailsChip("Tutorial")
-	const taskDetailAttach = createDetailsChip("Attach")
+	function chipInfo(isTrue, type) {
+		if (isTrue) {
+			if (type === "date") {
+				const chipDueDate = createDetailsChip("Hoy")
+				taskDetailsContainer.appendChild(chipDueDate)
+			}
 
-	taskDetailsContainer.append(taskDetailHoy, taskDetailsSeparator(), taskDetailTutorial, taskDetailsSeparator(), taskDetailAttach)
+			if (type === "project") {
+				const chipProject = createDetailsChip("Tutorial")
+				taskDetailsContainer.appendChild(chipProject)
+			}
 
-	function createDetailsChip(textContent) {
-		const detailContainer = el("div")
-		detailContainer.className = "detailContainer"
-
-		const chipName = {
-			Hoy: "clock",
-			Tutorial: "folder",
-			Attach: "clicp",
+			if (type === "file") {
+				const chipAttach = createDetailsChip("Attach")
+				taskDetailsContainer.appendChild(chipAttach)
+			}
 		}
-
-		const iconName = chipName[textContent]
-		const detailIcon = IconGenerator(iconName, "size-16")
-		const detailText = el("p")
-		detailText.textContent = textContent
-
-		detailContainer.append(detailIcon, detailText)
-		return detailContainer
-	}
-
-	function taskDetailsSeparator() {
-		const _separator = el("div")
-		_separator.className = "task-details-separator"
-
-		return _separator
 	}
 
 	taskTitleContainer.append(taskTitle, taskDetailsContainer)
-	taskInfoContainer.append(tickIcon, taskTitleContainer)
+	taskInfoContainer.append(taskTitleContainer)
 
 	// Icon star
-	const iconStar = IconGenerator("star", "size-21")
+	function iconImportant(isImportant) {
+		const _isImportant = isImportant
+		const _icon = _isImportant ? IconGenerator("starSolid", "size-21") : IconGenerator("star", "size-21")
 
-	taskCardContainer.append(taskInfoContainer, iconStar)
+		taskCardContainer.appendChild(_icon)
+		return taskCardContainer
+	}
 
-	return taskCardContainer
+	taskCardContainer.prepend(taskInfoContainer)
+
+	const display = () => taskCardContainer
+
+	return { display, title, tickIcon, iconImportant, chipInfo }
+}
+
+export function createDetailsChip(textContent) {
+	const detailContainer = el("div")
+	detailContainer.className = "detailContainer"
+
+	const chipName = {
+		Hoy: "clock",
+		Tutorial: "folder",
+		Attach: "clip",
+	}
+
+	const iconName = chipName[textContent]
+	const detailIcon = IconGenerator(iconName, "size-16")
+	const detailText = el("p")
+	detailText.textContent = textContent
+
+	detailContainer.append(detailIcon, detailText)
+	return detailContainer
+}
+
+function taskDetailsSeparator() {
+	const _separator = el("div")
+	_separator.className = "task-details-separator"
+
+	return _separator
 }

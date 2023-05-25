@@ -112,6 +112,15 @@ i.size-12 {
 	font-size: 12px;
 }
 
+.fa-star:hover {
+	color: var(--blue-accent-color);
+}
+
+.fa-star:hover,
+.is-important {
+	color: var(--blue-accent-color);
+}
+
 .btn-regular-blue {
 	display: flex;
 	align-items: center;
@@ -426,6 +435,11 @@ textarea:focus {
 
 	padding: 16px 24px;
 	color: var(--tick-grey);
+}
+
+.task-done {
+	text-decoration: line-through;
+	color: var(--text-light);
 }
 
 .task-info-container {
