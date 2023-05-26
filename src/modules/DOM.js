@@ -8,10 +8,9 @@ function el(element) {
 
 export function newUI() {
 	const menu = menuComponent()
-	const taskPanel = taskPanelComponent()
 	const taskList = mainSectionComponent()
 
-	content.append(menu, taskList, taskPanel)
+	content.append(menu, taskList)
 }
 
 function menuComponent() {
@@ -113,18 +112,17 @@ function projectItem(iconName = "", projectName = "Proyecto") {
 	return menuContainer
 }
 
-function taskPanelComponent() {
+export function taskPanelComponent() {
 	const taskPanel = el("section")
+	const btnClosePanel = IconGenerator("close", "size-16")
+	const taskPanelContainer = el("div")
+
 	taskPanel.id = "task-panel"
 	// taskPanel.className = "hide"
-
-	const btnClosePanel = IconGenerator("close", "size-16")
 	btnClosePanel.id = "btn-close-panel"
-	taskPanel.appendChild(btnClosePanel)
-
-	const taskPanelContainer = el("div")
 	taskPanelContainer.className = "task-panel-container"
-	taskPanel.appendChild(taskPanelContainer)
+
+	taskPanel.append(btnClosePanel, taskPanelContainer)
 
 	// TASK AND STEPS
 	const taskInfoContainer = el("div")
@@ -139,13 +137,15 @@ function taskPanelComponent() {
 	taskTitleContainer.className = "task-panel-title-container"
 
 	const tickIcon = IconGenerator("checkEmpty", "size-24")
+	const _taskTitle = el("p")
 
-	const taskTitle = el("p")
-	taskTitle.textContent = "Tarea por defecto"
+	function taskTitle(title) {
+		_taskTitle.textContent = title
+	}
 
 	taskInfoContainer.appendChild(taskStepsContainer)
 	taskStepsContainer.appendChild(taskTitleContainer)
-	taskTitleContainer.append(tickIcon, taskTitle)
+	taskTitleContainer.append(tickIcon, _taskTitle)
 
 	// Steps
 	function subTaskItem() {
@@ -235,40 +235,37 @@ function taskPanelComponent() {
 	buttonsContainer.append(btnSave, btnDelete)
 	taskPanelContainer.appendChild(buttonsContainer)
 
-	return taskPanel
+	const display = () => taskPanel
+
+	return { display, taskTitle }
 }
 
 function mainSectionComponent() {
 	const mainSection = el("main")
-	mainSection.id = "main-section"
-
 	const mainSectionContainer = el("div")
+	mainSection.id = "main-section"
 	mainSectionContainer.className = "main-section-container"
 
 	// HEADER
 	const headerContainer = el("div")
-	headerContainer.className = "header-container"
-
 	const projectIcon = IconGenerator("clock", "size-24")
 	const titleContainer = el("div")
-	titleContainer.className = "title-container"
-
 	const titleText = el("p")
+
+	headerContainer.className = "header-container"
+	titleContainer.className = "title-container"
 	titleText.textContent = "Planificado"
 
-	headerContainer.append(projectIcon, titleContainer)
 	titleContainer.appendChild(titleText)
-
+	headerContainer.append(projectIcon, titleContainer)
 	mainSectionContainer.appendChild(headerContainer)
 
-	// TASK LIST
 	const taskList = taskListComponent()
-	mainSectionContainer.append(taskList)
-
-	// BTN ADD NEW TASK
 	const btnAddTask = createButton("addTask")
 
+	mainSectionContainer.append(taskList)
 	mainSection.append(mainSectionContainer, btnAddTask)
+
 	return mainSection
 }
 
@@ -347,12 +344,12 @@ export function taskCardUI() {
 		return taskTitle
 	}
 
-	function chipInfo(isTrue, type) {
+	function chipInfo(isTrue, type, textContent) {
 		if (!isTrue) return
 
 		let _chip
-		if (type === "date") _chip = createDetailsChip("Hoy")
-		if (type === "project") _chip = createDetailsChip("Tutorial")
+		if (type === "date") _chip = createDetailsChip("Hoy", textContent)
+		if (type === "project") _chip = createDetailsChip("Tutorial", textContent)
 		if (type === "file") _chip = createDetailsChip("Attach")
 
 		taskDetailsContainer.appendChild(_chip)
@@ -383,17 +380,17 @@ export function taskCardUI() {
 	return { display, title, tickIcon, iconImportant, chipInfo, addChipSeparator }
 }
 
-export function createDetailsChip(textContent) {
+function createDetailsChip(chipName, textContent = "Archivo adjunto") {
 	const detailContainer = el("div")
 	detailContainer.className = "detailContainer"
 
-	const chipName = {
+	const _chipName = {
 		Hoy: "clock",
 		Tutorial: "folder",
 		Attach: "clip",
 	}
 
-	const iconName = chipName[textContent]
+	const iconName = _chipName[chipName]
 	const detailIcon = IconGenerator(iconName, "size-16")
 	const detailText = el("p")
 	detailText.textContent = textContent

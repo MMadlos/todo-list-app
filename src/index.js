@@ -1,9 +1,9 @@
 import "./styles.css"
-import { newUI, taskCardUI } from ".//modules/DOM"
+import { newUI, taskCardUI, taskPanelComponent } from ".//modules/DOM"
 import { createTask, taskList } from "./modules/task.js"
 
 newUI()
-
+const content = document.getElementById("content")
 const cardListContainer = document.querySelector(".task-card-list-container")
 
 function displayTaskList() {
@@ -20,19 +20,18 @@ function taskListDOM() {
 		const taskTitle = task.title
 		const isCompleted = task.isCompleted
 		const isImportant = task.isImportant
+		const dueDate = task.dueDate
 		const hasDueDate = task.dueDate !== ""
+		const projectName = task.project
 		const hasProject = task.project !== ""
 		const hasFileAttached = task.isFileAttached
-
-		console.table(task)
-		console.log(hasDueDate)
 
 		taskCard.title(taskTitle)
 		taskCard.tickIcon(isCompleted)
 		taskCard.iconImportant(isImportant)
 
-		taskCard.chipInfo(hasDueDate, "date")
-		taskCard.chipInfo(hasProject, "project")
+		taskCard.chipInfo(hasDueDate, "date", dueDate)
+		taskCard.chipInfo(hasProject, "project", projectName)
 		taskCard.chipInfo(hasFileAttached, "file")
 
 		taskCard.addChipSeparator()
@@ -85,8 +84,21 @@ function cardEventListeners() {
 			}
 
 			if (!isTickIcon && !isStarIcon) {
+				allCards.forEach((card) => {
+					card.removeAttribute("card-selected")
+				})
+
+				card.toggleAttribute("card-selected")
+
 				const taskPanel = document.getElementById("task-panel")
-				return taskPanel.classList.toggle("hide")
+				const isTaskPanelOpen = taskPanel ? true : false
+
+				if (!isTaskPanelOpen) return openTaskPanel()
+
+				taskPanel.remove()
+				openTaskPanel()
+
+				return
 			}
 
 			allCards.forEach((card) => {
@@ -96,4 +108,33 @@ function cardEventListeners() {
 			displayTaskList()
 		})
 	})
+}
+
+// TASK-PANEL
+function openTaskPanel() {
+	const taskPanelDOM = taskPanelComponent()
+
+	const taskPanelHTML = document.getElementById("task-panel")
+	// taskPanel.classList.toggle("hide")
+
+	// Determinar tarea seleccionada
+	const cardSelected = document.querySelector("[card-selected]")
+	const indexCard = cardSelected.dataset.index
+
+	// Recoger propiedades de la tarea
+	const taskFromList = taskList[indexCard]
+
+	const taskTitle = taskFromList.title
+	const taskSteps = taskFromList.steps
+	const isCompleted = taskFromList.isCompleted
+	const isImportant = taskFromList.isImportant
+	const dueDate = taskFromList.dueDate
+	const projectName = taskFromList.project
+	const isFileAttached = taskFromList.isFileAttached
+
+	// Añadir propiedades a DOM.js
+	taskPanelDOM.taskTitle(taskTitle)
+
+	const taskPanel = taskPanelDOM.display()
+	content.appendChild(taskPanel)
 }

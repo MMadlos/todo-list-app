@@ -437,7 +437,8 @@ textarea:focus {
 	color: var(--tick-grey);
 }
 
-.task-card-container:hover {
+.task-card-container:hover,
+.task-card-container[card-selected] {
 	border: 2px solid var(--tick-grey);
 }
 
