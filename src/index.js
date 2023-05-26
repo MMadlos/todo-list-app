@@ -2,26 +2,15 @@ import "./styles.css"
 import { newUI, taskCardUI } from ".//modules/DOM"
 import { createTask, taskList } from "./modules/task.js"
 
-const firstTask = createTask("First Task")
-const secondTask = createTask("Second Task")
-secondTask.properties.isCompleted = true
-secondTask.properties.isImportant = true
-secondTask.properties.dueDate = "Mañana"
-secondTask.properties.project = "Ejemplo"
-secondTask.properties.isFileAttached = true
-
-// Display all tasks in taskList
-
 newUI()
 
 const cardListContainer = document.querySelector(".task-card-list-container")
-
-displayTaskList()
 
 function displayTaskList() {
 	taskListDOM()
 	cardEventListeners()
 }
+displayTaskList()
 
 function taskListDOM() {
 	taskList.forEach((task) => {
@@ -34,6 +23,9 @@ function taskListDOM() {
 		const hasDueDate = task.dueDate !== ""
 		const hasProject = task.project !== ""
 		const hasFileAttached = task.isFileAttached
+
+		console.table(task)
+		console.log(hasDueDate)
 
 		taskCard.title(taskTitle)
 		taskCard.tickIcon(isCompleted)
@@ -60,24 +52,48 @@ function cardEventListeners() {
 			cardIndex = card.dataset.index
 		})
 
+		const tickIcon = card.querySelector(".task-info-container > i")
+		const isTickIconNotCompleted = tickIcon.classList.contains("fa-square")
+
+		if (isTickIconNotCompleted) {
+			tickIcon.addEventListener("mouseover", () => {
+				tickIcon.classList.toggle("fa-square")
+				tickIcon.classList.toggle("fa-square-check")
+			})
+			tickIcon.addEventListener("mouseout", () => {
+				tickIcon.classList.toggle("fa-square")
+				tickIcon.classList.toggle("fa-square-check")
+			})
+		}
+
 		card.addEventListener("click", (e) => {
-			// TODO -> Que cambie sólo al hacer click en el icono
+			const taskFromList = taskList[cardIndex]
 
 			const clickedElement = e.target
-			const isTickIcon = clickedElement.classList.contains("fa-square") || clickedElement.classList.contains("fa-square-check")
+			const isTickIcon = clickedElement == tickIcon
+			const isStarIcon = clickedElement.classList.contains("fa-star")
 
 			if (isTickIcon) {
-				const taskFromList = taskList[cardIndex]
 				const isTaskCompleted = taskFromList.isCompleted
 
 				isTaskCompleted ? (taskFromList.isCompleted = false) : (taskFromList.isCompleted = true)
-
-				allCards.forEach((card) => {
-					card.remove()
-				})
-
-				displayTaskList()
 			}
+
+			if (isStarIcon) {
+				const isTaskImportant = taskFromList.isImportant
+				isTaskImportant ? (taskFromList.isImportant = false) : (taskFromList.isImportant = true)
+			}
+
+			if (!isTickIcon && !isStarIcon) {
+				const taskPanel = document.getElementById("task-panel")
+				return taskPanel.classList.toggle("hide")
+			}
+
+			allCards.forEach((card) => {
+				card.remove()
+			})
+
+			displayTaskList()
 		})
 	})
 }

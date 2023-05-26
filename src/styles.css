@@ -437,6 +437,10 @@ textarea:focus {
 	color: var(--tick-grey);
 }
 
+.task-card-container:hover {
+	border: 2px solid var(--tick-grey);
+}
+
 .task-done {
 	text-decoration: line-through;
 	color: var(--text-light);

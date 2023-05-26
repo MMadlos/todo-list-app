@@ -21,29 +21,41 @@ export function createTask(taskTitle) {
 	return { properties }
 }
 
-// Default task
-
+// Default tasks
 const firstTask = {
-	title: "",
+	title: "First Task",
 	steps: {},
 	isCompleted: false,
 	isImportant: false,
-	duedate: "",
-	project: "Planificado",
+	dueDate: "",
+	project: "",
 	isFileAttached: false,
 	note: "",
 }
 
 const secondTask = {
-	title: "",
+	title: "Second Task",
+	steps: {},
+	isCompleted: true,
+	isImportant: true,
+	dueDate: "Hoy",
+	project: "Tutorial",
+	isFileAttached: true,
+	note: "",
+}
+
+const thirdTask = {
+	title: "Third Task",
 	steps: {},
 	isCompleted: false,
-	isImportant: false,
-	duedate: "",
-	project: "Planificado",
+	isImportant: true,
+	dueDate: "Mañana",
+	project: "Ejemplo",
 	isFileAttached: false,
 	note: "",
 }
+
+taskList.push(firstTask, secondTask, thirdTask)
 
 //! OLD CODE ----------
 // const allProjects = []
