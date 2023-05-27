@@ -254,6 +254,9 @@ i.size-12 {
 #btn-close-panel {
 	margin-left: auto;
 }
+#btn-close-panel:hover {
+	opacity: 50%;
+}
 
 #task-info-container {
 	display: flex;
@@ -289,6 +292,10 @@ i.size-12 {
 	font-weight: 600;
 }
 
+.task-panel-title-container > i {
+	color: var(--tick-grey);
+}
+
 .task-step-container {
 	display: flex;
 	gap: 8px;
@@ -306,7 +313,7 @@ i.size-12 {
 	color: var(--blue-accent-color);
 }
 
-/* Task details */
+/* TASK PANEL */
 
 #task-details-container,
 #task-attach-container {
@@ -324,11 +331,21 @@ i.size-12 {
 	display: flex;
 	padding: 8px;
 	justify-content: space-between;
+	border-radius: 4px;
+	cursor: default;
+}
+
+.task-details-item-container:hover {
+	background-color: var(--stroke-grey);
 }
 
 .task-details-info-container {
 	display: flex;
 	gap: 16px;
+}
+
+.task-details-info-container.selected {
+	color: var(--blue-accent-color);
 }
 
 .separator {

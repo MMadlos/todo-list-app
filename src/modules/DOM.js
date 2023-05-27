@@ -118,7 +118,6 @@ export function taskPanelComponent() {
 	const taskPanelContainer = el("div")
 
 	taskPanel.id = "task-panel"
-	// taskPanel.className = "hide"
 	btnClosePanel.id = "btn-close-panel"
 	taskPanelContainer.className = "task-panel-container"
 
@@ -129,23 +128,34 @@ export function taskPanelComponent() {
 	taskInfoContainer.id = "task-info-container"
 	taskPanelContainer.appendChild(taskInfoContainer)
 
-	// Task
 	const taskStepsContainer = el("div")
 	taskStepsContainer.className = "task-steps-container"
 
 	const taskTitleContainer = el("div")
 	taskTitleContainer.className = "task-panel-title-container"
 
-	const tickIcon = IconGenerator("checkEmpty", "size-24")
 	const _taskTitle = el("p")
+
+	function tickIcon(completion) {
+		const isCompleted = completion
+		let _tickIcon
+
+		if (!isCompleted) _tickIcon = IconGenerator("checkEmpty", "size-24")
+		if (isCompleted) {
+			_tickIcon = IconGenerator("checkDone", "size-24")
+			_taskTitle.classList.add("task-done")
+		}
+
+		taskTitleContainer.append(_tickIcon)
+	}
 
 	function taskTitle(title) {
 		_taskTitle.textContent = title
+		taskTitleContainer.append(_taskTitle)
 	}
 
 	taskInfoContainer.appendChild(taskStepsContainer)
 	taskStepsContainer.appendChild(taskTitleContainer)
-	taskTitleContainer.append(tickIcon, _taskTitle)
 
 	// Steps
 	function subTaskItem() {
@@ -171,43 +181,64 @@ export function taskPanelComponent() {
 	taskDetailsContainer.id = "task-details-container"
 	taskInfoContainer.appendChild(taskDetailsContainer)
 
-	function taskDetailsItem(leftIconName, textContent, rightIconName) {
+	function taskDetailsItem(leftIconName, textContent, rightIconName = "") {
 		const taskDetailsItemContainer = el("div")
-		taskDetailsItemContainer.className = "task-details-item-container"
-
 		const taskDetailsInfoContainer = el("div")
+
+		taskDetailsItemContainer.className = "task-details-item-container"
 		taskDetailsInfoContainer.className = "task-details-info-container"
 
 		const taskDetailsIconLeft = IconGenerator(leftIconName, "size-21")
-
 		const taskDetailsText = el("p")
+		if (rightIconName !== "") {
+			const taskDetailsIconRigth = IconGenerator(rightIconName, "size-21")
+			taskDetailsItemContainer.appendChild(taskDetailsIconRigth)
+		}
+
 		taskDetailsText.textContent = textContent
 
-		const taskDetailsIconRigth = IconGenerator(rightIconName, "size-21")
-
-		taskDetailsItemContainer.appendChild(taskDetailsInfoContainer)
-		taskDetailsInfoContainer.appendChild(taskDetailsIconLeft)
-		taskDetailsInfoContainer.appendChild(taskDetailsText)
-		taskDetailsItemContainer.appendChild(taskDetailsIconRigth)
+		taskDetailsItemContainer.prepend(taskDetailsInfoContainer)
+		taskDetailsInfoContainer.append(taskDetailsIconLeft, taskDetailsText)
 
 		return taskDetailsItemContainer
 	}
 
-	const taskDetailsStarItem = taskDetailsItem("star", "Marcado como importante", "close")
-	const taskDetailsDueItem = taskDetailsItem("clock", "Vencimiento", "close")
-	const taskDetailsProjectItem = taskDetailsItem("folder", "Proyecto", "chevronRight")
+	function isTaskImportant(isImportant) {
+		const taskDetailsStarItem = isImportant
+			? taskDetailsItem("starSolid", "Marcado como importante", "close")
+			: taskDetailsItem("star", "Marcar como importante", "")
+
+		const _container = taskDetailsStarItem.querySelector(".task-details-info-container")
+		if (isImportant) _container.classList.add("selected")
+
+		taskDetailsContainer.append(taskDetailsStarItem, separator())
+	}
+
+	function hasTaskDueDate(dueDate) {
+		const taskDetailsDueItem = dueDate ? taskDetailsItem("clock", "Vencimiento", "close") : taskDetailsItem("clock", "Añadir vencimiento", "")
+
+		const _container = taskDetailsDueItem.querySelector(".task-details-info-container")
+		if (dueDate) _container.classList.add("selected")
+
+		taskDetailsContainer.append(taskDetailsDueItem, separator())
+	}
+
+	function project(projectName) {
+		const taskDetailsProjectItem = projectName
+			? taskDetailsItem("folder", projectName, "chevronDown")
+			: taskDetailsItem("folder", "Seleccionar proyecto", "chevronDown")
+
+		const _container = taskDetailsProjectItem.querySelector(".task-details-info-container")
+		if (projectName) _container.classList.add("selected")
+
+		taskDetailsContainer.append(taskDetailsProjectItem)
+	}
 
 	function separator() {
 		const _separator = el("div")
 		_separator.className = "separator"
 		return _separator
 	}
-
-	taskDetailsContainer.appendChild(taskDetailsStarItem)
-	taskDetailsContainer.appendChild(separator())
-	taskDetailsContainer.appendChild(taskDetailsDueItem)
-	taskDetailsContainer.appendChild(separator())
-	taskDetailsContainer.appendChild(taskDetailsProjectItem)
 
 	// -> Adjuntar archivo
 	const taskDetailsAttachContainer = el("div")
@@ -235,9 +266,9 @@ export function taskPanelComponent() {
 	buttonsContainer.append(btnSave, btnDelete)
 	taskPanelContainer.appendChild(buttonsContainer)
 
-	const display = () => taskPanel
+	const display = () => content.appendChild(taskPanel)
 
-	return { display, taskTitle }
+	return { display, taskTitle, tickIcon, isTaskImportant, hasTaskDueDate, project }
 }
 
 function mainSectionComponent() {
@@ -298,9 +329,6 @@ function taskListComponent() {
 
 	const taskCardListContainer = el("div")
 	taskCardListContainer.className = "task-card-list-container"
-
-	// const taskCardOne = taskCardUI().display()
-	// const taskCardTwo = taskCardUI().display()
 
 	taskListContainer.appendChild(taskGroupContainer)
 	taskGroupContainer.append(taskGroupNameContainer, taskCardListContainer)

@@ -91,9 +91,9 @@ function cardEventListeners() {
 				card.toggleAttribute("card-selected")
 
 				const taskPanel = document.getElementById("task-panel")
-				const isTaskPanelOpen = taskPanel ? true : false
+				const isTaskPanelOpened = taskPanel ? true : false
 
-				if (!isTaskPanelOpen) return openTaskPanel()
+				if (!isTaskPanelOpened) return openTaskPanel()
 
 				taskPanel.remove()
 				openTaskPanel()
@@ -113,9 +113,7 @@ function cardEventListeners() {
 // TASK-PANEL
 function openTaskPanel() {
 	const taskPanelDOM = taskPanelComponent()
-
-	const taskPanelHTML = document.getElementById("task-panel")
-	// taskPanel.classList.toggle("hide")
+	const taskPanel = taskPanelDOM.display()
 
 	// Determinar tarea seleccionada
 	const cardSelected = document.querySelector("[card-selected]")
@@ -133,8 +131,40 @@ function openTaskPanel() {
 	const isFileAttached = taskFromList.isFileAttached
 
 	// Añadir propiedades a DOM.js
+	taskPanelDOM.tickIcon(isCompleted)
 	taskPanelDOM.taskTitle(taskTitle)
+	taskPanelDOM.isTaskImportant(isImportant)
+	taskPanelDOM.hasTaskDueDate(dueDate)
+	taskPanelDOM.project(projectName)
 
-	const taskPanel = taskPanelDOM.display()
-	content.appendChild(taskPanel)
+	taskPanelEventListeners()
+}
+
+function taskPanelEventListeners() {
+	const taskPanel = document.getElementById("task-panel")
+
+	// Tick título
+
+	// Tick pasos
+
+	// Agrgar pasos
+
+	// Marcar como importante
+
+	// Añadir vencimiento
+
+	// Añadir proyecto
+
+	// Adjuntar archivo
+
+	// Agregar una nota
+
+	// Close task panel
+	const btnClose = document.getElementById("btn-close-panel")
+	btnClose.addEventListener("click", () => {
+		const cardSelected = document.querySelector("[card-selected]")
+		cardSelected.toggleAttribute("card-selected")
+
+		taskPanel.remove()
+	})
 }
