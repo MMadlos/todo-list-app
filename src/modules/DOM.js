@@ -262,16 +262,16 @@ export function taskPanelComponent() {
 	taskInfoContainer.appendChild(taskDetailsAttachContainer)
 
 	// -> Agregar nota
-	const taskInputNote = el("textarea")
-	taskInputNote.id = "add-note-field"
-	taskInputNote.placeholder = "Agregar nota"
 
 	function note(taskNote) {
-		if (taskNote === "") return
-		taskInputNote.textContent = taskNote
-	}
+		const taskInputNote = el("textarea")
+		taskInputNote.id = "add-note-field"
+		taskInputNote.placeholder = "Agregar nota"
 
-	taskInfoContainer.appendChild(taskInputNote)
+		if (taskNote) taskInputNote.textContent = taskNote
+
+		taskInfoContainer.appendChild(taskInputNote)
+	}
 
 	// Botones
 	const buttonsContainer = el("div")

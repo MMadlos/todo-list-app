@@ -39,6 +39,8 @@ body {
 	font-family: "Inter", sans-serif;
 	color: var(--text-default);
 	font-weight: 500;
+
+	cursor: default;
 }
 
 img,
@@ -52,6 +54,7 @@ video {
 button {
 	border: none;
 	background: none;
+	cursor: pointer;
 }
 
 /* UTILITIES */
