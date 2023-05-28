@@ -54,7 +54,7 @@ const secondTask = {
 	dueDate: "Hoy",
 	project: "Tutorial",
 	isFileAttached: true,
-	note: "",
+	note: "Esto es una nota por defecto",
 }
 
 const thirdTask = {

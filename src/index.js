@@ -171,6 +171,7 @@ function openTaskPanel() {
 	const dueDate = taskFromList.dueDate
 	const projectName = taskFromList.project
 	const isFileAttached = taskFromList.isFileAttached
+	const taskNote = taskFromList.note
 
 	// Añadir propiedades a DOM.js
 	taskPanelDOM.tickIcon(isCompleted)
@@ -179,6 +180,8 @@ function openTaskPanel() {
 	taskPanelDOM.hasTaskDueDate(dueDate)
 	taskPanelDOM.project(projectName)
 	taskPanelDOM.taskStepsList(taskSteps)
+	taskPanelDOM.file(isFileAttached)
+	taskPanelDOM.note(taskNote)
 
 	taskPanelEventListeners()
 }

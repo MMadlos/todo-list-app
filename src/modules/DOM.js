@@ -246,18 +246,30 @@ export function taskPanelComponent() {
 	}
 
 	// -> Adjuntar archivo
+
 	const taskDetailsAttachContainer = el("div")
 	taskDetailsAttachContainer.id = "task-attach-container"
 
-	const taskDetailsAttachItem = taskDetailsItem("clip", "Adjuntar archivo", "close")
+	function file(isFileAttached) {
+		const taskFileItem = isFileAttached ? taskDetailsItem("clip", "Archivo adjunto", "close") : taskDetailsItem("clip", "Adjuntar archivo", "")
+
+		const _container = taskFileItem.querySelector(".task-details-info-container")
+		if (isFileAttached) _container.classList.add("selected")
+
+		taskDetailsAttachContainer.append(taskFileItem)
+	}
 
 	taskInfoContainer.appendChild(taskDetailsAttachContainer)
-	taskDetailsAttachContainer.appendChild(taskDetailsAttachItem)
 
 	// -> Agregar nota
 	const taskInputNote = el("textarea")
 	taskInputNote.id = "add-note-field"
 	taskInputNote.placeholder = "Agregar nota"
+
+	function note(taskNote) {
+		if (taskNote === "") return
+		taskInputNote.textContent = taskNote
+	}
 
 	taskInfoContainer.appendChild(taskInputNote)
 
@@ -273,7 +285,7 @@ export function taskPanelComponent() {
 
 	const display = () => content.appendChild(taskPanel)
 
-	return { display, taskTitle, tickIcon, isTaskImportant, hasTaskDueDate, project, taskStepsList }
+	return { display, taskTitle, tickIcon, isTaskImportant, hasTaskDueDate, project, taskStepsList, file, note }
 }
 
 function mainSectionComponent() {
