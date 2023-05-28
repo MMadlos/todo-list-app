@@ -1,6 +1,6 @@
 import "./styles.css"
 import { newUI, taskCardUI, taskPanelComponent } from ".//modules/DOM"
-import { createTask, taskList } from "./modules/task.js"
+import { taskList } from "./modules/task.js"
 
 newUI()
 const content = document.getElementById("content")
@@ -51,6 +51,7 @@ function cardEventListeners() {
 			cardIndex = card.dataset.index
 		})
 
+		// Hover effect
 		const tickIcon = card.querySelector(".task-info-container > i")
 		const isTickIconNotCompleted = tickIcon.classList.contains("fa-square")
 
@@ -65,8 +66,18 @@ function cardEventListeners() {
 			})
 		}
 
+		// Event listeners
 		card.addEventListener("click", (e) => {
 			const taskFromList = taskList[cardIndex]
+
+			const hasCardSelectedAttribute = card.hasAttribute("card-selected")
+			if (!hasCardSelectedAttribute) {
+				allCards.forEach((card) => {
+					card.removeAttribute("card-selected")
+				})
+
+				card.setAttribute("card-selected", "")
+			}
 
 			const clickedElement = e.target
 			const isTickIcon = clickedElement == tickIcon
@@ -74,40 +85,71 @@ function cardEventListeners() {
 
 			if (isTickIcon) {
 				const isTaskCompleted = taskFromList.isCompleted
-
 				isTaskCompleted ? (taskFromList.isCompleted = false) : (taskFromList.isCompleted = true)
+
+				if (hasCardSelectedAttribute) {
+					updateTaskList()
+					const newCardElement = document.querySelector(`[data-index="${cardIndex}"]`)
+					newCardElement.setAttribute("card-selected", "")
+
+					updateTaskPanel()
+
+					return
+				}
+
+				if (!hasCardSelectedAttribute) {
+					// TODO ---> Revisar. Se selecciona la nueva tarjeta porque añadmos card.setAttribute de nuevo
+					// Buscar si hay una tarjeta con la propiedad
+					const selectedElement = document.querySelector(`[card-selected]`)
+
+					// Si la hay, guardar el valor
+					// Añadir card-selected después de updateTaskList
+					updateTaskList()
+
+					// TODO --> Conseguir y mantener el índice del elemento seleccionado anterior
+					const oldCardElement = document.querySelector(`[data-index="${cardIndex}"]`)
+					oldCardElement.setAttribute("card-selected", "")
+
+					return
+				}
 			}
 
 			if (isStarIcon) {
 				const isTaskImportant = taskFromList.isImportant
 				isTaskImportant ? (taskFromList.isImportant = false) : (taskFromList.isImportant = true)
+
+				if (hasCardSelectedAttribute) {
+					updateTaskList()
+					const newCardElement = document.querySelector(`[data-index="${cardIndex}"]`)
+					newCardElement.setAttribute("card-selected", "")
+
+					updateTaskPanel()
+
+					return
+				}
+
+				updateTaskList()
 			}
 
 			if (!isTickIcon && !isStarIcon) {
-				allCards.forEach((card) => {
-					card.removeAttribute("card-selected")
-				})
-
-				card.toggleAttribute("card-selected")
+				card.setAttribute("card-selected", "")
 
 				const taskPanel = document.getElementById("task-panel")
 				const isTaskPanelOpened = taskPanel ? true : false
-
 				if (!isTaskPanelOpened) return openTaskPanel()
-
-				taskPanel.remove()
-				openTaskPanel()
-
+				updateTaskPanel()
 				return
 			}
-
-			allCards.forEach((card) => {
-				card.remove()
-			})
-
-			displayTaskList()
 		})
 	})
+}
+
+function updateTaskList() {
+	const allCards = cardListContainer.querySelectorAll(".task-card-container")
+	allCards.forEach((card) => {
+		card.remove()
+	})
+	displayTaskList()
 }
 
 // TASK-PANEL
@@ -136,8 +178,17 @@ function openTaskPanel() {
 	taskPanelDOM.isTaskImportant(isImportant)
 	taskPanelDOM.hasTaskDueDate(dueDate)
 	taskPanelDOM.project(projectName)
+	taskPanelDOM.taskStepsList(taskSteps)
 
 	taskPanelEventListeners()
+}
+
+function updateTaskPanel() {
+	const taskPanel = document.getElementById("task-panel")
+	if (!taskPanel) return
+
+	taskPanel.remove()
+	openTaskPanel()
 }
 
 function taskPanelEventListeners() {

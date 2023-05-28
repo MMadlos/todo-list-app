@@ -7,7 +7,7 @@ export const taskList = []
 export function createTask(taskTitle) {
 	const properties = {
 		title: taskTitle,
-		steps: {},
+		steps: [],
 		isCompleted: false,
 		isImportant: false,
 		dueDate: "",
@@ -24,7 +24,7 @@ export function createTask(taskTitle) {
 // Default tasks
 const firstTask = {
 	title: "First Task",
-	steps: {},
+	steps: [],
 	isCompleted: false,
 	isImportant: false,
 	dueDate: "",
@@ -35,7 +35,20 @@ const firstTask = {
 
 const secondTask = {
 	title: "Second Task",
-	steps: {},
+	steps: [
+		{
+			isCompleted: true,
+			stepName: "Primer paso",
+		},
+		{
+			isCompleted: true,
+			stepName: "Segundo paso",
+		},
+		{
+			isCompleted: false,
+			stepName: "Tercer paso",
+		},
+	],
 	isCompleted: true,
 	isImportant: true,
 	dueDate: "Hoy",
@@ -46,7 +59,7 @@ const secondTask = {
 
 const thirdTask = {
 	title: "Third Task",
-	steps: {},
+	steps: [],
 	isCompleted: false,
 	isImportant: true,
 	dueDate: "Mañana",
@@ -56,53 +69,3 @@ const thirdTask = {
 }
 
 taskList.push(firstTask, secondTask, thirdTask)
-
-//! OLD CODE ----------
-// const allProjects = []
-
-// function newProject(name) {
-// 	const taskList = []
-// 	let projectName = name
-// 	allProjects[projectName] = taskList
-
-// 	const setName = (name) => (projectName = name)
-// 	const getName = () => projectName
-
-// 	function addTask(task) {
-// 		// Search for the highest ID number of the taskList and apply the next ID number for the new task
-// 		let arrayID = []
-// 		for (const task of taskList) {
-// 			arrayID.push(task.id)
-// 		}
-// 		const maxID = Math.max(...arrayID)
-
-// 		// Add task to the taskList
-// 		task.id = task.id ?? maxID + 1
-// 		taskList.push(task)
-// 	}
-
-// 	function getTaskByID(ID) {
-// 		let taskFromList
-
-// 		for (const task of taskList) {
-// 			const hasSameID = ID === task.id
-// 			if (hasSameID) taskFromList = task
-// 		}
-
-// 		return taskFromList
-// 	}
-
-// 	function sortTasksByID() {
-// 		taskList.sort((a, b) => {
-// 			return a.id - b.id
-// 		})
-// 	}
-
-// 	return { taskList, addTask, getTaskByID, sortTasksByID, setName, getName }
-// }
-
-// function NewTask({ id, title, priority, project, done }) {
-// 	return { id, title, priority, project, done }
-// }
-
-// export { newProject, NewTask, allProjects }

@@ -158,23 +158,28 @@ export function taskPanelComponent() {
 	taskStepsContainer.appendChild(taskTitleContainer)
 
 	// Steps
-	function subTaskItem() {
-		const subTaskContainer = el("div")
-		subTaskContainer.className = "task-step-container"
+	function taskStepsList(taskStepsList) {
+		const stepsList = taskStepsList
+		stepsList.forEach((step) => {
+			const isStepCompleted = step.isCompleted
+			const stepText = step.stepName
 
-		const tickIcon = IconGenerator("checkEmpty", "size-16")
+			const stepContainer = el("div")
+			stepContainer.className = "task-step-container"
 
-		const subTaskText = el("p")
-		subTaskText.textContent = "Paso por defecto"
+			const tickIcon = isStepCompleted ? IconGenerator("checkDone", "size-16") : IconGenerator("checkEmpty", "size-16")
 
-		subTaskContainer.append(tickIcon, subTaskText)
+			const stepTextDOM = el("p")
+			stepTextDOM.textContent = stepText
+			if (isStepCompleted) stepTextDOM.classList.add("task-done")
 
-		return subTaskContainer
+			stepContainer.append(tickIcon, stepTextDOM)
+			taskStepsContainer.append(stepContainer)
+		})
+
+		const btnAddStep = createButton("addStep")
+		taskStepsContainer.append(btnAddStep)
 	}
-
-	const btnAddStep = createButton("addStep")
-
-	taskStepsContainer.append(subTaskItem(), subTaskItem(), subTaskItem(), btnAddStep)
 
 	// TASK DETAILS
 	const taskDetailsContainer = el("div")
@@ -268,7 +273,7 @@ export function taskPanelComponent() {
 
 	const display = () => content.appendChild(taskPanel)
 
-	return { display, taskTitle, tickIcon, isTaskImportant, hasTaskDueDate, project }
+	return { display, taskTitle, tickIcon, isTaskImportant, hasTaskDueDate, project, taskStepsList }
 }
 
 function mainSectionComponent() {
