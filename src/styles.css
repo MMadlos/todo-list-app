@@ -288,11 +288,26 @@ i.size-12 {
 
 .task-panel-title-container {
 	display: flex;
+	align-items: center;
 	gap: 16px;
 	padding: 8px 0;
 
 	font-size: 1.3rem;
 	font-weight: 600;
+}
+
+.task-panel-title-container > input {
+	color: var(--text-default);
+	padding: 8px;
+	border: none;
+}
+
+.task-panel-title-container > input:focus {
+	border-radius: 4px;
+	color: var(--text-light);
+	text-decoration: none;
+	border: 2px solid var(--stroke-grey-dark);
+	outline: none;
 }
 
 .task-panel-title-container > i {
@@ -464,7 +479,7 @@ textarea:focus {
 
 .task-done {
 	text-decoration: line-through;
-	color: var(--text-light);
+	color: var(--text-light) !important;
 }
 
 .task-info-container {

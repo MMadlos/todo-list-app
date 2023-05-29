@@ -4,16 +4,10 @@ import { taskList } from "./modules/task.js"
 
 newUI()
 
-const content = document.getElementById("content")
 const cardListContainer = document.querySelector(".task-card-list-container")
-
 displayTaskList()
-function displayTaskList() {
-	taskListDOM()
-	cardEventListeners()
-}
 
-function taskListDOM() {
+function displayTaskList() {
 	taskList.forEach((task) => {
 		const taskCard = taskCardUI()
 		const taskCardDOM = taskCard.display()
@@ -42,6 +36,8 @@ function taskListDOM() {
 		const taskIndex = taskList.indexOf(task)
 		taskCardDOM.dataset.index = taskIndex
 	})
+
+	cardEventListeners()
 }
 
 function cardEventListeners() {
@@ -49,20 +45,17 @@ function cardEventListeners() {
 	allCards.forEach((card) => {
 		// Hover effect
 		const tickIcon = card.querySelector(".task-info-container > i")
-		tickIcon.addEventListener("mouseover", () => {
-			tickIcon.classList.toggle("fa-square")
-			tickIcon.classList.toggle("fa-square-check")
-		})
-		tickIcon.addEventListener("mouseout", () => {
-			tickIcon.classList.toggle("fa-square")
-			tickIcon.classList.toggle("fa-square-check")
+		;["mouseover", "mouseout"].forEach((event) => {
+			tickIcon.addEventListener(event, () => {
+				tickIcon.classList.toggle("fa-square")
+				tickIcon.classList.toggle("fa-square-check")
+			})
 		})
 
-		// Get card index
 		let cardIndex
-		card.addEventListener("mouseenter", () => {
+		card.onmouseenter = () => {
 			cardIndex = card.dataset.index
-		})
+		}
 
 		// Event listeners
 		card.addEventListener("click", (e) => {
@@ -76,6 +69,14 @@ function cardEventListeners() {
 			const isTickIcon = clickedElement == tickIcon
 			const isStarIcon = clickedElement.classList.contains("fa-star")
 
+			if (!isCardSelected && !isStarIcon && !isTickIcon) {
+				allCards.forEach((card) => {
+					card.removeAttribute("card-selected")
+				})
+
+				card.setAttribute("card-selected", "")
+			}
+
 			if (isTickIcon) {
 				const isTaskCompleted = taskFromList.isCompleted
 				isTaskCompleted ? (taskFromList.isCompleted = false) : (taskFromList.isCompleted = true)
@@ -85,8 +86,6 @@ function cardEventListeners() {
 				tickIcon.classList.toggle("fa-square-check")
 				tickIcon.classList.toggle("fa-square")
 				tickIcon.nextElementSibling.querySelector("p").classList.toggle("task-done")
-
-				if (isTaskPanelOpened) updateTaskPanel()
 			}
 
 			if (isStarIcon) {
@@ -97,31 +96,11 @@ function cardEventListeners() {
 				starIcon.classList.toggle("fa-solid")
 				starIcon.classList.toggle("fa-regular")
 				starIcon.classList.toggle("is-important")
-
-				if (isTaskPanelOpened) updateTaskPanel()
 			}
 
-			if (!isTickIcon && !isStarIcon) {
-				if (!isCardSelected) {
-					allCards.forEach((card) => {
-						card.removeAttribute("card-selected")
-					})
-
-					card.setAttribute("card-selected", "")
-				}
-
-				isTaskPanelOpened ? updateTaskPanel() : openTaskPanel()
-			}
+			isTaskPanelOpened ? updateTaskPanel() : openTaskPanel()
 		})
 	})
-}
-
-function updateTaskList() {
-	const allCards = cardListContainer.querySelectorAll(".task-card-container")
-	allCards.forEach((card) => {
-		card.remove()
-	})
-	displayTaskList()
 }
 
 // TASK-PANEL
@@ -129,13 +108,10 @@ function openTaskPanel() {
 	const taskPanelDOM = taskPanelComponent()
 	taskPanelDOM.display()
 
-	// Determinar tarea seleccionada
 	const cardSelected = document.querySelector("[card-selected]")
 	const indexCard = cardSelected.dataset.index
 
-	// Recoger propiedades de la tarea
 	const taskFromList = taskList[indexCard]
-
 	const isCompleted = taskFromList.isCompleted
 	const taskTitle = taskFromList.title
 	const taskSteps = taskFromList.steps
@@ -145,7 +121,6 @@ function openTaskPanel() {
 	const isFileAttached = taskFromList.isFileAttached
 	const taskNote = taskFromList.note
 
-	// Añadir propiedades a DOM.js
 	taskPanelDOM.tickIcon(isCompleted)
 	taskPanelDOM.taskTitle(taskTitle)
 	taskPanelDOM.taskStepsList(taskSteps)
@@ -169,28 +144,140 @@ function updateTaskPanel() {
 function taskPanelEventListeners() {
 	const taskPanel = document.getElementById("task-panel")
 
-	// Tick título
+	// Check Icon --> Hover effect
+	const tickIcon = taskPanel.querySelector(".task-panel-title-container > i")
+	;["mouseover", "mouseout"].forEach((event) => {
+		tickIcon.addEventListener(event, () => {
+			tickIcon.classList.toggle("fa-square")
+			tickIcon.classList.toggle("fa-square-check")
+		})
+	})
 
-	// Tick pasos
+	// Dask details info
+	const taskItemContainerAll = taskPanel.querySelectorAll(".task-details-item-container")
 
-	// Agrgar pasos
+	const importantContainer = taskItemContainerAll[0]
+	const importantInfoContainer = importantContainer.querySelector(".task-details-info-container")
+	importantContainer.addEventListener("click", (e) => {
+		const iconClose = importantContainer.querySelector(".fa-xmark")
+		const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
 
-	// Marcar como importante
+		if (isIconCloseHidden) toggleStyles()
+		if (e.target === iconClose) toggleStyles()
 
-	// Añadir vencimiento
+		function toggleStyles() {
+			const iconStar = importantContainer.querySelector(".fa-star")
+			const text = importantContainer.querySelector("p")
 
-	// Añadir proyecto
+			iconStar.classList.toggle("is-important")
+			iconStar.classList.toggle("fa-solid")
+			iconStar.classList.toggle("fa-regular")
 
-	// Adjuntar archivo
+			text.textContent = isIconCloseHidden ? "Marcado como importante" : "Marcar como importante"
+			importantInfoContainer.classList.toggle("selected")
 
-	// Agregar una nota
+			iconClose.classList.toggle("hide")
 
-	// Close task panel
-	const btnClose = document.getElementById("btn-close-panel")
-	btnClose.addEventListener("click", () => {
-		const cardSelected = document.querySelector("[card-selected]")
-		cardSelected.toggleAttribute("card-selected")
+			const cardSelected = cardListContainer.querySelector("[card-selected")
+			const starIconCardSelected = cardSelected.querySelector(".fa-star")
+			starIconCardSelected.classList.toggle("fa-solid")
+			starIconCardSelected.classList.toggle("fa-regular")
+			starIconCardSelected.classList.toggle("is-important")
+		}
 
-		taskPanel.remove()
+		// TODO --> Update in taskFromTaskList
+	})
+
+	const dueDateContainer = taskItemContainerAll[1]
+	const dueDateInfoContainer = dueDateContainer.querySelector(".task-details-info-container")
+	dueDateContainer.addEventListener("click", (e) => {
+		const iconClose = dueDateContainer.querySelector(".fa-xmark")
+		const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
+
+		if (isIconCloseHidden) toggleStyles()
+		if (e.target === iconClose) toggleStyles()
+
+		function toggleStyles() {
+			const text = dueDateContainer.querySelector("p")
+			text.textContent = isIconCloseHidden ? "Vencimiento" : "Añadir vencimiento"
+
+			dueDateInfoContainer.classList.toggle("selected")
+			iconClose.classList.toggle("hide")
+		}
+
+		// TODO --> Eliminar chip "Hoy" de la tarjeta
+		// TODO --> Update in taskFromTaskList
+	})
+
+	// Bubbling elements
+	const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
+	taskPanel.addEventListener("click", (e) => {
+		if (e.target === tickIcon) {
+			tickIcon.classList.toggle("fa-solid")
+			tickIcon.classList.toggle("fa-regular")
+			tickIcon.classList.toggle("fa-square-check")
+			tickIcon.classList.toggle("fa-square")
+
+			taskTitle.classList.toggle("task-done")
+		}
+
+		// Tick pasos
+
+		// Agregar pasos
+
+		// Marcar como importante
+
+		// Añadir vencimiento
+
+		// Añadir proyecto
+
+		// Adjuntar archivo
+
+		// Agregar una nota
+
+		// Save
+		// Cuando haga click, guardo el valor del título
+		const btnSave = document.getElementById("btn-save")
+		if (e.target === btnSave || e.target === btnSave.querySelector("p")) {
+			// Datos que quiero guardar
+			/*
+			const _getTaskPropertiesFromForm = {
+				title: "",
+				steps: [],
+				isCompleted: false,
+				isImportant: false,
+				dueDate: "",
+				project: "",
+				isFileAttached: false,
+				note: "",
+			}
+			*/
+
+			// Tick icon
+			const _isTaskCompleted = taskPanel.querySelector(".task-panel-title-container > i").classList.contains("task-done")
+
+			// Title
+			const _title = taskTitle.value
+			console.log({ _isTaskCompleted, _title })
+
+			// Steps
+
+			// Importance
+			// Due date
+			// Project
+			// Attached
+			// Note
+		}
+
+		// Delete
+
+		//Close task panel
+		const btnClose = document.getElementById("btn-close-panel")
+		if (e.target === btnClose) {
+			const cardSelected = document.querySelector("[card-selected]")
+			cardSelected.toggleAttribute("card-selected")
+
+			taskPanel.remove()
+		}
 	})
 }

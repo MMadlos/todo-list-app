@@ -126,15 +126,11 @@ export function taskPanelComponent() {
 	// TASK AND STEPS
 	const taskInfoContainer = el("div")
 	taskInfoContainer.id = "task-info-container"
-	taskPanelContainer.appendChild(taskInfoContainer)
 
-	const taskStepsContainer = el("div")
-	taskStepsContainer.className = "task-steps-container"
+	taskPanelContainer.appendChild(taskInfoContainer)
 
 	const taskTitleContainer = el("div")
 	taskTitleContainer.className = "task-panel-title-container"
-
-	const _taskTitle = el("p")
 
 	function tickIcon(completion) {
 		const isCompleted = completion
@@ -149,15 +145,18 @@ export function taskPanelComponent() {
 		taskTitleContainer.append(_tickIcon)
 	}
 
+	const _taskTitle = el("input")
 	function taskTitle(title) {
-		_taskTitle.textContent = title
+		_taskTitle.value = title
 		taskTitleContainer.append(_taskTitle)
 	}
 
-	taskInfoContainer.appendChild(taskStepsContainer)
-	taskStepsContainer.appendChild(taskTitleContainer)
+	const taskStepsContainer = el("div")
+	taskStepsContainer.className = "task-steps-container"
 
-	// Steps
+	taskStepsContainer.appendChild(taskTitleContainer)
+	taskInfoContainer.appendChild(taskStepsContainer)
+
 	function taskStepsList(taskStepsList) {
 		const stepsList = taskStepsList
 		stepsList.forEach((step) => {
@@ -181,7 +180,6 @@ export function taskPanelComponent() {
 		taskStepsContainer.append(btnAddStep)
 	}
 
-	// TASK DETAILS
 	const taskDetailsContainer = el("div")
 	taskDetailsContainer.id = "task-details-container"
 	taskInfoContainer.appendChild(taskDetailsContainer)
@@ -211,19 +209,21 @@ export function taskPanelComponent() {
 	function isTaskImportant(isImportant) {
 		const taskDetailsStarItem = isImportant
 			? taskDetailsItem("starSolid", "Marcado como importante", "close")
-			: taskDetailsItem("star", "Marcar como importante", "")
+			: taskDetailsItem("star", "Marcar como importante", "close")
 
 		const _container = taskDetailsStarItem.querySelector(".task-details-info-container")
 		if (isImportant) _container.classList.add("selected")
+		if (!isImportant) taskDetailsStarItem.querySelector(".fa-xmark").classList.add("hide")
 
 		taskDetailsContainer.append(taskDetailsStarItem, separator())
 	}
 
 	function hasTaskDueDate(dueDate) {
-		const taskDetailsDueItem = dueDate ? taskDetailsItem("clock", "Vencimiento", "close") : taskDetailsItem("clock", "Añadir vencimiento", "")
+		const taskDetailsDueItem = dueDate ? taskDetailsItem("clock", "Vencimiento", "close") : taskDetailsItem("clock", "Añadir vencimiento", "close")
 
 		const _container = taskDetailsDueItem.querySelector(".task-details-info-container")
 		if (dueDate) _container.classList.add("selected")
+		if (!dueDate) taskDetailsDueItem.querySelector(".fa-xmark").classList.add("hide")
 
 		taskDetailsContainer.append(taskDetailsDueItem, separator())
 	}
@@ -246,7 +246,6 @@ export function taskPanelComponent() {
 	}
 
 	// -> Adjuntar archivo
-
 	const taskDetailsAttachContainer = el("div")
 	taskDetailsAttachContainer.id = "task-attach-container"
 
@@ -262,7 +261,6 @@ export function taskPanelComponent() {
 	taskInfoContainer.appendChild(taskDetailsAttachContainer)
 
 	// -> Agregar nota
-
 	function note(taskNote) {
 		const taskInputNote = el("textarea")
 		taskInputNote.id = "add-note-field"
@@ -275,10 +273,10 @@ export function taskPanelComponent() {
 
 	// Botones
 	const buttonsContainer = el("div")
-	buttonsContainer.className = "buttons-container"
-
 	const btnSave = createButton("saveTask")
 	const btnDelete = createButton("deleteProject")
+
+	buttonsContainer.className = "buttons-container"
 
 	buttonsContainer.append(btnSave, btnDelete)
 	taskPanelContainer.appendChild(buttonsContainer)
