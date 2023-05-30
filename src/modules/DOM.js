@@ -211,6 +211,8 @@ export function taskPanelComponent() {
 			? taskDetailsItem("starSolid", "Marcado como importante", "close")
 			: taskDetailsItem("star", "Marcar como importante", "close")
 
+		taskDetailsStarItem.dataset.itemType = "important"
+
 		const _container = taskDetailsStarItem.querySelector(".task-details-info-container")
 		if (isImportant) _container.classList.add("selected")
 		if (!isImportant) taskDetailsStarItem.querySelector(".fa-xmark").classList.add("hide")
@@ -220,6 +222,8 @@ export function taskPanelComponent() {
 
 	function hasTaskDueDate(dueDate) {
 		const taskDetailsDueItem = dueDate ? taskDetailsItem("clock", "Vencimiento", "close") : taskDetailsItem("clock", "Añadir vencimiento", "close")
+
+		taskDetailsDueItem.dataset.itemType = "due-date"
 
 		const _container = taskDetailsDueItem.querySelector(".task-details-info-container")
 		if (dueDate) _container.classList.add("selected")
@@ -232,6 +236,8 @@ export function taskPanelComponent() {
 		const taskDetailsProjectItem = projectName
 			? taskDetailsItem("folder", projectName, "chevronDown")
 			: taskDetailsItem("folder", "Seleccionar proyecto", "chevronDown")
+
+		taskDetailsProjectItem.dataset.itemType = "project-name"
 
 		const _container = taskDetailsProjectItem.querySelector(".task-details-info-container")
 		if (projectName) _container.classList.add("selected")
@@ -251,7 +257,7 @@ export function taskPanelComponent() {
 
 	function file(isFileAttached) {
 		const taskFileItem = isFileAttached ? taskDetailsItem("clip", "Archivo adjunto", "close") : taskDetailsItem("clip", "Adjuntar archivo", "")
-
+		taskFileItem.dataset.itemType = "attach-file"
 		const _container = taskFileItem.querySelector(".task-details-info-container")
 		if (isFileAttached) _container.classList.add("selected")
 
@@ -395,8 +401,7 @@ export function taskCardUI() {
 		return taskCardContainer
 	}
 
-	const { chipInfo } = chipInfoFactory(taskDetailsContainer)
-	const { chipsSeparator } = chipInfoFactory(taskDetailsContainer)
+	const { chipInfo, chipsSeparator } = chipInfoFactory(taskDetailsContainer)
 
 	const display = () => taskCardContainer
 

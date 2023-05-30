@@ -3,8 +3,9 @@ import { newUI, taskCardUI, taskPanelComponent } from ".//modules/DOM"
 import { taskList } from "./modules/task.js"
 
 newUI()
-
+const taskCardArray = []
 const cardListContainer = document.querySelector(".task-card-list-container")
+
 displayTaskList()
 
 function displayTaskList() {
@@ -13,8 +14,7 @@ function displayTaskList() {
 		const taskCardDOM = taskCard.display()
 		cardListContainer.append(taskCardDOM)
 
-		// console.log(taskCard) // Funciona
-		// console.log(taskCardDOM) // Funciona
+		taskCardArray.push(taskCard)
 
 		const taskTitle = task.title
 		const isCompleted = task.isCompleted
@@ -80,26 +80,36 @@ function cardEventListeners() {
 
 			if (isTickIcon) {
 				const isTaskCompleted = taskFromList.isCompleted
-				isTaskCompleted ? (taskFromList.isCompleted = false) : (taskFromList.isCompleted = true)
+				// isTaskCompleted ? (taskFromList.isCompleted = false) : (taskFromList.isCompleted = true)
+
+				taskFromList.isCompleted = isTaskCompleted ? false : true
 
 				tickIcon.classList.toggle("fa-solid")
 				tickIcon.classList.toggle("fa-regular")
 				tickIcon.classList.toggle("fa-square-check")
 				tickIcon.classList.toggle("fa-square")
 				tickIcon.nextElementSibling.querySelector("p").classList.toggle("task-done")
+
+				isCardSelected ?? updateTaskPanel()
 			}
 
 			if (isStarIcon) {
 				const isTaskImportant = taskFromList.isImportant
-				isTaskImportant ? (taskFromList.isImportant = false) : (taskFromList.isImportant = true)
+
+				// isTaskImportant ? (taskFromList.isImportant = false) : (taskFromList.isImportant = true)
+
+				taskFromList.isImprotant = isTaskImportant ? false : true
 
 				const starIcon = card.querySelector(".fa-star")
 				starIcon.classList.toggle("fa-solid")
 				starIcon.classList.toggle("fa-regular")
 				starIcon.classList.toggle("is-important")
+
+				isCardSelected ?? updateTaskPanel()
 			}
 
-			isTaskPanelOpened ? updateTaskPanel() : openTaskPanel()
+			if (!isTaskPanelOpened) openTaskPanel()
+			if (isTaskPanelOpened && !isCardSelected) updateTaskPanel()
 		})
 	})
 }
@@ -136,9 +146,8 @@ function openTaskPanel() {
 
 function updateTaskPanel() {
 	const taskPanel = document.getElementById("task-panel")
-	if (!taskPanel) return
-
 	taskPanel.remove()
+
 	openTaskPanel()
 }
 
@@ -154,61 +163,67 @@ function taskPanelEventListeners() {
 		})
 	})
 
+	// 3 grupos de funcionalidades:
+	// --> 1 Eventos propios del task panel
+	// --> 2 Vincularlos al DOM de la lista de tareaes (ej: al desmarcar vencimiento, tiene que desaparecer el vencimiento de la tarjeta en la lista de tareas)
+	// --> 3 Guardar las propiedades añadidas en el task panel a la tarea de la taskList
+	// Decisión: Sólo se actualizará la lista de tareas al pulsar en "Guardar"
+
 	// Dask details info
 	const taskItemContainerAll = taskPanel.querySelectorAll(".task-details-item-container")
 
 	const importantContainer = taskItemContainerAll[0]
 	const importantInfoContainer = importantContainer.querySelector(".task-details-info-container")
-	importantContainer.addEventListener("click", (e) => {
-		const iconClose = importantContainer.querySelector(".fa-xmark")
-		const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
 
-		if (isIconCloseHidden) toggleStyles()
-		if (e.target === iconClose) toggleStyles()
+	console.log(taskItemContainerAll)
+	taskItemContainerAll.forEach((itemContainer) => {
+		itemContainer.addEventListener("click", (e) => {
+			const itemType = itemContainer.dataset.itemType
 
-		function toggleStyles() {
-			const iconStar = importantContainer.querySelector(".fa-star")
-			const text = importantContainer.querySelector("p")
+			const iconClose = itemContainer.querySelector(".fa-xmark")
+			const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
+			if (isIconCloseHidden) toggleStyles(itemType)
+			if (e.target === iconClose) toggleStyles(itemType)
 
-			iconStar.classList.toggle("is-important")
-			iconStar.classList.toggle("fa-solid")
-			iconStar.classList.toggle("fa-regular")
+			function toggleStyles(type) {
+				console.log(type)
+				const _icon = type === "important" ? importantContainer.querySelector(".fa-star") : importantContainer.querySelector(".fa-xmark")
 
-			text.textContent = isIconCloseHidden ? "Marcado como importante" : "Marcar como importante"
-			importantInfoContainer.classList.toggle("selected")
+				const text = importantContainer.querySelector("p")
 
-			iconClose.classList.toggle("hide")
+				_icon.classList.toggle("is-important")
+				_icon.classList.toggle("fa-solid")
+				_icon.classList.toggle("fa-regular")
 
-			const cardSelected = cardListContainer.querySelector("[card-selected")
-			const starIconCardSelected = cardSelected.querySelector(".fa-star")
-			starIconCardSelected.classList.toggle("fa-solid")
-			starIconCardSelected.classList.toggle("fa-regular")
-			starIconCardSelected.classList.toggle("is-important")
-		}
+				if (type === "important") {
+					text.textContent = isIconCloseHidden ? "Marcado como importante" : "Marcar como importante"
+					itemContainer.querySelector(".task-details-info-container").classList.toggle("selected")
+				}
 
-		// TODO --> Update in taskFromTaskList
+				if (type === "due-date") {
+				}
+				iconClose.classList.toggle("hide")
+			}
+		})
 	})
 
-	const dueDateContainer = taskItemContainerAll[1]
-	const dueDateInfoContainer = dueDateContainer.querySelector(".task-details-info-container")
-	dueDateContainer.addEventListener("click", (e) => {
-		const iconClose = dueDateContainer.querySelector(".fa-xmark")
-		const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
+	// const dueDateContainer = taskItemContainerAll[1]
+	// const dueDateInfoContainer = dueDateContainer.querySelector(".task-details-info-container")
+	// dueDateContainer.addEventListener("click", (e) => {
+	// 	const iconClose = dueDateContainer.querySelector(".fa-xmark")
+	// 	const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
 
-		if (isIconCloseHidden) toggleStyles()
-		if (e.target === iconClose) toggleStyles()
+	// 	if (isIconCloseHidden) toggleStyles()
+	// 	if (e.target === iconClose) toggleStyles()
 
-		function toggleStyles() {
-			const text = dueDateContainer.querySelector("p")
-			text.textContent = isIconCloseHidden ? "Vencimiento" : "Añadir vencimiento"
+	// 	function toggleStyles() {
+	// 		const text = dueDateContainer.querySelector("p")
+	// 		text.textContent = isIconCloseHidden ? "Vencimiento" : "Añadir vencimiento"
 
-			dueDateInfoContainer.classList.toggle("selected")
-			iconClose.classList.toggle("hide")
-		}
-
-		// TODO --> Eliminar chip "Hoy" de la tarjeta
-		// TODO --> Update in taskFromTaskList
-	})
+	// 		dueDateInfoContainer.classList.toggle("selected")
+	// 		iconClose.classList.toggle("hide")
+	// 	}
+	// })
 
 	// Bubbling elements
 	const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
@@ -237,6 +252,10 @@ function taskPanelEventListeners() {
 		// Agregar una nota
 
 		// Save
+		// -> Guardar las nuevas propiedades
+		// -> Cambiarlas en la tarea de taskList
+		// -> Actualizar la lista de tareas que se muestra en pantalla
+
 		// Cuando haga click, guardo el valor del título
 		const btnSave = document.getElementById("btn-save")
 		if (e.target === btnSave || e.target === btnSave.querySelector("p")) {
