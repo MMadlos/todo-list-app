@@ -387,17 +387,6 @@ export function taskCardUI() {
 		return taskTitle
 	}
 
-	function chipInfo(isTrue, type, textContent) {
-		if (!isTrue) return
-
-		let _chip
-		if (type === "date") _chip = createDetailsChip("Hoy", textContent)
-		if (type === "project") _chip = createDetailsChip("Tutorial", textContent)
-		if (type === "file") _chip = createDetailsChip("Attach")
-
-		taskDetailsContainer.appendChild(_chip)
-	}
-
 	function iconImportant(isImportant) {
 		const _isImportant = isImportant
 		const _icon = _isImportant ? IconGenerator("starSolid", "size-21") : IconGenerator("star", "size-21")
@@ -406,11 +395,31 @@ export function taskCardUI() {
 		return taskCardContainer
 	}
 
-	function addChipSeparator() {
-		const detailContainers = taskDetailsContainer.querySelectorAll(".detailContainer")
+	const { chipInfo } = chipInfoFactory(taskDetailsContainer)
+	const { chipsSeparator } = chipInfoFactory(taskDetailsContainer)
+
+	const display = () => taskCardContainer
+
+	return { display, title, tickIcon, iconImportant, chipInfo, chipsSeparator }
+}
+
+function chipInfoFactory(containerToAppend) {
+	const chipInfo = (isTrue, type, textContent) => {
+		if (!isTrue) return
+
+		let _chip
+		if (type === "date") _chip = createDetailsChip("Hoy", textContent)
+		if (type === "project") _chip = createDetailsChip("Tutorial", textContent)
+		if (type === "file") _chip = createDetailsChip("Attach")
+
+		containerToAppend.appendChild(_chip)
+	}
+
+	const chipsSeparator = () => {
+		const detailContainers = containerToAppend.querySelectorAll(".detailContainer")
 		const chipCount = detailContainers.length
 
-		if (chipCount === 0) taskDetailsContainer.remove()
+		if (chipCount === 0) containerToAppend.remove()
 		if (chipCount > 1) {
 			for (let i = 0; i < chipCount - 1; i++) {
 				detailContainers[i].after(taskDetailsSeparator())
@@ -418,9 +427,7 @@ export function taskCardUI() {
 		}
 	}
 
-	const display = () => taskCardContainer
-
-	return { display, title, tickIcon, iconImportant, chipInfo, addChipSeparator }
+	return { chipInfo, chipsSeparator }
 }
 
 function createDetailsChip(chipName, textContent = "Archivo adjunto") {

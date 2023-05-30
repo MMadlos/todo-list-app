@@ -11,6 +11,10 @@ function displayTaskList() {
 	taskList.forEach((task) => {
 		const taskCard = taskCardUI()
 		const taskCardDOM = taskCard.display()
+		cardListContainer.append(taskCardDOM)
+
+		// console.log(taskCard) // Funciona
+		// console.log(taskCardDOM) // Funciona
 
 		const taskTitle = task.title
 		const isCompleted = task.isCompleted
@@ -28,10 +32,7 @@ function displayTaskList() {
 		taskCard.chipInfo(hasDueDate, "date", dueDate)
 		taskCard.chipInfo(hasProject, "project", projectName)
 		taskCard.chipInfo(hasFileAttached, "file")
-
-		taskCard.addChipSeparator()
-
-		cardListContainer.append(taskCardDOM)
+		taskCard.chipsSeparator()
 
 		const taskIndex = taskList.indexOf(task)
 		taskCardDOM.dataset.index = taskIndex

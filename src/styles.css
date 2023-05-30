@@ -357,6 +357,13 @@ i.size-12 {
 	background-color: var(--stroke-grey);
 }
 
+.task-details-item-container > i {
+	color: var(--text-light);
+}
+.task-details-item-container > i:hover {
+	opacity: 50%;
+}
+
 .task-details-info-container {
 	display: flex;
 	gap: 16px;
