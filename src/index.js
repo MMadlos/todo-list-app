@@ -154,7 +154,7 @@ function updateTaskPanel() {
 function taskPanelEventListeners() {
 	const taskPanel = document.getElementById("task-panel")
 
-	// Check Icon --> Hover effect
+	// CHECK ICON --> Hover effect
 	const tickIcon = taskPanel.querySelector(".task-panel-title-container > i")
 	;["mouseover", "mouseout"].forEach((event) => {
 		tickIcon.addEventListener(event, () => {
@@ -169,61 +169,46 @@ function taskPanelEventListeners() {
 	// --> 3 Guardar las propiedades añadidas en el task panel a la tarea de la taskList
 	// Decisión: Sólo se actualizará la lista de tareas al pulsar en "Guardar"
 
-	// Dask details info
+	// TASK DETAILS - IMPORTANT | DUE DATE | PROJECT ASIGNED | ATTACH FILE
 	const taskItemContainerAll = taskPanel.querySelectorAll(".task-details-item-container")
-
-	const importantContainer = taskItemContainerAll[0]
-	const importantInfoContainer = importantContainer.querySelector(".task-details-info-container")
-
-	console.log(taskItemContainerAll)
 	taskItemContainerAll.forEach((itemContainer) => {
 		itemContainer.addEventListener("click", (e) => {
+			// Recojo tipo de elemento (importante | Vencimiento | Proyecto | Archivo adjunto)
 			const itemType = itemContainer.dataset.itemType
 
-			const iconClose = itemContainer.querySelector(".fa-xmark")
-			const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
-			if (isIconCloseHidden) toggleStyles(itemType)
-			if (e.target === iconClose) toggleStyles(itemType)
+			// Si es importante o vencimiento, si no está marcado, se marca al hacer click en el contenedor. Si está marcado, sólo se desmarca al hacer click en el icono de cerrar.
+			if (itemType === "important" || itemType === "due-date" || itemType === "attach-file") {
+				const iconClose = itemContainer.querySelector(".fa-xmark")
+				const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
 
-			function toggleStyles(type) {
-				console.log(type)
-				const _icon = type === "important" ? importantContainer.querySelector(".fa-star") : importantContainer.querySelector(".fa-xmark")
+				if (!isIconCloseHidden && e.target !== iconClose) return
 
-				const text = importantContainer.querySelector("p")
+				const text = itemContainer.querySelector("p")
 
-				_icon.classList.toggle("is-important")
-				_icon.classList.toggle("fa-solid")
-				_icon.classList.toggle("fa-regular")
+				if (itemType === "important") {
+					const _icon = itemContainer.querySelector(".fa-star")
+					_icon.classList.toggle("is-important", "fa-solid")
+					_icon.classList.toggle("fa-solid")
+					_icon.classList.toggle("fa-regular")
 
-				if (type === "important") {
 					text.textContent = isIconCloseHidden ? "Marcado como importante" : "Marcar como importante"
-					itemContainer.querySelector(".task-details-info-container").classList.toggle("selected")
 				}
 
-				if (type === "due-date") {
-				}
+				if (itemType === "due-date") text.textContent = isIconCloseHidden ? `Vence el "xxxx"` : "Añadir vencimiento"
+				if (itemType === "attach-file") text.textContent = isIconCloseHidden ? `Archivo adjunto` : "Adjuntar archivo"
+
 				iconClose.classList.toggle("hide")
+				itemContainer.querySelector(".task-details-info-container").classList.toggle("selected")
+			}
+
+			const iconChevron = itemContainer.querySelector(".fa-chevron-down")
+			if (e.target === iconChevron) {
+				console.log("CHEVRON")
+				// TODO --> Cuando no haya un proyecto seleccionado, el Chevron apunta a la derecha. Al hacer click, despliega la lista de proyectos.
+				// TODO --> Cuando hay un proyecto seleccionado y se hace click en Chevron, se despliega la lista de proyectos
 			}
 		})
 	})
-
-	// const dueDateContainer = taskItemContainerAll[1]
-	// const dueDateInfoContainer = dueDateContainer.querySelector(".task-details-info-container")
-	// dueDateContainer.addEventListener("click", (e) => {
-	// 	const iconClose = dueDateContainer.querySelector(".fa-xmark")
-	// 	const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
-
-	// 	if (isIconCloseHidden) toggleStyles()
-	// 	if (e.target === iconClose) toggleStyles()
-
-	// 	function toggleStyles() {
-	// 		const text = dueDateContainer.querySelector("p")
-	// 		text.textContent = isIconCloseHidden ? "Vencimiento" : "Añadir vencimiento"
-
-	// 		dueDateInfoContainer.classList.toggle("selected")
-	// 		iconClose.classList.toggle("hide")
-	// 	}
-	// })
 
 	// Bubbling elements
 	const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
@@ -237,19 +222,19 @@ function taskPanelEventListeners() {
 			taskTitle.classList.toggle("task-done")
 		}
 
-		// Tick pasos
+		const tickIconSteps = taskPanel.querySelectorAll(".task-step-container > i")
+		tickIconSteps.forEach((tick) => {
+			if (e.target === tick || e.target === tick.nextElementSibling) {
+				console.log("Funciona")
 
-		// Agregar pasos
+				tick.classList.toggle("fa-solid")
+				tick.classList.toggle("fa-regular")
+				tick.classList.toggle("fa-square-check")
+				tick.classList.toggle("fa-square")
 
-		// Marcar como importante
-
-		// Añadir vencimiento
-
-		// Añadir proyecto
-
-		// Adjuntar archivo
-
-		// Agregar una nota
+				tick.nextElementSibling.classList.toggle("task-done")
+			}
+		})
 
 		// Save
 		// -> Guardar las nuevas propiedades
