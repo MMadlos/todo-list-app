@@ -39,6 +39,7 @@ function displayTaskList() {
 	})
 
 	cardEventListeners()
+	addNewTaskBtn()
 }
 
 function cardEventListeners() {
@@ -95,8 +96,6 @@ function cardEventListeners() {
 
 			if (isStarIcon) {
 				const isTaskImportant = taskFromList.isImportant
-
-				// isTaskImportant ? (taskFromList.isImportant = false) : (taskFromList.isImportant = true)
 
 				taskFromList.isImprotant = isTaskImportant ? false : true
 
@@ -201,11 +200,19 @@ function taskPanelEventListeners() {
 				itemContainer.querySelector(".task-details-info-container").classList.toggle("selected")
 			}
 
-			const iconChevron = itemContainer.querySelector(".fa-chevron-down")
-			if (e.target === iconChevron) {
-				console.log("CHEVRON")
-				// TODO --> Cuando no haya un proyecto seleccionado, el Chevron apunta a la derecha. Al hacer click, despliega la lista de proyectos.
-				// TODO --> Cuando hay un proyecto seleccionado y se hace click en Chevron, se despliega la lista de proyectos
+			if (itemType === "project-name") {
+				const text = itemContainer.querySelector("p")
+				const iconChevron = itemContainer.querySelector(".fa-chevron-down")
+					? itemContainer.querySelector(".fa-chevron-down")
+					: itemContainer.querySelector(".fa-chevron-right")
+
+				text.textContent = itemContainer.querySelector(".fa-chevron-down") ? "Seleccionar proyecto" : "Tutorial"
+
+				itemContainer.querySelector(".task-details-info-container").classList.toggle("selected")
+
+				if (e.target !== iconChevron) return
+				iconChevron.classList.toggle("fa-chevron-down")
+				iconChevron.classList.toggle("fa-chevron-right")
 			}
 		})
 	})
@@ -236,46 +243,6 @@ function taskPanelEventListeners() {
 			}
 		})
 
-		// Save
-		// -> Guardar las nuevas propiedades
-		// -> Cambiarlas en la tarea de taskList
-		// -> Actualizar la lista de tareas que se muestra en pantalla
-
-		// Cuando haga click, guardo el valor del título
-		const btnSave = document.getElementById("btn-save")
-		if (e.target === btnSave || e.target === btnSave.querySelector("p")) {
-			// Datos que quiero guardar
-			/*
-			const _getTaskPropertiesFromForm = {
-				title: "",
-				steps: [],
-				isCompleted: false,
-				isImportant: false,
-				dueDate: "",
-				project: "",
-				isFileAttached: false,
-				note: "",
-			}
-			*/
-
-			// Tick icon
-			const _isTaskCompleted = taskPanel.querySelector(".task-panel-title-container > i").classList.contains("task-done")
-
-			// Title
-			const _title = taskTitle.value
-			console.log({ _isTaskCompleted, _title })
-
-			// Steps
-
-			// Importance
-			// Due date
-			// Project
-			// Attached
-			// Note
-		}
-
-		// Delete
-
 		//Close task panel
 		const btnClose = document.getElementById("btn-close-panel")
 		if (e.target === btnClose) {
@@ -284,5 +251,77 @@ function taskPanelEventListeners() {
 
 			taskPanel.remove()
 		}
+	})
+
+	// Save
+	// -> Guardar las nuevas propiedades
+	// -> Cambiarlas en la tarea de taskList
+	// -> Actualizar la lista de tareas que se muestra en pantalla
+
+	// Cuando haga click, guardo el valor del título
+	const btnSave = document.getElementById("btn-save")
+	btnSave.addEventListener("click", () => {
+		// Datos que quiero guardar
+		const _getValues = {
+			title: "",
+			steps: [],
+			isCompleted: false,
+			isImportant: false,
+			dueDate: "",
+			project: "",
+			isFileAttached: false,
+			note: "",
+		}
+
+		// From form:
+		_getValues.title = taskTitle.value
+
+		const allSteps = taskPanel.querySelectorAll(".task-step-container")
+		const stepsList = []
+		allSteps.forEach((step) => {
+			const isCompleted = step.querySelector("p").classList.contains("task-done")
+			const stepName = step.querySelector("p").textContent
+
+			const stepObject = { isCompleted, stepName }
+			stepsList.push(stepObject)
+		})
+		_getValues.steps = stepsList
+
+		_getValues.isCompleted = taskPanel.querySelector(".task-panel-title-container > input").classList.contains("task-done")
+		_getValues.isImportant = taskPanel.querySelector(`[data-item-type="important"] > div`).classList.contains("selected")
+		_getValues.dueDate = taskPanel.querySelector(`[data-item-type="due-date"] > div`).classList.contains("selected")
+		_getValues.project = taskPanel.querySelector(`[data-item-type="project-name"] > div`).classList.contains("selected")
+			? taskPanel.querySelector(`[data-item-type="project-name"] > div > p`).textContent
+			: ""
+
+		_getValues.isFileAttached = taskPanel.querySelector(`[data-item-type="attach-file"] > div`).classList.contains("selected")
+		_getValues.note = taskPanel.querySelector("#add-note-field").value
+
+		// Add values to the task in the TaskList
+		const cardSelected = document.querySelector("[card-selected]")
+		const indexCard = cardSelected.dataset.index
+
+		taskList[indexCard] = _getValues
+
+		//Update the taskList
+		cardListContainer.querySelectorAll(".task-card-container").forEach((card) => {
+			card.remove()
+		})
+		displayTaskList()
+		taskPanel.remove()
+	})
+}
+
+function addNewTaskBtn() {
+	const addTaskBtn = document.getElementById("btn-add-task")
+	addTaskBtn.addEventListener("click", () => {
+		console.log("CLICKED")
+
+		// Al hacer click, se tiene que volver un div con nuevos elementos: Tick icon | Input | Iconos: due date, proyecto, importante, chevron derecha (abre task panel)
+		// Al pulsar enter, se crea una nueva tarea
+		// Al salir del div, vuelve a ser un botón
+		// Al pulsar en due date o importante, se marca en azul el icono
+		// Al pulsar en proyecto, se despliega la lista de proyectos y, después de seleccionar, el icono se vuelve azul.
+		// Al pulsar en chevron, se despliega el panel de la tarea.
 	})
 }

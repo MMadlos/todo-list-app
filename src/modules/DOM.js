@@ -256,10 +256,11 @@ export function taskPanelComponent() {
 	taskDetailsAttachContainer.id = "task-attach-container"
 
 	function file(isFileAttached) {
-		const taskFileItem = isFileAttached ? taskDetailsItem("clip", "Archivo adjunto", "close") : taskDetailsItem("clip", "Adjuntar archivo", "")
+		const taskFileItem = isFileAttached ? taskDetailsItem("clip", "Archivo adjunto", "close") : taskDetailsItem("clip", "Adjuntar archivo", "close")
 		taskFileItem.dataset.itemType = "attach-file"
 		const _container = taskFileItem.querySelector(".task-details-info-container")
 		if (isFileAttached) _container.classList.add("selected")
+		if (!isFileAttached) taskFileItem.querySelector(".fa-xmark").classList.add("hide")
 
 		taskDetailsAttachContainer.append(taskFileItem)
 	}
