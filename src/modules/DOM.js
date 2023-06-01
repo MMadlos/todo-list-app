@@ -132,16 +132,10 @@ export function taskPanelComponent() {
 	const taskTitleContainer = el("div")
 	taskTitleContainer.className = "task-panel-title-container"
 
-	function tickIcon(completion) {
-		const isCompleted = completion
-		let _tickIcon
+	function tickIcon(isCompleted) {
+		const _tickIcon = isCompleted ? IconGenerator("checkDone", "size-24") : IconGenerator("checkEmpty", "size-24")
 
-		if (!isCompleted) _tickIcon = IconGenerator("checkEmpty", "size-24")
-		if (isCompleted) {
-			_tickIcon = IconGenerator("checkDone", "size-24")
-			_taskTitle.classList.add("task-done")
-		}
-
+		if (isCompleted) _taskTitle.classList.add("task-done")
 		taskTitleContainer.append(_tickIcon)
 	}
 
@@ -187,12 +181,12 @@ export function taskPanelComponent() {
 	function taskDetailsItem(leftIconName, textContent, rightIconName = "") {
 		const taskDetailsItemContainer = el("div")
 		const taskDetailsInfoContainer = el("div")
+		const taskDetailsText = el("p")
 
 		taskDetailsItemContainer.className = "task-details-item-container"
 		taskDetailsInfoContainer.className = "task-details-info-container"
 
 		const taskDetailsIconLeft = IconGenerator(leftIconName, "size-21")
-		const taskDetailsText = el("p")
 		if (rightIconName !== "") {
 			const taskDetailsIconRigth = IconGenerator(rightIconName, "size-21")
 			taskDetailsItemContainer.appendChild(taskDetailsIconRigth)
@@ -235,7 +229,7 @@ export function taskPanelComponent() {
 	function project(projectName) {
 		const taskDetailsProjectItem = projectName
 			? taskDetailsItem("folder", projectName, "chevronDown")
-			: taskDetailsItem("folder", "Seleccionar proyecto", "chevronDown")
+			: taskDetailsItem("folder", "Seleccionar proyecto", "chevronRight")
 
 		taskDetailsProjectItem.dataset.itemType = "project-name"
 
@@ -316,8 +310,34 @@ function mainSectionComponent() {
 	const taskList = taskListComponent()
 	const btnAddTask = createButton("addTask")
 
+	// New task Input
+	const newTaskInputContainer = el("div")
+	newTaskInputContainer.className = "new-task-input-container"
+
+	const newTaskTaskContainer = el("div")
+	newTaskTaskContainer.className = "new-task-task-container"
+
+	const newTaskInputIcon = IconGenerator("checkEmpty", "size-24")
+
+	const newTaskInput = el("input")
+	newTaskInput.type = "text"
+	newTaskInput.id = "new-task"
+	newTaskInput.name = "new-task"
+	newTaskInput.placeholder = "Nombre de la tarea"
+
+	const newTaskIconsContainer = el("div")
+	newTaskIconsContainer.className = "new-task-icons-container"
+	const dueDateIcon = IconGenerator("clock", "size-21")
+	const projectFolderIcon = IconGenerator("folder", "size-21")
+	const starIcon = IconGenerator("star", "size-21")
+	const chevronRightIcon = IconGenerator("chevronRight", "size-21")
+
+	newTaskIconsContainer.append(dueDateIcon, projectFolderIcon, starIcon, chevronRightIcon)
+	newTaskTaskContainer.append(newTaskInputIcon, newTaskInput)
+	newTaskInputContainer.append(newTaskTaskContainer, newTaskIconsContainer)
+
 	mainSectionContainer.append(taskList)
-	mainSection.append(mainSectionContainer, btnAddTask)
+	mainSection.append(mainSectionContainer, newTaskInputContainer, btnAddTask)
 
 	return mainSection
 }

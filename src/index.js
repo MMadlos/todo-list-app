@@ -81,7 +81,6 @@ function cardEventListeners() {
 
 			if (isTickIcon) {
 				const isTaskCompleted = taskFromList.isCompleted
-				// isTaskCompleted ? (taskFromList.isCompleted = false) : (taskFromList.isCompleted = true)
 
 				taskFromList.isCompleted = isTaskCompleted ? false : true
 
@@ -92,6 +91,7 @@ function cardEventListeners() {
 				tickIcon.nextElementSibling.querySelector("p").classList.toggle("task-done")
 
 				isCardSelected ?? updateTaskPanel()
+				return
 			}
 
 			if (isStarIcon) {
@@ -105,6 +105,7 @@ function cardEventListeners() {
 				starIcon.classList.toggle("is-important")
 
 				isCardSelected ?? updateTaskPanel()
+				return
 			}
 
 			if (!isTaskPanelOpened) openTaskPanel()
@@ -162,13 +163,32 @@ function taskPanelEventListeners() {
 		})
 	})
 
-	// 3 grupos de funcionalidades:
-	// --> 1 Eventos propios del task panel
-	// --> 2 Vincularlos al DOM de la lista de tareaes (ej: al desmarcar vencimiento, tiene que desaparecer el vencimiento de la tarjeta en la lista de tareas)
-	// --> 3 Guardar las propiedades añadidas en el task panel a la tarea de la taskList
-	// Decisión: Sólo se actualizará la lista de tareas al pulsar en "Guardar"
+	// TASK PANEL EVENTS
+	const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
+	taskPanel.addEventListener("click", (e) => {
+		if (e.target === tickIcon) {
+			tickIcon.classList.toggle("fa-solid")
+			tickIcon.classList.toggle("fa-regular")
+			tickIcon.classList.toggle("fa-square-check")
+			tickIcon.classList.toggle("fa-square")
 
-	// TASK DETAILS - IMPORTANT | DUE DATE | PROJECT ASIGNED | ATTACH FILE
+			taskTitle.classList.toggle("task-done")
+		}
+
+		const tickIconSteps = taskPanel.querySelectorAll(".task-step-container > i")
+		tickIconSteps.forEach((tick) => {
+			if (e.target === tick || e.target === tick.nextElementSibling) {
+				tick.classList.toggle("fa-solid")
+				tick.classList.toggle("fa-regular")
+				tick.classList.toggle("fa-square-check")
+				tick.classList.toggle("fa-square")
+
+				tick.nextElementSibling.classList.toggle("task-done")
+			}
+		})
+	})
+
+	// TASK DETAILS EVENTS - IMPORTANT | DUE DATE | PROJECT ASIGNED | ATTACH FILE
 	const taskItemContainerAll = taskPanel.querySelectorAll(".task-details-item-container")
 	taskItemContainerAll.forEach((itemContainer) => {
 		itemContainer.addEventListener("click", (e) => {
@@ -210,58 +230,15 @@ function taskPanelEventListeners() {
 
 				itemContainer.querySelector(".task-details-info-container").classList.toggle("selected")
 
-				if (e.target !== iconChevron) return
 				iconChevron.classList.toggle("fa-chevron-down")
 				iconChevron.classList.toggle("fa-chevron-right")
 			}
 		})
 	})
 
-	// Bubbling elements
-	const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
-	taskPanel.addEventListener("click", (e) => {
-		if (e.target === tickIcon) {
-			tickIcon.classList.toggle("fa-solid")
-			tickIcon.classList.toggle("fa-regular")
-			tickIcon.classList.toggle("fa-square-check")
-			tickIcon.classList.toggle("fa-square")
-
-			taskTitle.classList.toggle("task-done")
-		}
-
-		const tickIconSteps = taskPanel.querySelectorAll(".task-step-container > i")
-		tickIconSteps.forEach((tick) => {
-			if (e.target === tick || e.target === tick.nextElementSibling) {
-				console.log("Funciona")
-
-				tick.classList.toggle("fa-solid")
-				tick.classList.toggle("fa-regular")
-				tick.classList.toggle("fa-square-check")
-				tick.classList.toggle("fa-square")
-
-				tick.nextElementSibling.classList.toggle("task-done")
-			}
-		})
-
-		//Close task panel
-		const btnClose = document.getElementById("btn-close-panel")
-		if (e.target === btnClose) {
-			const cardSelected = document.querySelector("[card-selected]")
-			cardSelected.toggleAttribute("card-selected")
-
-			taskPanel.remove()
-		}
-	})
-
-	// Save
-	// -> Guardar las nuevas propiedades
-	// -> Cambiarlas en la tarea de taskList
-	// -> Actualizar la lista de tareas que se muestra en pantalla
-
-	// Cuando haga click, guardo el valor del título
+	// BTNS EVENTS
 	const btnSave = document.getElementById("btn-save")
 	btnSave.addEventListener("click", () => {
-		// Datos que quiero guardar
 		const _getValues = {
 			title: "",
 			steps: [],
@@ -273,7 +250,7 @@ function taskPanelEventListeners() {
 			note: "",
 		}
 
-		// From form:
+		// Properties from form:
 		_getValues.title = taskTitle.value
 
 		const allSteps = taskPanel.querySelectorAll(".task-step-container")
@@ -308,6 +285,8 @@ function taskPanelEventListeners() {
 			card.remove()
 		})
 		displayTaskList()
+
+		// Close task panel
 		taskPanel.remove()
 	})
 }

@@ -98,6 +98,9 @@ button {
 }
 
 /* ICONS AND BUTTONS*/
+i.size-28 {
+	font-size: 28px;
+}
 i.size-24 {
 	font-size: 24px;
 }
@@ -523,4 +526,61 @@ textarea:focus {
 .task-details-separator {
 	height: 100%;
 	border-right: 1px solid var(--text-light);
+}
+
+.new-task-input-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+	border: 2px solid var(--stroke-grey-dark);
+	border-radius: 12px;
+	padding: 6px 12px;
+}
+
+.new-task-task-container {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+}
+
+.new-task-task-container > i {
+	color: var(--tick-grey);
+}
+
+#new-task {
+	color: var(--text-default);
+	padding: 8px;
+	border: none;
+	width: 100%;
+
+	font-size: 1rem;
+}
+#new-task:focus {
+	color: var(--text-default);
+	padding: 8px;
+	border: none;
+	outline: none;
+}
+
+#new-task::placeholder {
+	color: var(--text-light);
+}
+
+.new-task-icons-container {
+	display: flex;
+	gap: 16px;
+}
+
+.new-task-icons-container > i {
+	padding: 8px;
+	border-radius: 8px;
+	color: var(--text-light);
+}
+
+.new-task-icons-container > i:hover {
+	color: var(--blue-accent-color);
+	background-color: var(--stroke-grey);
 }
