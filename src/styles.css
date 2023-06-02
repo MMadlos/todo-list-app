@@ -319,11 +319,17 @@ i.size-12 {
 
 .task-step-container {
 	display: flex;
+	align-items: center;
 	gap: 8px;
 	padding: 8px;
 
 	color: var(--text-light);
 	font-size: 0.875rem;
+}
+
+.task-step-container > input {
+	outline: none;
+	border: none;
 }
 
 .btn-add-step {
@@ -528,7 +534,7 @@ textarea:focus {
 	border-right: 1px solid var(--text-light);
 }
 
-.new-task-input-container {
+/* .new-task-input-container {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -537,6 +543,18 @@ textarea:focus {
 	border: 2px solid var(--stroke-grey-dark);
 	border-radius: 12px;
 	padding: 6px 12px;
+} */
+
+.btn-regular-blue,
+.new-task-input-container {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+	color: var(--blue-accent-color);
+	border: 2px solid var(--blue-accent-color);
+	border-radius: 12px;
+	padding: 12px;
 }
 
 .new-task-task-container {

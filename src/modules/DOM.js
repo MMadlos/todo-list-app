@@ -162,8 +162,8 @@ export function taskPanelComponent() {
 
 			const tickIcon = isStepCompleted ? IconGenerator("checkDone", "size-16") : IconGenerator("checkEmpty", "size-16")
 
-			const stepTextDOM = el("p")
-			stepTextDOM.textContent = stepText
+			const stepTextDOM = el("input")
+			stepTextDOM.value = stepText
 			if (isStepCompleted) stepTextDOM.classList.add("task-done")
 
 			stepContainer.append(tickIcon, stepTextDOM)
@@ -310,15 +310,32 @@ function mainSectionComponent() {
 	const taskList = taskListComponent()
 	const btnAddTask = createButton("addTask")
 
-	// New task Input
-	const newTaskInputContainer = el("div")
-	newTaskInputContainer.className = "new-task-input-container"
+	mainSectionContainer.append(taskList)
+	mainSection.append(mainSectionContainer, btnAddTask)
 
+	return mainSection
+}
+
+export function toggleAddTask() {
+	const mainSection = document.getElementById("main-section")
+	const addTaskBtn = document.getElementById("btn-add-task")
+
+	addTaskBtn.remove()
+
+	const newTaskInput = newTaskInputComponent()
+
+	mainSection.appendChild(newTaskInput)
+	return
+}
+
+function newTaskInputComponent() {
+	const newTaskInputContainer = el("div")
 	const newTaskTaskContainer = el("div")
+
+	newTaskInputContainer.className = "new-task-input-container"
 	newTaskTaskContainer.className = "new-task-task-container"
 
 	const newTaskInputIcon = IconGenerator("checkEmpty", "size-24")
-
 	const newTaskInput = el("input")
 	newTaskInput.type = "text"
 	newTaskInput.id = "new-task"
@@ -327,6 +344,7 @@ function mainSectionComponent() {
 
 	const newTaskIconsContainer = el("div")
 	newTaskIconsContainer.className = "new-task-icons-container"
+
 	const dueDateIcon = IconGenerator("clock", "size-21")
 	const projectFolderIcon = IconGenerator("folder", "size-21")
 	const starIcon = IconGenerator("star", "size-21")
@@ -336,10 +354,7 @@ function mainSectionComponent() {
 	newTaskTaskContainer.append(newTaskInputIcon, newTaskInput)
 	newTaskInputContainer.append(newTaskTaskContainer, newTaskIconsContainer)
 
-	mainSectionContainer.append(taskList)
-	mainSection.append(mainSectionContainer, newTaskInputContainer, btnAddTask)
-
-	return mainSection
+	return newTaskInputContainer
 }
 
 function taskListComponent() {

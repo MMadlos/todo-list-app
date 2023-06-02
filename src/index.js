@@ -1,6 +1,7 @@
 import "./styles.css"
-import { newUI, taskCardUI, taskPanelComponent } from ".//modules/DOM"
+import { newUI, taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
 import { taskList } from "./modules/task.js"
+import { createButton } from "./modules/icons"
 
 newUI()
 const taskCardArray = []
@@ -154,6 +155,8 @@ function updateTaskPanel() {
 function taskPanelEventListeners() {
 	const taskPanel = document.getElementById("task-panel")
 
+	const closePanelIcon = document.getElementById("btn-close-panel")
+
 	// CHECK ICON --> Hover effect
 	const tickIcon = taskPanel.querySelector(".task-panel-title-container > i")
 	;["mouseover", "mouseout"].forEach((event) => {
@@ -166,6 +169,9 @@ function taskPanelEventListeners() {
 	// TASK PANEL EVENTS
 	const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
 	taskPanel.addEventListener("click", (e) => {
+		const btnClosePanel = document.getElementById("btn-close-panel")
+
+		if (e.target === btnClosePanel) taskPanel.remove()
 		if (e.target === tickIcon) {
 			tickIcon.classList.toggle("fa-solid")
 			tickIcon.classList.toggle("fa-regular")
@@ -177,13 +183,18 @@ function taskPanelEventListeners() {
 
 		const tickIconSteps = taskPanel.querySelectorAll(".task-step-container > i")
 		tickIconSteps.forEach((tick) => {
-			if (e.target === tick || e.target === tick.nextElementSibling) {
+			//TODO --> Debo poder editar el paso
+			if (e.target === tick) {
 				tick.classList.toggle("fa-solid")
 				tick.classList.toggle("fa-regular")
 				tick.classList.toggle("fa-square-check")
 				tick.classList.toggle("fa-square")
 
 				tick.nextElementSibling.classList.toggle("task-done")
+			}
+
+			const stepText = tick.nextElementSibling
+			if (e.target === stepText) {
 			}
 		})
 	})
@@ -256,8 +267,8 @@ function taskPanelEventListeners() {
 		const allSteps = taskPanel.querySelectorAll(".task-step-container")
 		const stepsList = []
 		allSteps.forEach((step) => {
-			const isCompleted = step.querySelector("p").classList.contains("task-done")
-			const stepName = step.querySelector("p").textContent
+			const isCompleted = step.querySelector("input").classList.contains("task-done")
+			const stepName = step.querySelector("input").value
 
 			const stepObject = { isCompleted, stepName }
 			stepsList.push(stepObject)
@@ -292,15 +303,42 @@ function taskPanelEventListeners() {
 }
 
 function addNewTaskBtn() {
-	const addTaskBtn = document.getElementById("btn-add-task")
-	addTaskBtn.addEventListener("click", () => {
-		console.log("CLICKED")
+	/*
+	(Cuando el input está cerrado) Cuando hago click en añadir tarea -> Se elimina el contenedor y se añade el input
 
-		// Al hacer click, se tiene que volver un div con nuevos elementos: Tick icon | Input | Iconos: due date, proyecto, importante, chevron derecha (abre task panel)
-		// Al pulsar enter, se crea una nueva tarea
-		// Al salir del div, vuelve a ser un botón
-		// Al pulsar en due date o importante, se marca en azul el icono
-		// Al pulsar en proyecto, se despliega la lista de proyectos y, después de seleccionar, el icono se vuelve azul.
-		// Al pulsar en chevron, se despliega el panel de la tarea.
+	Cuando el input está abierto y hago click fuera de él, se elimina y se añade el btn
+
+	Cuando el input está abierto y hago click en él, no pasa nada
+	*/
+
+	const addTaskBtn = document.getElementById("btn-add-task")
+	let isTaskInputOpened = false
+
+	if (!isTaskInputOpened) {
+		addTaskBtn.addEventListener("click", (e) => {
+			toggleAddTask()
+			e.stopPropagation()
+			isTaskInputOpened = true
+		})
+	}
+
+	const content = document.getElementById("content")
+	content.addEventListener("click", (e) => {
+		if (isTaskInputOpened) {
+			const newTaskInputContainer = document.querySelector(".new-task-input-container")
+			const _inputTargetContainer = e.target.closest(".new-task-input-container")
+			const isInputElement = newTaskInputContainer === _inputTargetContainer
+			e.stopPropagation()
+
+			if (!isInputElement) {
+				const mainSection = document.getElementById("main-section")
+				newTaskInputContainer.remove()
+
+				const btnAddTask = createButton("addTask")
+				mainSection.appendChild(btnAddTask)
+				addNewTaskBtn()
+				e.stopPropagation()
+			}
+		}
 	})
 }
