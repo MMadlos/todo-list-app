@@ -151,85 +151,73 @@ function updateTaskPanel() {
 
 	openTaskPanel()
 }
+function toggleClasses(element, ...classes) {
+	const _element = element
+	const _classes = [...classes]
+
+	for (let _class of _classes) {
+		_element.classList.toggle(_class)
+	}
+}
 
 function taskPanelEventListeners() {
 	const taskPanel = document.getElementById("task-panel")
 
 	// CHECK ICON --> Hover effect
-	const tickIcon = taskPanel.querySelector(".task-panel-title-container > i")
 	;["mouseover", "mouseout"].forEach((event) => {
-		tickIcon.addEventListener(event, () => {
-			tickIcon.classList.toggle("fa-square")
-			tickIcon.classList.toggle("fa-square-check")
+		const taskContainer = taskPanel.querySelector(".task-steps-container")
+		taskContainer.addEventListener(event, (e) => {
+			const isTickIcon = e.target.closest(".fa-square-check") || e.target.closest(".fa-square")
+			if (isTickIcon) toggleClasses(isTickIcon, "fa-square", "fa-square-check")
 		})
 	})
 
 	// TASK PANEL EVENTS
-	const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
 	taskPanel.addEventListener("click", (e) => {
-		const btnClosePanel = document.getElementById("btn-close-panel")
-		if (e.target === btnClosePanel) taskPanel.remove()
+		const btnClosePanel = e.target.closest("#btn-close-panel")
+		const tickIcon = e.target.closest("i.fa-square") || e.target.closest("i.fa-square-check")
 
-		if (e.target === tickIcon) {
-			tickIcon.classList.toggle("fa-solid")
-			tickIcon.classList.toggle("fa-regular")
-			tickIcon.classList.toggle("fa-square-check")
-			tickIcon.classList.toggle("fa-square")
+		if (btnClosePanel) taskPanel.remove()
 
-			taskTitle.classList.toggle("task-done")
+		if (tickIcon) {
+			toggleClasses(tickIcon, "fa-solid", "fa-regular", "fa-square-check", "fa-square")
+			tickIcon.nextElementSibling.classList.toggle("task-done")
 		}
 
-		const tickIconStep = e.target.closest(".task-step-container > i")
-		if (tickIconStep) {
-			tickIconStep.classList.toggle("fa-solid")
-			tickIconStep.classList.toggle("fa-regular")
-			tickIconStep.classList.toggle("fa-square-check")
-			tickIconStep.classList.toggle("fa-square")
-
-			tickIconStep.nextElementSibling.classList.toggle("task-done")
-		}
-
+		// TASK DETAILS
 		const taskDetailsItemContainer = e.target.closest(".task-details-item-container")
 		if (taskDetailsItemContainer) {
 			const itemType = taskDetailsItemContainer.dataset.itemType
+			const detailsContainer = taskDetailsItemContainer.querySelector(".task-details-info-container")
+			const isContainerSelected = detailsContainer.classList.contains("selected")
 
-			if (itemType === "important" || itemType === "due-date" || itemType === "attach-file") {
-				const iconClose = taskDetailsItemContainer.querySelector(".fa-xmark")
-				const isIconCloseHidden = iconClose.classList.contains("hide") ? true : false
-
-				if (!isIconCloseHidden && e.target !== iconClose) return
-
-				const text = taskDetailsItemContainer.querySelector("p")
-
-				if (itemType === "important") {
-					const _icon = taskDetailsItemContainer.querySelector(".fa-star")
-					_icon.classList.toggle("is-important")
-					_icon.classList.toggle("fa-solid")
-					_icon.classList.toggle("fa-regular")
-
-					text.textContent = isIconCloseHidden ? "Marcado como importante" : "Marcar como importante"
-				}
-
-				if (itemType === "due-date") text.textContent = isIconCloseHidden ? `Vence el "xxxx"` : "Añadir vencimiento"
-				if (itemType === "attach-file") text.textContent = isIconCloseHidden ? `Archivo adjunto` : "Adjuntar archivo"
-
-				iconClose.classList.toggle("hide")
-				taskDetailsItemContainer.querySelector(".task-details-info-container").classList.toggle("selected")
-			}
+			const taskDetailtext = taskDetailsItemContainer.querySelector("p")
+			const iconStar = taskDetailsItemContainer.querySelector(".fa-star")
+			const iconClose = taskDetailsItemContainer.querySelector(".fa-xmark")
+			const iconChevron = taskDetailsItemContainer.querySelector(".fa-chevron-down")
+				? taskDetailsItemContainer.querySelector(".fa-chevron-down")
+				: taskDetailsItemContainer.querySelector(".fa-chevron-right")
 
 			if (itemType === "project-name") {
-				const text = taskDetailsItemContainer.querySelector("p")
-				const iconChevron = taskDetailsItemContainer.querySelector(".fa-chevron-down")
-					? taskDetailsItemContainer.querySelector(".fa-chevron-down")
-					: taskDetailsItemContainer.querySelector(".fa-chevron-right")
+				toggleClasses(iconChevron, "fa-chevron-down", "fa-chevron-right")
+				detailsContainer.classList.toggle("selected")
+				taskDetailtext.textContent = isContainerSelected ? "Seleccionar proyecto" : "Tutorial"
 
-				text.textContent = taskDetailsItemContainer.querySelector(".fa-chevron-down") ? "Seleccionar proyecto" : "Tutorial"
-
-				taskDetailsItemContainer.querySelector(".task-details-info-container").classList.toggle("selected")
-
-				iconChevron.classList.toggle("fa-chevron-down")
-				iconChevron.classList.toggle("fa-chevron-right")
+				return
 			}
+
+			if (isContainerSelected && e.target !== iconClose) return
+			if (itemType === "important") toggleClasses(iconStar, "is-important", "fa-solid", "fa-regular")
+
+			iconClose.classList.toggle("hide")
+			detailsContainer.classList.toggle("selected")
+
+			const _typeText = {
+				important: isContainerSelected ? "Marcar como importante" : "Marcado como importante",
+				"due-date": isContainerSelected ? "Añadir vencimiento" : `Vence el "xxxx"`,
+				"attach-file": isContainerSelected ? "Adjuntar archivo" : `Archivo adjunto`,
+			}
+			taskDetailtext.textContent = _typeText[itemType]
 		}
 
 		const btnSave = e.target.closest("#btn-save")
@@ -255,6 +243,8 @@ function taskPanelEventListeners() {
 				const stepObject = { isCompleted, stepName }
 				stepsList.push(stepObject)
 			})
+
+			const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
 
 			_getValues.title = taskTitle.value
 			_getValues.steps = stepsList

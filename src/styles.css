@@ -305,11 +305,12 @@ i.size-12 {
 	border: none;
 }
 
-.task-panel-title-container > input:focus {
+.task-panel-title-container > input:focus,
+.task-step-container > input:focus {
 	border-radius: 4px;
 	color: var(--text-light);
 	text-decoration: none;
-	border: 2px solid var(--stroke-grey-dark);
+	border-bottom: 2px solid var(--stroke-grey-dark);
 	outline: none;
 }
 
