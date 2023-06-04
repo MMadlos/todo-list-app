@@ -603,3 +603,7 @@ textarea:focus {
 	color: var(--blue-accent-color);
 	background-color: var(--stroke-grey);
 }
+
+.new-task-icons-container > i.selected {
+	color: var(--blue-accent-color);
+}

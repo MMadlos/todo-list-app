@@ -1,10 +1,9 @@
 import "./styles.css"
 import { newUI, taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
-import { taskList } from "./modules/task.js"
+import { taskList, createTask } from "./modules/task.js"
 import { createButton } from "./modules/icons"
 
 newUI()
-const taskCardArray = []
 const cardListContainer = document.querySelector(".task-card-list-container")
 
 displayTaskList()
@@ -14,8 +13,6 @@ function displayTaskList() {
 		const taskCard = taskCardUI()
 		const taskCardDOM = taskCard.display()
 		cardListContainer.append(taskCardDOM)
-
-		taskCardArray.push(taskCard)
 
 		const taskTitle = task.title
 		const isCompleted = task.isCompleted
@@ -41,6 +38,16 @@ function displayTaskList() {
 
 	cardEventListeners()
 	addNewTaskBtn()
+}
+
+function updateTaskList() {
+	const taskCardListContainer = document.querySelector(".task-card-list-container")
+	const allCards = taskCardListContainer.querySelectorAll(".task-card-container")
+	allCards.forEach((card) => {
+		card.remove()
+	})
+
+	displayTaskList(taskCardListContainer)
 }
 
 function cardEventListeners() {
@@ -141,7 +148,6 @@ function openTaskPanel() {
 	taskPanelDOM.project(projectName)
 	taskPanelDOM.file(isFileAttached)
 	taskPanelDOM.note(taskNote)
-
 	taskPanelEventListeners()
 }
 
@@ -161,11 +167,9 @@ function toggleClasses(element, ...classes) {
 }
 
 function taskPanelEventListeners() {
-	const taskPanel = document.getElementById("task-panel")
-
 	// CHECK ICON --> Hover effect
 	;["mouseover", "mouseout"].forEach((event) => {
-		const taskContainer = taskPanel.querySelector(".task-steps-container")
+		const taskContainer = document.querySelector(".task-steps-container")
 		taskContainer.addEventListener(event, (e) => {
 			const isTickIcon = e.target.closest(".fa-square-check") || e.target.closest(".fa-square")
 			if (isTickIcon) toggleClasses(isTickIcon, "fa-square", "fa-square-check")
@@ -173,6 +177,7 @@ function taskPanelEventListeners() {
 	})
 
 	// TASK PANEL EVENTS
+	const taskPanel = document.getElementById("task-panel")
 	taskPanel.addEventListener("click", (e) => {
 		const btnClosePanel = e.target.closest("#btn-close-panel")
 		const tickIcon = e.target.closest("i.fa-square") || e.target.closest("i.fa-square-check")
@@ -275,10 +280,8 @@ function taskPanelEventListeners() {
 
 function addNewTaskBtn() {
 	/*
-	(Cuando el input está cerrado) Cuando hago click en añadir tarea -> Se elimina el contenedor y se añade el input
-
+	CCuando hago click en añadir tarea -> Se elimina el contenedor y se añade el input
 	Cuando el input está abierto y hago click fuera de él, se elimina y se añade el btn
-
 	Cuando el input está abierto y hago click en él, no pasa nada
 	*/
 
@@ -288,6 +291,8 @@ function addNewTaskBtn() {
 	if (!isTaskInputOpened) {
 		addTaskBtn.addEventListener("click", (e) => {
 			toggleAddTask()
+			addNewTaskEventListeners()
+
 			e.stopPropagation()
 			isTaskInputOpened = true
 		})
@@ -311,5 +316,54 @@ function addNewTaskBtn() {
 				e.stopPropagation()
 			}
 		}
+	})
+}
+
+function addNewTaskEventListeners() {
+	const _container = document.querySelector(".new-task-input-container")
+
+	;["mouseover", "mouseout"].forEach((event) => {
+		_container.addEventListener(event, (e) => {
+			const isTickIcon = e.target.closest(".fa-square-check") || e.target.closest(".fa-square")
+			if (!isTickIcon) return
+			toggleClasses(isTickIcon, "fa-square", "fa-square-check")
+		})
+	})
+
+	const tickIcon = _container.querySelector(".fa-square-check") || _container.querySelector(".fa-square")
+	const clockIcon = _container.querySelector(".fa-clock")
+	const folderIcon = _container.querySelector(".fa-folder-open")
+	const starIcon = _container.querySelector(".fa-star")
+	const inputText = _container.querySelector("input")
+
+	_container.addEventListener("click", (e) => {
+		if (e.target === tickIcon) toggleClasses(tickIcon, "fa-regular", "fa-square", "fa-solid", "fa-square-check")
+		if (e.target === clockIcon) toggleClasses(clockIcon, "selected")
+		if (e.target === folderIcon) toggleClasses(folderIcon, "selected")
+		if (e.target === starIcon) toggleClasses(starIcon, "selected", "fa-solid")
+	})
+
+	document.addEventListener("keydown", (e) => {
+		if (e.key !== "Enter") return
+
+		const isCompleted = tickIcon.classList.contains("fa-square-check")
+		const hasDueDate = clockIcon.classList.contains("selected")
+		const hasProject = folderIcon.classList.contains("selected")
+		const isImportant = starIcon.classList.contains("selected")
+		const taskText = inputText.value
+
+		const newTask = createTask(taskText)
+		newTask.isCompleted = isCompleted
+		newTask.isImportant = isImportant
+		newTask.dueDate = hasDueDate ? "Hoy" : ""
+		newTask.project = hasProject ? "Planificado" : ""
+
+		// TODO
+		// --> REVISAR LAS DEPENDENCIAS DE LAS OTRAS FUNCIONES PORQUE SE DUPLICA VALORES
+		//
+		// Al pulsar enter:
+		// - Desaparecer el input
+		// - Aparecer el "Añadir tarea"
+		// - Actualizar la lista de tareas
 	})
 }

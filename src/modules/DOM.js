@@ -132,7 +132,7 @@ export function taskPanelComponent() {
 	const taskTitleContainer = el("div")
 	taskTitleContainer.className = "task-panel-title-container"
 
-	function tickIcon(isCompleted) {
+	function tickIcon(isCompleted = false) {
 		const _tickIcon = isCompleted ? IconGenerator("checkDone", "size-24") : IconGenerator("checkEmpty", "size-24")
 
 		if (isCompleted) _taskTitle.classList.add("task-done")
@@ -140,7 +140,7 @@ export function taskPanelComponent() {
 	}
 
 	const _taskTitle = el("input")
-	function taskTitle(title) {
+	function taskTitle(title = "Nombre de la tarea") {
 		_taskTitle.value = title
 		taskTitleContainer.append(_taskTitle)
 	}
@@ -151,7 +151,7 @@ export function taskPanelComponent() {
 	taskStepsContainer.appendChild(taskTitleContainer)
 	taskInfoContainer.appendChild(taskStepsContainer)
 
-	function taskStepsList(taskStepsList) {
+	function taskStepsList(taskStepsList = []) {
 		const stepsList = taskStepsList
 		stepsList.forEach((step) => {
 			const isStepCompleted = step.isCompleted
@@ -348,9 +348,8 @@ function newTaskInputComponent() {
 	const dueDateIcon = IconGenerator("clock", "size-21")
 	const projectFolderIcon = IconGenerator("folder", "size-21")
 	const starIcon = IconGenerator("star", "size-21")
-	const chevronRightIcon = IconGenerator("chevronRight", "size-21")
 
-	newTaskIconsContainer.append(dueDateIcon, projectFolderIcon, starIcon, chevronRightIcon)
+	newTaskIconsContainer.append(dueDateIcon, projectFolderIcon, starIcon)
 	newTaskTaskContainer.append(newTaskInputIcon, newTaskInput)
 	newTaskInputContainer.append(newTaskTaskContainer, newTaskIconsContainer)
 
