@@ -381,14 +381,11 @@ function taskListComponent() {
 	taskGroupNameContainer.append(iconChevronDown, groupName, groupCounterContainer)
 	groupCounterContainer.appendChild(counterText)
 
-	// ------
-
 	const taskCardListContainer = el("div")
 	taskCardListContainer.className = "task-card-list-container"
 
 	taskListContainer.appendChild(taskGroupContainer)
 	taskGroupContainer.append(taskGroupNameContainer, taskCardListContainer)
-	// taskCardListContainer.append(taskCardOne, taskCardTwo)
 
 	return taskListContainer
 }
@@ -405,35 +402,28 @@ export function taskCardUI() {
 	taskTitleContainer.className = "task-title-container"
 	taskDetailsContainer.className = "task-details-container"
 
+	taskTitle.textContent = "Título por defecto"
+
 	taskCardContainer.prepend(taskInfoContainer)
 	taskInfoContainer.append(taskTitleContainer)
 	taskTitleContainer.append(taskTitle, taskDetailsContainer)
 
-	function tickIcon(completion) {
-		const isCompleted = completion
-		let tickIcon
+	function tickIcon(isTaskCompleted) {
+		const tickIcon = isTaskCompleted ? IconGenerator("checkDone", "size-21") : IconGenerator("checkEmpty", "size-21")
 
-		if (!isCompleted) tickIcon = IconGenerator("checkEmpty", "size-21")
-		if (isCompleted) {
-			tickIcon = IconGenerator("checkDone", "size-21")
-			taskTitle.classList.add("task-done")
-		}
+		if (isTaskCompleted) taskTitle.classList.add("task-done")
 
-		taskInfoContainer.prepend(tickIcon)
-		return taskInfoContainer
+		return taskInfoContainer.prepend(tickIcon)
 	}
 
-	function title(title = "Título por defecto") {
-		taskTitle.textContent = title
-		return taskTitle
+	function title(title) {
+		return (taskTitle.textContent = title)
 	}
 
-	function iconImportant(isImportant) {
-		const _isImportant = isImportant
-		const _icon = _isImportant ? IconGenerator("starSolid", "size-21") : IconGenerator("star", "size-21")
+	function iconImportant(isTaskImportant) {
+		const _icon = isTaskImportant ? IconGenerator("starSolid", "size-21") : IconGenerator("star", "size-21")
 
-		taskCardContainer.appendChild(_icon)
-		return taskCardContainer
+		return taskCardContainer.appendChild(_icon)
 	}
 
 	const { chipInfo, chipsSeparator } = chipInfoFactory(taskDetailsContainer)
