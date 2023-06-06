@@ -1,24 +1,21 @@
 import "./styles.css"
-import { newUI, taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
+import { UI, taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
 import { taskList, createTask } from "./modules/task.js"
 import { createButton } from "./modules/icons"
 
-newUI()
-const cardListContainer = document.querySelector(".task-card-list-container")
+initApp()
 
-displayTaskList()
-
-function displayTaskList() {
+function initApp() {
+	UI()
 	renderTaskList()
 	cardEventListeners()
-	addNewTaskBtn()
+	addTaskBtnEventListeners()
 }
 
 function renderTaskList() {
 	taskList.forEach((task) => {
 		const taskCard = taskCardUI()
 		const taskCardDOM = taskCard.display()
-		cardListContainer.append(taskCardDOM)
 
 		const taskTitle = task.title
 		const isCompleted = task.isCompleted
@@ -47,25 +44,13 @@ function updateTaskList() {
 	removeTaskList()
 	renderTaskList()
 	cardEventListeners()
-	addNewTaskBtn()
-}
-
-function removeTaskList() {
-	cardListContainer.querySelectorAll(".task-card-container").forEach((card) => {
-		card.remove()
-	})
+	addTaskBtnEventListeners()
 }
 
 function cardEventListeners() {
-	const allCards = cardListContainer.querySelectorAll(".task-card-container")
-	allCards.forEach((card) => {
-		const tickIcon = card.querySelector(".task-info-container > i")
-		;["mouseover", "mouseout"].forEach((event) => {
-			tickIcon.addEventListener(event, () => {
-				toggleClasses(tickIcon, "fa-square", "fa-square-check")
-			})
-		})
-
+	const allCards = document.querySelectorAll(".task-card-container")
+	for (const card of allCards) {
+		checkIconEventListeners(card)
 		card.addEventListener("click", (e) => {
 			const cardIndex = card.dataset.index
 			const taskFromList = taskList[cardIndex]
@@ -73,9 +58,9 @@ function cardEventListeners() {
 			const isCardSelected = card.hasAttribute("card-selected")
 
 			const clickedElement = e.target
+			const tickIcon = card.querySelector(".task-info-container > i")
 			const isTickIcon = clickedElement == tickIcon
 			const isStarIcon = e.target.closest(".fa-star")
-			const taskText = tickIcon.nextElementSibling.querySelector("p")
 
 			const isAnotherCardSelected = document.querySelector(`[card-selected]`) ? true : false
 			const cardCurrentSelected = document.querySelector(`[card-selected]`) ?? false
@@ -94,10 +79,9 @@ function cardEventListeners() {
 			}
 
 			if (isTickIcon) {
-				toggleClasses(tickIcon, "fa-solid", "fa-regular", "fa-square-check", "fa-square")
+				const taskText = tickIcon.nextElementSibling.querySelector("p")
 				taskText.classList.toggle("task-done")
 				taskFromList.isCompleted = !taskFromList.isCompleted
-				return
 			}
 
 			if (isStarIcon) {
@@ -106,10 +90,9 @@ function cardEventListeners() {
 				return
 			}
 		})
-	})
+	}
 }
 
-// TASK-PANEL
 function openTaskPanel() {
 	renderTaskPanel()
 	taskPanelEventListeners()
@@ -142,37 +125,35 @@ function renderTaskPanel() {
 	taskPanelDOM.note(taskNote)
 }
 
-function updateTaskPanel() {
-	const taskPanel = document.getElementById("task-panel")
-	taskPanel.remove()
-
-	openTaskPanel()
-}
-
-function toggleClasses(element, ...classes) {
-	const _element = element
-	const _classes = [...classes]
-
-	for (let _class of _classes) {
-		_element.classList.toggle(_class)
-	}
-}
-
 function taskPanelEventListeners() {
-	;["mouseover", "mouseout"].forEach((event) => {
-		const taskContainer = document.querySelector(".task-steps-container")
-		taskContainer.addEventListener(event, (e) => {
-			const isTickIcon = e.target.closest(".fa-square-check") || e.target.closest(".fa-square")
-			if (isTickIcon) toggleClasses(isTickIcon, "fa-square", "fa-square-check")
-		})
-	})
-
 	const taskPanel = document.getElementById("task-panel")
+
+	checkIconEventListeners(taskPanel)
+
 	taskPanel.addEventListener("click", (e) => {
 		const isBtnClose = e.target.closest("#btn-close-panel")
 		const isTickIcon = e.target.closest("i.fa-square") || e.target.closest("i.fa-square-check")
 		const taskDetailsContainer = e.target.closest(".task-details-item-container")
 		const isBtnSave = e.target.closest("#btn-save")
+		const addStepBtn = e.target.closest("#btn-add-step")
+
+		if (addStepBtn) {
+			// Add Input above add step btn
+
+			const taskStepsContainer = document.querySelector(".task-steps-container")
+			const stepContainer = document.createElement("div")
+			stepContainer.className = "task-step-container"
+
+			const tickIcon = document.createElement("i")
+			tickIcon.classList.add("fa-regular", "fa-square", "size-16")
+
+			const stepTextDOM = document.createElement("input")
+			stepTextDOM.value = "Nuevo paso añadido"
+
+			stepContainer.append(tickIcon, stepTextDOM)
+
+			taskStepsContainer.insertBefore(stepContainer, addStepBtn)
+		}
 
 		if (isBtnClose) {
 			taskPanel.remove()
@@ -181,7 +162,6 @@ function taskPanelEventListeners() {
 		}
 
 		if (isTickIcon) {
-			toggleClasses(isTickIcon, "fa-solid", "fa-regular", "fa-square-check", "fa-square")
 			const taskText = isTickIcon.nextElementSibling
 			taskText.classList.toggle("task-done")
 		}
@@ -234,7 +214,7 @@ function taskPanelEventListeners() {
 				steps: [],
 				isCompleted: taskTitle.classList.contains("task-done"),
 				isImportant: importanceContainer.classList.contains("selected"),
-				dueDate: dueDateContainer.classList.contains("selected"),
+				dueDate: dueDateContainer.classList.contains("selected") ? "Hoy" : "",
 				project: projectContainer.classList.contains("selected") ? projectContainer.querySelector(`p`).textContent : "",
 				isFileAttached: fileContainer.classList.contains("selected"),
 				note: noteContainer.value,
@@ -256,94 +236,113 @@ function taskPanelEventListeners() {
 	})
 }
 
-function addNewTaskBtn() {
-	// IDENTIFICAR SI ES EL BOTÓN DE AÑADIR TAREA O SE ESTÁ ESCRIBIENDO
-	const addTaskBtn = document.getElementById("main-section").lastChild
-	const isButton = addTaskBtn === document.getElementById("btn-add-task")
-	const isInput = addTaskBtn === document.querySelector(".new-task-input-container")
+function addTaskBtnEventListeners() {
+	const addTaskElement = document.getElementById("main-section").lastChild
+	const isButton = addTaskElement === document.getElementById("btn-add-task")
 
 	if (isButton) {
-		addTaskBtn.addEventListener("click", (e) => {
+		addTaskElement.addEventListener("click", (e) => {
 			toggleAddTask()
-			addNewTaskBtn()
+			addTaskBtnEventListeners()
 			e.stopPropagation()
 		})
+		return
 	}
 
-	if (isInput) {
-		const _container = document.querySelector(".new-task-input-container")
-		;["mouseover", "mouseout"].forEach((event) => {
-			_container.addEventListener(event, (e) => {
-				const isTickIcon = e.target.closest(".fa-square-check") || e.target.closest(".fa-square")
-				if (!isTickIcon) return
-				toggleClasses(isTickIcon, "fa-square", "fa-square-check")
-			})
-		})
+	checkIconEventListeners(addTaskElement)
+	const tickIcon = addTaskElement.querySelector(".fa-square-check") ?? addTaskElement.querySelector(".fa-square")
 
-		const tickIcon = _container.querySelector(".fa-square-check") || _container.querySelector(".fa-square")
-		const clockIcon = _container.querySelector(".fa-clock")
-		const folderIcon = _container.querySelector(".fa-folder-open")
-		const starIcon = _container.querySelector(".fa-star")
-		const inputText = _container.querySelector("input")
+	const clockIcon = addTaskElement.querySelector(".fa-clock")
+	const folderIcon = addTaskElement.querySelector(".fa-folder-open")
+	const starIcon = addTaskElement.querySelector(".fa-star")
+	const inputText = addTaskElement.querySelector("input")
 
-		_container.addEventListener("click", (e) => {
-			if (e.target === tickIcon) toggleClasses(tickIcon, "fa-regular", "fa-square", "fa-solid", "fa-square-check")
-			if (e.target === clockIcon) toggleClasses(clockIcon, "selected")
-			if (e.target === folderIcon) toggleClasses(folderIcon, "selected")
-			if (e.target === starIcon) toggleClasses(starIcon, "selected", "fa-solid")
-			e.stopPropagation()
-		})
+	addTaskElement.addEventListener("click", (e) => {
+		if (e.target === clockIcon) toggleClasses(clockIcon, "selected")
+		if (e.target === folderIcon) toggleClasses(folderIcon, "selected")
+		if (e.target === starIcon) toggleClasses(starIcon, "selected", "fa-solid")
+		e.stopPropagation()
+	})
 
-		_container.addEventListener("keydown", (e) => {
-			if (e.key !== "Enter") return
+	addTaskElement.addEventListener("keydown", (e) => {
+		if (e.key !== "Enter") return
 
-			const isCompleted = tickIcon.classList.contains("fa-square-check")
-			const hasDueDate = clockIcon.classList.contains("selected")
-			const hasProject = folderIcon.classList.contains("selected")
-			const isImportant = starIcon.classList.contains("selected")
-			const taskText = inputText.value
+		const isCompleted = tickIcon.classList.contains("fa-square-check")
+		const hasDueDate = clockIcon.classList.contains("selected")
+		const hasProject = folderIcon.classList.contains("selected")
+		const isImportant = starIcon.classList.contains("selected")
+		const taskText = inputText.value
 
-			const newTask = createTask(taskText)
-			newTask.properties.isCompleted = isCompleted
-			newTask.properties.isImportant = isImportant
-			newTask.properties.dueDate = hasDueDate ? "Hoy" : ""
-			newTask.properties.project = hasProject ? "Planificado" : ""
+		const newTask = createTask(taskText)
+		newTask.properties.isCompleted = isCompleted
+		newTask.properties.isImportant = isImportant
+		newTask.properties.dueDate = hasDueDate ? "Hoy" : ""
+		newTask.properties.project = hasProject ? "Planificado" : ""
 
-			const mainSection = document.getElementById("main-section")
-			const newTaskInputContainer = document.querySelector(".new-task-input-container")
-			newTaskInputContainer.remove()
+		const mainSection = document.getElementById("main-section")
+		const newTaskInputContainer = document.querySelector(".new-task-input-container")
+		newTaskInputContainer.remove()
 
-			const btnAddTask = createButton("addTask")
-			mainSection.appendChild(btnAddTask)
+		const btnAddTask = createButton("addTask")
+		mainSection.appendChild(btnAddTask)
 
-			// Si hay alguna card seleccionada, añadir a la selección después de hacer update a la task list
-			const isAnyCardSelected = document.querySelector("[card-selected]") ?? false
-			if (!isAnyCardSelected) return updateTaskList()
+		const isAnyCardSelected = document.querySelector("[card-selected]") ?? false
+		if (!isAnyCardSelected) return updateTaskList()
 
-			const cardSelected = document.querySelector("[card-selected]")
-			const cardSelectedIndex = cardSelected.dataset.index
+		const cardSelected = document.querySelector("[card-selected]")
+		const cardSelectedIndex = cardSelected.dataset.index
 
-			updateTaskList()
-			const newSelectedCard = document.querySelector(`[data-index="${cardSelectedIndex}"]`)
-			newSelectedCard.setAttribute("card-selected", "")
-			// updateTaskPanel()
-		})
+		updateTaskList()
+		const newSelectedCard = document.querySelector(`[data-index="${cardSelectedIndex}"]`)
+		newSelectedCard.setAttribute("card-selected", "")
+	})
 
-		const content = document.getElementById("content")
-		content.addEventListener("click", (e) => {
-			if (e.target === _container) return
-			const _currentAddTaskIsBtn = document.getElementById("main-section").lastChild === document.getElementById("btn-add-task") ? true : false
+	const content = document.getElementById("content")
+	content.addEventListener("click", () => {
+		if (isButton) return
 
-			if (_currentAddTaskIsBtn) return
+		const mainSection = document.getElementById("main-section")
+		mainSection.lastChild.remove()
 
-			const mainSection = document.getElementById("main-section")
-			mainSection.lastChild.remove()
+		const btnAddTask = createButton("addTask")
+		mainSection.appendChild(btnAddTask)
 
-			const btnAddTask = createButton("addTask")
-			mainSection.appendChild(btnAddTask)
+		addTaskBtnEventListeners()
+	})
+}
 
-			addNewTaskBtn()
-			e.stopPropagation()
-		})
+// UTILITIES
+function toggleClasses(element, ...classes) {
+	const _element = element
+	const _classes = [...classes]
+
+	for (let _class of _classes) {
+		_element.classList.toggle(_class)
 	}
+}
+
+function checkIconEventListeners(parentElement) {
+	const checkIcon = parentElement.querySelector(".fa-square-check") ?? parentElement.querySelector(".fa-square")
+	;["mouseover", "mouseout"].forEach((event) => {
+		checkIcon.addEventListener(event, () => {
+			toggleClasses(checkIcon, "fa-square", "fa-square-check")
+		})
+	})
+
+	checkIcon.addEventListener("click", (e) => {
+		toggleClasses(checkIcon, "fa-solid", "fa-regular", "fa-square-check", "fa-square")
+	})
+}
+
+function removeTaskList() {
+	document.querySelectorAll(".task-card-container").forEach((card) => {
+		card.remove()
+	})
+}
+
+function updateTaskPanel() {
+	const taskPanel = document.getElementById("task-panel")
+	taskPanel.remove()
+
+	openTaskPanel()
 }

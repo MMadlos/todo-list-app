@@ -6,27 +6,26 @@ function el(element) {
 	return document.createElement(element)
 }
 
-export function newUI() {
+export function UI() {
 	const menu = menuComponent()
-	const taskList = mainSectionComponent()
+	const mainSection = mainSectionComponent()
 
-	content.append(menu, taskList)
+	content.append(menu, mainSection)
 }
 
 function menuComponent() {
 	// Structure and header
 	const menu = el("section")
-	menu.id = "menu"
-
 	const menuContainer = el("div")
-	menuContainer.className = "menu-container"
-
 	const tituloContainer = el("div")
+
+	menu.id = "menu"
+	menuContainer.className = "menu-container"
 	tituloContainer.className = "title-container"
 
 	const logo = Logo()
-
 	const titulo = el("h1")
+
 	titulo.id = "app-name"
 	titulo.textContent = "Mis tareas"
 
@@ -39,17 +38,17 @@ function menuComponent() {
 	const projectListDefault = el("div")
 	projectListDefault.className = "project-list-container"
 
-	const projectsDefault = {
+	const DEFAULT_PROJECTS = {
 		planificado: ["clock", "Planificado"],
 		todos: ["list", "Todos"],
 		importantes: ["star", "Importantes"],
 		completados: ["check", "Completados"],
 	}
 
-	const projectsLength = Object.keys(projectsDefault).length
+	const projectsLength = Object.keys(DEFAULT_PROJECTS).length
 	for (var i = 0; i < projectsLength; i++) {
-		let projectIconName = Object.values(projectsDefault)[i][0]
-		let projectText = Object.values(projectsDefault)[i][1]
+		let projectIconName = Object.values(DEFAULT_PROJECTS)[i][0]
+		let projectText = Object.values(DEFAULT_PROJECTS)[i][1]
 
 		let project = projectItem(projectIconName, projectText)
 		if (i === 0) {
@@ -58,8 +57,6 @@ function menuComponent() {
 
 		projectListDefault.appendChild(project)
 	}
-
-	menuContainer.appendChild(projectListDefault)
 
 	//-> Personalized list
 	const projectList = el("div")
@@ -73,7 +70,7 @@ function menuComponent() {
 	const projectDefecto = projectItem("bookmark", "Defecto")
 
 	projectList.append(projectSeparator, projectTutorial, projectDefecto)
-	menuContainer.appendChild(projectList)
+	menuContainer.append(projectListDefault, projectList)
 
 	const btnAddProject = createButton("addProject")
 
@@ -82,32 +79,24 @@ function menuComponent() {
 	return menu
 }
 
-function projectItem(iconName = "", projectName = "Proyecto") {
+function projectItem(iconName = "", projectName = "Nuevo proyecto") {
 	const menuContainer = el("div")
-	menuContainer.className = "project-item-container"
-
-	// Icon and title
 	const titleContainer = el("div")
-	titleContainer.className = "project-item-title-container"
-
 	const icon = IconGenerator(iconName, "size-16")
-
 	const projectTitle = el("p")
+	const counterContainer = el("div")
+	const counterText = el("p")
+
+	menuContainer.className = "project-item-container"
+	titleContainer.className = "project-item-title-container"
 	projectTitle.textContent = projectName
 
-	titleContainer.appendChild(icon)
-	titleContainer.appendChild(projectTitle)
-
-	// Counter
-	const counterContainer = el("div")
 	counterContainer.className = "project-item-counter-container"
-
-	const counterText = el("p")
 	counterText.textContent = "23"
 
 	counterContainer.appendChild(counterText)
-	menuContainer.appendChild(titleContainer)
-	menuContainer.appendChild(counterContainer)
+	titleContainer.append(icon, projectTitle)
+	menuContainer.append(titleContainer, counterContainer)
 
 	return menuContainer
 }
@@ -307,87 +296,41 @@ function mainSectionComponent() {
 	headerContainer.append(projectIcon, titleContainer)
 	mainSectionContainer.appendChild(headerContainer)
 
-	const taskList = taskListComponent()
-	const btnAddTask = createButton("addTask")
-
-	mainSectionContainer.append(taskList)
-	mainSection.append(mainSectionContainer, btnAddTask)
-
-	return mainSection
-}
-
-export function toggleAddTask() {
-	const mainSection = document.getElementById("main-section")
-	const addTaskBtn = document.getElementById("btn-add-task")
-
-	addTaskBtn.remove()
-
-	const newTaskInput = newTaskInputComponent()
-
-	mainSection.appendChild(newTaskInput)
-	return
-}
-
-function newTaskInputComponent() {
-	const newTaskInputContainer = el("div")
-	const newTaskTaskContainer = el("div")
-
-	newTaskInputContainer.className = "new-task-input-container"
-	newTaskTaskContainer.className = "new-task-task-container"
-
-	const newTaskInputIcon = IconGenerator("checkEmpty", "size-24")
-	const newTaskInput = el("input")
-	newTaskInput.type = "text"
-	newTaskInput.id = "new-task"
-	newTaskInput.name = "new-task"
-	newTaskInput.placeholder = "Nombre de la tarea"
-
-	const newTaskIconsContainer = el("div")
-	newTaskIconsContainer.className = "new-task-icons-container"
-
-	const dueDateIcon = IconGenerator("clock", "size-21")
-	const projectFolderIcon = IconGenerator("folder", "size-21")
-	const starIcon = IconGenerator("star", "size-21")
-
-	newTaskIconsContainer.append(dueDateIcon, projectFolderIcon, starIcon)
-	newTaskTaskContainer.append(newTaskInputIcon, newTaskInput)
-	newTaskInputContainer.append(newTaskTaskContainer, newTaskIconsContainer)
-
-	return newTaskInputContainer
-}
-
-function taskListComponent() {
+	// TASK LIST (Group + cards)
 	const taskListContainer = el("div")
-	taskListContainer.className = "task-list-container"
-
 	const taskGroupContainer = el("div")
+
+	taskListContainer.className = "task-list-container"
 	taskGroupContainer.className = "task-group-container"
 
 	// -> Group Name elements
 	const taskGroupNameContainer = el("div")
-	taskGroupNameContainer.className = "task-group-name-container"
-
 	const iconChevronDown = IconGenerator("chevronDown", "size-12")
-
 	const groupName = el("p")
-	groupName.textContent = "Hoy"
-
 	const groupCounterContainer = el("div")
-	groupCounterContainer.className = "group-counter-container"
-
 	const counterText = el("p")
+
+	taskGroupNameContainer.className = "task-group-name-container"
+	groupName.textContent = "Hoy"
+	groupCounterContainer.className = "group-counter-container"
 	counterText.textContent = "2"
 
 	taskGroupNameContainer.append(iconChevronDown, groupName, groupCounterContainer)
 	groupCounterContainer.appendChild(counterText)
 
+	// -> Cards
 	const taskCardListContainer = el("div")
 	taskCardListContainer.className = "task-card-list-container"
 
 	taskListContainer.appendChild(taskGroupContainer)
 	taskGroupContainer.append(taskGroupNameContainer, taskCardListContainer)
+	mainSectionContainer.append(taskListContainer)
 
-	return taskListContainer
+	// BTN
+	const btnAddTask = createButton("addTask")
+	mainSection.append(mainSectionContainer, btnAddTask)
+
+	return mainSection
 }
 
 export function taskCardUI() {
@@ -428,7 +371,12 @@ export function taskCardUI() {
 
 	const { chipInfo, chipsSeparator } = chipInfoFactory(taskDetailsContainer)
 
-	const display = () => taskCardContainer
+	const display = () => {
+		const taskListContainer = document.querySelector(".task-card-list-container")
+		taskListContainer.appendChild(taskCardContainer)
+
+		return taskCardContainer
+	}
 
 	return { display, title, tickIcon, iconImportant, chipInfo, chipsSeparator }
 }
@@ -484,4 +432,43 @@ function taskDetailsSeparator() {
 	_separator.className = "task-details-separator"
 
 	return _separator
+}
+
+export function toggleAddTask() {
+	const mainSection = document.getElementById("main-section")
+	const addTaskBtn = document.getElementById("btn-add-task")
+
+	addTaskBtn.remove()
+	const newTaskInput = newTaskInputComponent()
+
+	mainSection.appendChild(newTaskInput)
+	return
+}
+
+function newTaskInputComponent() {
+	const newTaskInputContainer = el("div")
+	const newTaskTaskContainer = el("div")
+
+	newTaskInputContainer.className = "new-task-input-container"
+	newTaskTaskContainer.className = "new-task-task-container"
+
+	const newTaskInputIcon = IconGenerator("checkEmpty", "size-24")
+	const newTaskInput = el("input")
+	newTaskInput.type = "text"
+	newTaskInput.id = "new-task"
+	newTaskInput.name = "new-task"
+	newTaskInput.placeholder = "Nombre de la tarea"
+
+	const newTaskIconsContainer = el("div")
+	newTaskIconsContainer.className = "new-task-icons-container"
+
+	const dueDateIcon = IconGenerator("clock", "size-21")
+	const projectFolderIcon = IconGenerator("folder", "size-21")
+	const starIcon = IconGenerator("star", "size-21")
+
+	newTaskIconsContainer.append(dueDateIcon, projectFolderIcon, starIcon)
+	newTaskTaskContainer.append(newTaskInputIcon, newTaskInput)
+	newTaskInputContainer.append(newTaskTaskContainer, newTaskIconsContainer)
+
+	return newTaskInputContainer
 }
