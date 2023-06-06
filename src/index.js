@@ -174,7 +174,11 @@ function taskPanelEventListeners() {
 		const taskDetailsContainer = e.target.closest(".task-details-item-container")
 		const isBtnSave = e.target.closest("#btn-save")
 
-		if (isBtnClose) taskPanel.remove()
+		if (isBtnClose) {
+			taskPanel.remove()
+			const selectedCard = document.querySelector("[card-selected]")
+			selectedCard.removeAttribute("card-selected")
+		}
 
 		if (isTickIcon) {
 			toggleClasses(isTickIcon, "fa-solid", "fa-regular", "fa-square-check", "fa-square")
@@ -257,7 +261,6 @@ function addNewTaskBtn() {
 	const addTaskBtn = document.getElementById("main-section").lastChild
 	const isButton = addTaskBtn === document.getElementById("btn-add-task")
 	const isInput = addTaskBtn === document.querySelector(".new-task-input-container")
-	console.log({ isButton, isInput })
 
 	if (isButton) {
 		addTaskBtn.addEventListener("click", (e) => {
@@ -288,9 +291,10 @@ function addNewTaskBtn() {
 			if (e.target === clockIcon) toggleClasses(clockIcon, "selected")
 			if (e.target === folderIcon) toggleClasses(folderIcon, "selected")
 			if (e.target === starIcon) toggleClasses(starIcon, "selected", "fa-solid")
+			e.stopPropagation()
 		})
 
-		document.addEventListener("keydown", (e) => {
+		_container.addEventListener("keydown", (e) => {
 			if (e.key !== "Enter") return
 
 			const isCompleted = tickIcon.classList.contains("fa-square-check")
@@ -300,19 +304,10 @@ function addNewTaskBtn() {
 			const taskText = inputText.value
 
 			const newTask = createTask(taskText)
-			newTask.isCompleted = isCompleted
-			newTask.isImportant = isImportant
-			newTask.dueDate = hasDueDate ? "Hoy" : ""
-			newTask.project = hasProject ? "Planificado" : ""
-
-			// TODO
-
-			// Update task list {}
-
-			removeTaskList()
-			renderTaskList()
-			cardEventListeners()
-			// addNewTaskBtn()
+			newTask.properties.isCompleted = isCompleted
+			newTask.properties.isImportant = isImportant
+			newTask.properties.dueDate = hasDueDate ? "Hoy" : ""
+			newTask.properties.project = hasProject ? "Planificado" : ""
 
 			const mainSection = document.getElementById("main-section")
 			const newTaskInputContainer = document.querySelector(".new-task-input-container")
@@ -320,32 +315,35 @@ function addNewTaskBtn() {
 
 			const btnAddTask = createButton("addTask")
 			mainSection.appendChild(btnAddTask)
-			addNewTaskBtn()
 
-			// --> REVISAR LAS DEPENDENCIAS DE LAS OTRAS FUNCIONES PORQUE SE DUPLICA VALORES
-			//
-			// Al pulsar enter:
-			// - Desaparecer el input
-			// - Aparecer el "Añadir tarea"
-			// - Actualizar la lista de tareas
+			// Si hay alguna card seleccionada, añadir a la selección después de hacer update a la task list
+			const isAnyCardSelected = document.querySelector("[card-selected]") ?? false
+			if (!isAnyCardSelected) return updateTaskList()
+
+			const cardSelected = document.querySelector("[card-selected]")
+			const cardSelectedIndex = cardSelected.dataset.index
+
+			updateTaskList()
+			const newSelectedCard = document.querySelector(`[data-index="${cardSelectedIndex}"]`)
+			newSelectedCard.setAttribute("card-selected", "")
+			// updateTaskPanel()
 		})
 
 		const content = document.getElementById("content")
 		content.addEventListener("click", (e) => {
-			console.log({ isButton, isInput })
+			if (e.target === _container) return
+			const _currentAddTaskIsBtn = document.getElementById("main-section").lastChild === document.getElementById("btn-add-task") ? true : false
 
-			//TODO -- REVISAR
-			const isInputContainer = e.target.closest(".new-task-input-container")
-			if (isInputContainer) return
-
-			const newTaskInputContainer = document.querySelector(".new-task-input-container")
-			newTaskInputContainer.remove()
+			if (_currentAddTaskIsBtn) return
 
 			const mainSection = document.getElementById("main-section")
+			mainSection.lastChild.remove()
+
 			const btnAddTask = createButton("addTask")
 			mainSection.appendChild(btnAddTask)
 
-			// addNewTaskBtn()
+			addNewTaskBtn()
+			e.stopPropagation()
 		})
 	}
 }
