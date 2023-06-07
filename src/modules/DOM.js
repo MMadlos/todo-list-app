@@ -351,6 +351,11 @@ export function taskCardUI() {
 	taskInfoContainer.append(taskTitleContainer)
 	taskTitleContainer.append(taskTitle, taskDetailsContainer)
 
+	const display = () => {
+		const taskListContainer = document.querySelector(".task-card-list-container")
+		return taskListContainer.appendChild(taskCardContainer)
+	}
+
 	function tickIcon(isTaskCompleted) {
 		const tickIcon = isTaskCompleted ? IconGenerator("checkDone", "size-21") : IconGenerator("checkEmpty", "size-21")
 
@@ -365,18 +370,10 @@ export function taskCardUI() {
 
 	function iconImportant(isTaskImportant) {
 		const _icon = isTaskImportant ? IconGenerator("starSolid", "size-21") : IconGenerator("star", "size-21")
-
 		return taskCardContainer.appendChild(_icon)
 	}
 
 	const { chipInfo, chipsSeparator } = chipInfoFactory(taskDetailsContainer)
-
-	const display = () => {
-		const taskListContainer = document.querySelector(".task-card-list-container")
-		taskListContainer.appendChild(taskCardContainer)
-
-		return taskCardContainer
-	}
 
 	return { display, title, tickIcon, iconImportant, chipInfo, chipsSeparator }
 }
@@ -394,7 +391,7 @@ function chipInfoFactory(containerToAppend) {
 	}
 
 	const chipsSeparator = () => {
-		const detailContainers = containerToAppend.querySelectorAll(".detailContainer")
+		const detailContainers = containerToAppend.querySelectorAll(".detail-container")
 		const chipCount = detailContainers.length
 
 		if (chipCount === 0) containerToAppend.remove()
@@ -410,17 +407,18 @@ function chipInfoFactory(containerToAppend) {
 
 function createDetailsChip(chipName, textContent = "Archivo adjunto") {
 	const detailContainer = el("div")
-	detailContainer.className = "detailContainer"
+	detailContainer.className = "detail-container"
 
 	const _chipName = {
 		Hoy: "clock",
 		Tutorial: "folder",
 		Attach: "clip",
 	}
-
 	const iconName = _chipName[chipName]
+
 	const detailIcon = IconGenerator(iconName, "size-16")
 	const detailText = el("p")
+
 	detailText.textContent = textContent
 
 	detailContainer.append(detailIcon, detailText)

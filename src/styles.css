@@ -518,7 +518,7 @@ textarea:focus {
 	gap: 8px;
 }
 
-.detailContainer {
+.detail-container {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -526,7 +526,7 @@ textarea:focus {
 	color: var(--text-light);
 }
 
-.detailContainer > p {
+.detail-container > p {
 	font-size: 12px;
 }
 

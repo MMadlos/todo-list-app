@@ -1,5 +1,14 @@
 // El menú de la izquierda mostrará los proyectos que pongamos en projectList
-const projectList = []
+export const projectList = [
+	// Default FIX project list
+	"Planificado",
+	"Todos",
+	"Importantes",
+	"Completados",
+	// Default CUSTOM project list
+	"Tutorial",
+	"Defecto",
+]
 
 // El main section mostrará las taskList que pongamos aquí en función del proyecto
 export const taskList = []
