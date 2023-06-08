@@ -1,5 +1,5 @@
 import "./styles.css"
-import { UI, taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
+import { UI, menuComponent, taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
 import { projectList, taskList, createTask } from "./modules/task.js"
 import { createButton } from "./modules/icons"
 
@@ -7,12 +7,14 @@ initApp()
 
 function initApp() {
 	UI()
-	renderTaskList(taskList)
+	displayProjectList()
+	menuEventListeners()
+	renderTaskList(getTasksFromSelectedProject())
 	cardEventListeners()
 	addTaskBtnEventListeners()
 }
 
-function renderTaskList(taskListOrigin = taskList) {
+function renderTaskList(taskListOrigin) {
 	taskListOrigin.forEach((task) => {
 		const taskCard = taskCardUI()
 		const taskCardDOM = taskCard.display()
@@ -293,52 +295,66 @@ function addTaskBtnEventListeners() {
 	})
 }
 
-const { planificado, importantes, completados, todos } = sortTasksByDefaultProjects()
-console.log({ planificado, importantes, completados, todos })
-menuEventListeners()
+function displayProjectList() {
+	const menu = menuComponent()
+	menu.display()
+
+	projectList.forEach((project) => {
+		const projectName = project
+		console.log(projectName)
+		menu.fixedProjectList(projectName)
+	})
+
+	const defaultProject = document.querySelector(".project-item-container")
+	defaultProject.classList.add("selected")
+
+	menu.customProjects()
+}
 
 function menuEventListeners() {
 	const projectContainerAll = document.querySelectorAll(".project-item-container")
 	projectContainerAll.forEach((projectItem) => {
 		projectItem.addEventListener("click", (e) => {
-			const projectContainer = e.target.closest(".project-item-container")
-			const projectName = projectContainer.querySelector("p").textContent.toLowerCase()
+			const currentProjectSelected = document.querySelector(".project-item-container.selected")
+			currentProjectSelected.classList.remove("selected")
 
-			// Recoger la lista de tareas con los proyectos
-			const projectTasks = sortTasksByDefaultProjects()[projectName]
+			const projectContainer = e.target.closest(".project-item-container")
+			projectContainer.classList.toggle("selected")
+
+			const projectTasks = getTasksFromSelectedProject()
 			updateTaskList(projectTasks)
-			console.log(projectTasks)
 		})
 	})
+
+	const addProjectBtn = document.getElementById("btn-add-project")
+	addProjectBtn.addEventListener("click", () => {
+		// Delete div#main-section > div.main-section-container
+		// Add new main-section-container with "Default icon and title"
+		// Add empty content
+		// Add new item project in the project list menu
+	})
 }
 
-function sortTasksByDefaultProjects() {
-	const planificado = taskList.filter((task) => {
-		return task.dueDate !== ""
+function getTasksFromSelectedProject() {
+	const currentProjectSelected = document.querySelector(".project-item-container.selected")
+	const projectName = currentProjectSelected.querySelector("p").textContent.toLowerCase()
+
+	const propertyNames = {
+		planificado: "dueDate",
+		importantes: "isImportant",
+		completados: "isCompleted",
+	}
+
+	const propertyToFilter = propertyNames[projectName]
+	const tasksProject = taskList.filter((task) => {
+		if (propertyToFilter === "dueDate") return task[propertyToFilter] !== ""
+
+		return task[propertyToFilter]
 	})
 
-	const todos = taskList
-
-	const importantes = taskList.filter((task) => {
-		return task.isImportant
-	})
-
-	const completados = taskList.filter((task) => {
-		return task.isCompleted
-	})
-
-	return { planificado, importantes, completados, todos }
+	const tasks = projectName === "todos" ? taskList : tasksProject
+	return tasks
 }
-
-//TODO --> HACERLO DESPUÉS PORQUE TENGO QUE ORDENAR TAREAS POR EL NOMBRE DEL PROYECTO
-// Add new project btn
-const addProjectBtn = document.getElementById("btn-add-project")
-addProjectBtn.addEventListener("click", () => {
-	// Delete div#main-section > div.main-section-container
-	// Add new main-section-container with "Default icon and title"
-	// Add empty content
-	// Add new item project in the project list menu
-})
 
 // UTILITIES
 function toggleClasses(element, ...classes) {

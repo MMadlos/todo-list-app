@@ -7,76 +7,92 @@ function el(element) {
 }
 
 export function UI() {
-	const menu = menuComponent()
+	// const menu = menuComponent().display()
 	const mainSection = mainSectionComponent()
 
-	content.append(menu, mainSection)
+	content.append(mainSection) //menu,
 }
 
-function menuComponent() {
+export function menuComponent() {
 	// Structure and header
 	const menu = el("section")
 	const menuContainer = el("div")
-	const tituloContainer = el("div")
-
 	menu.id = "menu"
 	menuContainer.className = "menu-container"
-	tituloContainer.className = "title-container"
-
-	const logo = Logo()
-	const titulo = el("h1")
-
-	titulo.id = "app-name"
-	titulo.textContent = "Mis tareas"
-
-	tituloContainer.append(logo, titulo)
-	menuContainer.appendChild(tituloContainer)
 	menu.appendChild(menuContainer)
 
+	const appNameContainer = el("div")
+	appNameContainer.className = "title-container"
+	menuContainer.appendChild(appNameContainer)
+
+	const logo = Logo()
+	const appName = el("h1")
+	appName.id = "app-name"
+	appName.textContent = "Mis tareas"
+	appNameContainer.append(logo, appName)
+
+	const btnAddProject = createButton("addProject")
+	menu.appendChild(btnAddProject)
+
+	function display() {
+		const content = document.getElementById("content")
+		return content.prepend(menu)
+	}
+
 	//PROJECT LIST
-	//-> Default list
 	const projectListDefault = el("div")
 	projectListDefault.className = "project-list-container"
 
-	const DEFAULT_PROJECTS = {
-		planificado: ["clock", "Planificado"],
-		todos: ["list", "Todos"],
-		importantes: ["star", "Importantes"],
-		completados: ["check", "Completados"],
-	}
+	function fixedProjectList(projectName) {
+		const projectItemContainer = el("div")
+		const titleContainer = el("div")
 
-	const projectsLength = Object.keys(DEFAULT_PROJECTS).length
-	for (var i = 0; i < projectsLength; i++) {
-		let projectIconName = Object.values(DEFAULT_PROJECTS)[i][0]
-		let projectText = Object.values(DEFAULT_PROJECTS)[i][1]
-
-		let project = projectItem(projectIconName, projectText)
-		if (i === 0) {
-			project.classList.add("selected")
+		const iconProjectName = {
+			planificado: "clock",
+			todos: "list",
+			importantes: "star",
+			completados: "check",
 		}
 
-		projectListDefault.appendChild(project)
+		const iconSelected = iconProjectName[projectName.toLowerCase()]
+
+		const icon = IconGenerator(iconSelected, "size-16")
+		const projectTitle = el("p")
+		const counterContainer = el("div")
+		const counterText = el("p")
+
+		projectItemContainer.className = "project-item-container"
+		titleContainer.className = "project-item-title-container"
+		projectTitle.textContent = projectName
+
+		counterContainer.className = "project-item-counter-container"
+		counterText.textContent = "23"
+
+		counterContainer.appendChild(counterText)
+		titleContainer.append(icon, projectTitle)
+		projectItemContainer.append(titleContainer, counterContainer)
+
+		projectListDefault.appendChild(projectItemContainer)
+		menuContainer.appendChild(projectListDefault)
 	}
 
-	//-> Personalized list
-	const projectList = el("div")
-	projectList.className = "project-list-container"
+	// //-> Personalized list
+	function customProjects() {
+		const projectList = el("div")
+		projectList.className = "project-list-container"
 
-	const projectSeparator = el("p")
-	projectSeparator.textContent = "Proyectos"
-	projectSeparator.className = "project-list-separator"
+		const projectSeparator = el("p")
+		projectSeparator.textContent = "Proyectos"
+		projectSeparator.className = "project-list-separator"
 
-	const projectTutorial = projectItem("play", "Tutorial")
-	const projectDefecto = projectItem("bookmark", "Defecto")
+		// const projectTutorial = projectItem("play", "Tutorial")
+		// const projectDefecto = projectItem("bookmark", "Defecto")
 
-	projectList.append(projectSeparator, projectTutorial, projectDefecto)
-	menuContainer.append(projectListDefault, projectList)
+		projectList.append(projectSeparator) //, projectTutorial, projectDefecto
+		menuContainer.append(projectList) // projectListDefault,
+	}
 
-	const btnAddProject = createButton("addProject")
-
-	menu.appendChild(btnAddProject)
-
-	return menu
+	return { display, fixedProjectList, customProjects }
 }
 
 function projectItem(iconName = "", projectName = "Nuevo proyecto") {

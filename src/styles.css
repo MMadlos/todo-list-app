@@ -203,7 +203,7 @@ i.size-12 {
 .project-item-title-container {
 	display: flex;
 	gap: 16px;
-	align-self: center;
+	align-items: center;
 }
 
 .project-item-counter-container > p {
@@ -442,7 +442,7 @@ textarea:focus {
 	border-radius: 8px;
 }
 
-.title-container:hover {
+.header-container > .title-container:hover {
 	background-color: var(--bg-grey-light);
 	border: 2px solid var(--stroke-grey);
 }

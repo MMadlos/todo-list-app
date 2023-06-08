@@ -5,9 +5,10 @@ export const projectList = [
 	"Todos",
 	"Importantes",
 	"Completados",
+
 	// Default CUSTOM project list
-	"Tutorial",
-	"Defecto",
+	// "Tutorial",
+	// "Defecto",
 ]
 
 // El main section mostrará las taskList que pongamos aquí en función del proyecto
