@@ -9,12 +9,55 @@ function initApp() {
 	UI()
 	displayProjectList()
 	menuEventListeners()
-	renderTaskList(getTasksFromSelectedProject())
+	renderTaskList()
 	cardEventListeners()
 	addTaskBtnEventListeners()
 }
 
-function renderTaskList(taskListOrigin) {
+function displayProjectList() {
+	const menu = menuComponent()
+	menu.display()
+
+	const fixProjects = projectList.slice(0, 4)
+	fixProjects.forEach((project) => {
+		const numberOfTasks = getTasksFromProject(project).length
+		menu.fixedProjectList(project, numberOfTasks)
+	})
+
+	const defaultProject = document.querySelector(".project-item-container")
+	defaultProject.classList.add("selected")
+
+	const iconNamesDefault = { Tutorial: "play", Defecto: "folder" }
+	const customProjects = projectList.slice(4)
+	customProjects.forEach((project) => {
+		const numberOfTasks = getTasksFromProject(project).length
+		menu.customProjects(project, numberOfTasks, iconNamesDefault[project])
+	})
+}
+
+function menuEventListeners() {
+	const menu = document.querySelector("#menu")
+	menu.addEventListener("click", (e) => {
+		const projectContainer = e.target.closest(".project-item-container")
+		const btnAddProject = e.target.closest("#btn-add-project")
+
+		if (projectContainer) {
+			const currentProjectSelected = document.querySelector(".project-item-container.selected")
+			currentProjectSelected.classList.remove("selected")
+
+			projectContainer.classList.toggle("selected")
+			const projectName = projectContainer.querySelector(".project-item-title-container > p").textContent
+			const projectTasks = getTasksFromProject(projectName)
+			updateTaskList(projectTasks)
+		}
+
+		if (btnAddProject) {
+			console.log("BTN CLICKED")
+		}
+	})
+}
+
+function renderTaskList(taskListOrigin = getTasksFromProject()) {
 	taskListOrigin.forEach((task) => {
 		const taskCard = taskCardUI()
 		const taskCardDOM = taskCard.display()
@@ -295,64 +338,24 @@ function addTaskBtnEventListeners() {
 	})
 }
 
-function displayProjectList() {
-	const menu = menuComponent()
-	menu.display()
-
-	projectList.forEach((project) => {
-		const projectName = project
-		console.log(projectName)
-		menu.fixedProjectList(projectName)
-	})
-
-	const defaultProject = document.querySelector(".project-item-container")
-	defaultProject.classList.add("selected")
-
-	menu.customProjects()
-}
-
-function menuEventListeners() {
-	const projectContainerAll = document.querySelectorAll(".project-item-container")
-	projectContainerAll.forEach((projectItem) => {
-		projectItem.addEventListener("click", (e) => {
-			const currentProjectSelected = document.querySelector(".project-item-container.selected")
-			currentProjectSelected.classList.remove("selected")
-
-			const projectContainer = e.target.closest(".project-item-container")
-			projectContainer.classList.toggle("selected")
-
-			const projectTasks = getTasksFromSelectedProject()
-			updateTaskList(projectTasks)
-		})
-	})
-
-	const addProjectBtn = document.getElementById("btn-add-project")
-	addProjectBtn.addEventListener("click", () => {
-		// Delete div#main-section > div.main-section-container
-		// Add new main-section-container with "Default icon and title"
-		// Add empty content
-		// Add new item project in the project list menu
-	})
-}
-
-function getTasksFromSelectedProject() {
-	const currentProjectSelected = document.querySelector(".project-item-container.selected")
-	const projectName = currentProjectSelected.querySelector("p").textContent.toLowerCase()
-
+function getTasksFromProject(projectName = "Planificado") {
 	const propertyNames = {
 		planificado: "dueDate",
 		importantes: "isImportant",
 		completados: "isCompleted",
 	}
 
-	const propertyToFilter = propertyNames[projectName]
+	const _projectName = projectName.toLowerCase()
+
+	const propertyToFilter = propertyNames[_projectName]
 	const tasksProject = taskList.filter((task) => {
 		if (propertyToFilter === "dueDate") return task[propertyToFilter] !== ""
+		if (propertyToFilter === undefined) return task.project === projectName
 
 		return task[propertyToFilter]
 	})
 
-	const tasks = projectName === "todos" ? taskList : tasksProject
+	const tasks = _projectName === "todos" ? taskList : tasksProject
 	return tasks
 }
 

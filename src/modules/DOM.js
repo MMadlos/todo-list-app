@@ -42,8 +42,9 @@ export function menuComponent() {
 	//PROJECT LIST
 	const projectListDefault = el("div")
 	projectListDefault.className = "project-list-container"
+	menuContainer.appendChild(projectListDefault)
 
-	function fixedProjectList(projectName) {
+	function fixedProjectList(projectName, numberOfTasks) {
 		const projectItemContainer = el("div")
 		const titleContainer = el("div")
 
@@ -66,55 +67,48 @@ export function menuComponent() {
 		projectTitle.textContent = projectName
 
 		counterContainer.className = "project-item-counter-container"
-		counterText.textContent = "23"
+		counterText.textContent = numberOfTasks
 
 		counterContainer.appendChild(counterText)
 		titleContainer.append(icon, projectTitle)
 		projectItemContainer.append(titleContainer, counterContainer)
 
 		projectListDefault.appendChild(projectItemContainer)
-		menuContainer.appendChild(projectListDefault)
 	}
 
-	// //-> Personalized list
-	function customProjects() {
-		const projectList = el("div")
-		projectList.className = "project-list-container"
+	const projectList = el("div")
+	projectList.className = "project-list-container"
 
-		const projectSeparator = el("p")
-		projectSeparator.textContent = "Proyectos"
-		projectSeparator.className = "project-list-separator"
+	const projectSeparator = el("p")
+	projectSeparator.textContent = "Proyectos"
+	projectSeparator.className = "project-list-separator"
+	projectList.append(projectSeparator)
+	menuContainer.append(projectList)
 
-		// const projectTutorial = projectItem("play", "Tutorial")
-		// const projectDefecto = projectItem("bookmark", "Defecto")
+	function customProjects(projectName, numberOfTasks, iconName) {
+		const projectItemContainer = el("div")
+		const titleContainer = el("div")
 
-		projectList.append(projectSeparator) //, projectTutorial, projectDefecto
-		menuContainer.append(projectList) // projectListDefault,
+		const icon = IconGenerator(iconName, "size-16")
+		const projectTitle = el("p")
+		const counterContainer = el("div")
+		const counterText = el("p")
+
+		projectItemContainer.className = "project-item-container"
+		titleContainer.className = "project-item-title-container"
+		projectTitle.textContent = projectName
+
+		counterContainer.className = "project-item-counter-container"
+		counterText.textContent = numberOfTasks
+
+		counterContainer.appendChild(counterText)
+		titleContainer.append(icon, projectTitle)
+		projectItemContainer.append(titleContainer, counterContainer)
+
+		projectList.append(projectItemContainer)
 	}
 
 	return { display, fixedProjectList, customProjects }
-}
-
-function projectItem(iconName = "", projectName = "Nuevo proyecto") {
-	const menuContainer = el("div")
-	const titleContainer = el("div")
-	const icon = IconGenerator(iconName, "size-16")
-	const projectTitle = el("p")
-	const counterContainer = el("div")
-	const counterText = el("p")
-
-	menuContainer.className = "project-item-container"
-	titleContainer.className = "project-item-title-container"
-	projectTitle.textContent = projectName
-
-	counterContainer.className = "project-item-counter-container"
-	counterText.textContent = "23"
-
-	counterContainer.appendChild(counterText)
-	titleContainer.append(icon, projectTitle)
-	menuContainer.append(titleContainer, counterContainer)
-
-	return menuContainer
 }
 
 export function taskPanelComponent() {
