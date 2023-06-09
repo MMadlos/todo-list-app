@@ -3,11 +3,12 @@ import { UI, menuComponent, taskCardUI, taskPanelComponent, toggleAddTask } from
 import { projectList, taskList, createTask } from "./modules/task.js"
 import { createButton } from "./modules/icons"
 
+const menu = menuComponent()
+displayProjectList()
 initApp()
 
 function initApp() {
 	UI()
-	displayProjectList()
 	menuEventListeners()
 	renderTaskList()
 	cardEventListeners()
@@ -15,7 +16,7 @@ function initApp() {
 }
 
 function displayProjectList() {
-	const menu = menuComponent()
+	// const menu = menuComponent()
 	menu.display()
 
 	const fixProjects = projectList.slice(0, 4)
@@ -36,8 +37,8 @@ function displayProjectList() {
 }
 
 function menuEventListeners() {
-	const menu = document.querySelector("#menu")
-	menu.addEventListener("click", (e) => {
+	const menuDOM = document.querySelector("#menu")
+	menuDOM.addEventListener("click", (e) => {
 		const projectContainer = e.target.closest(".project-item-container")
 		const btnAddProject = e.target.closest("#btn-add-project")
 
@@ -49,10 +50,27 @@ function menuEventListeners() {
 			const projectName = projectContainer.querySelector(".project-item-title-container > p").textContent
 			const projectTasks = getTasksFromProject(projectName)
 			updateTaskList(projectTasks)
+
+			const taskListTitle = document.querySelector(".header-container > .title-container > p")
+			taskListTitle.textContent = projectName
+
+			const taskListIcon = document.querySelector(".header-container > i")
+			const projectIcon = projectContainer.querySelector(".project-item-title-container > i")
+			taskListIcon.classList = projectIcon.classList
+			taskListIcon.classList.remove("size-16")
+			taskListIcon.classList.add("size-24")
 		}
 
 		if (btnAddProject) {
 			console.log("BTN CLICKED")
+			// Añadir proyecto a la lista de proyectos
+			const _newProject = "Proyecto"
+			projectList.push(_newProject)
+
+			// Mostrarlo en el menú
+			menu.customProjects(_newProject)
+			// Seleccionarlo en el menú
+			// Desplegar una nueva lista de tareas
 		}
 	})
 }

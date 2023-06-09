@@ -85,7 +85,7 @@ export function menuComponent() {
 	projectList.append(projectSeparator)
 	menuContainer.append(projectList)
 
-	function customProjects(projectName, numberOfTasks, iconName) {
+	function customProjects(projectName, numberOfTasks = "0", iconName = "") {
 		const projectItemContainer = el("div")
 		const titleContainer = el("div")
 
