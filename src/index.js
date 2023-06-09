@@ -41,9 +41,9 @@ function menuEventListeners() {
 	menuDOM.addEventListener("click", (e) => {
 		const projectContainer = e.target.closest(".project-item-container")
 		const btnAddProject = e.target.closest("#btn-add-project")
+		const currentProjectSelected = document.querySelector(".project-item-container.selected")
 
 		if (projectContainer) {
-			const currentProjectSelected = document.querySelector(".project-item-container.selected")
 			currentProjectSelected.classList.remove("selected")
 
 			projectContainer.classList.toggle("selected")
@@ -67,10 +67,22 @@ function menuEventListeners() {
 			const _newProject = "Proyecto"
 			projectList.push(_newProject)
 
-			// Mostrarlo en el menú
 			menu.customProjects(_newProject)
-			// Seleccionarlo en el menú
-			// Desplegar una nueva lista de tareas
+			currentProjectSelected.classList.remove("selected")
+			const projectListContainer = document.querySelector(".menu-container").lastChild
+			const projectContainer = projectListContainer.lastChild
+			projectContainer.classList.add("selected")
+
+			const projectTasks = getTasksFromProject(_newProject)
+			updateTaskList(projectTasks)
+			const taskListTitle = document.querySelector(".header-container > .title-container > p")
+			taskListTitle.textContent = _newProject
+
+			const taskListIcon = document.querySelector(".header-container > i")
+			const projectIcon = projectContainer.querySelector(".project-item-title-container > i")
+			taskListIcon.classList = projectIcon.classList
+			taskListIcon.classList.remove("size-16")
+			taskListIcon.classList.add("size-24")
 		}
 	})
 }
