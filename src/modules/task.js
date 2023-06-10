@@ -8,7 +8,7 @@ export const projectList = [
 
 	// Default CUSTOM project list
 	"Tutorial",
-	"Defecto",
+	"Nombre por defecto",
 ]
 
 // El main section mostrará las taskList que pongamos aquí en función del proyecto
@@ -73,7 +73,7 @@ const thirdTask = {
 	isCompleted: false,
 	isImportant: true,
 	dueDate: "Mañana",
-	project: "Ejemplo",
+	project: "Nombre por defecto",
 	isFileAttached: false,
 	note: "",
 }

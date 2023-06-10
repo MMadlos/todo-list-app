@@ -1,58 +1,96 @@
 import "./styles.css"
-import { UI, menuComponent, taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
+import { UI, taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
+import { menuComponent } from "./modules/DOM/menu"
 import { projectList, taskList, createTask } from "./modules/task.js"
 import { createButton } from "./modules/icons"
 
-const menu = menuComponent()
-displayProjectList()
-initApp()
+const content = document.getElementById("content")
 
-function initApp() {
+// Init app
+;(function initApp() {
 	UI()
+	displayProjectList()
 	menuEventListeners()
 	renderTaskList()
 	cardEventListeners()
 	addTaskBtnEventListeners()
-}
+})()
 
 function displayProjectList() {
-	// const menu = menuComponent()
-	menu.display()
+	const menu = menuComponent()
+	const menuSection = menu.display()
+	content.prepend(menuSection)
 
-	const fixProjects = projectList.slice(0, 4)
-	fixProjects.forEach((project) => {
-		const numberOfTasks = getTasksFromProject(project).length
-		menu.fixedProjectList(project, numberOfTasks)
+	const allDefaultProjects = document.querySelectorAll("[project]")
+	allDefaultProjects.forEach((project) => {
+		const taskNumberElement = project.querySelector(".project-item-counter-container > p")
+		const projectName = project.getAttribute("project")
+
+		const numberOfTasks = getTasksFromProject(projectName).length
+		taskNumberElement.textContent = numberOfTasks
 	})
 
-	const defaultProject = document.querySelector(".project-item-container")
-	defaultProject.classList.add("selected")
-
-	const iconNamesDefault = { Tutorial: "play", Defecto: "folder" }
 	const customProjects = projectList.slice(4)
 	customProjects.forEach((project) => {
-		const numberOfTasks = getTasksFromProject(project).length
-		menu.customProjects(project, numberOfTasks, iconNamesDefault[project])
+		menu.addProjectItem(project)
+
+		const projectItemContainer = menuSection.querySelector(`[project="${project.toLowerCase()}"]`)
+		const projectName = projectItemContainer.querySelector(".project-item-title-container > p").textContent
+		const taskNumberElement = projectItemContainer.querySelector(".project-item-counter-container > p")
+		const numberOfTasks = getTasksFromProject(projectName).length
+
+		taskNumberElement.textContent = numberOfTasks
 	})
+}
+
+function getTasksFromProject(projectName) {
+	const propertyNames = {
+		planificado: "dueDate",
+		importantes: "isImportant",
+		completados: "isCompleted",
+	}
+
+	const _projectName = projectName.toLowerCase()
+	const tasksProject = taskList.filter((task) => {
+		if (_projectName === "todos") return taskList
+
+		const propertyToFilter = propertyNames[_projectName]
+		if (propertyToFilter === "dueDate") return task[propertyToFilter] !== ""
+		if (propertyToFilter === undefined) return task.project === projectName
+
+		return task[propertyToFilter]
+	})
+
+	return tasksProject
+}
+
+// TODO --> REVISAR A PARTIR DE AQUÍ
+function updateProjectList() {
+	const projectItemsAll = document.querySelectorAll(".project-item-container")
+	projectItemsAll.forEach((item) => item.remove())
+
+	displayProjectList()
 }
 
 function menuEventListeners() {
 	const menuDOM = document.querySelector("#menu")
+	const defaultProjectSelected = document.querySelector(".project-item-container")
+	defaultProjectSelected.classList.add("selected")
+
 	menuDOM.addEventListener("click", (e) => {
 		const projectContainer = e.target.closest(".project-item-container")
 		const btnAddProject = e.target.closest("#btn-add-project")
 		const currentProjectSelected = document.querySelector(".project-item-container.selected")
+		currentProjectSelected.classList.remove("selected")
 
 		if (projectContainer) {
-			currentProjectSelected.classList.remove("selected")
-
 			projectContainer.classList.toggle("selected")
 			const projectName = projectContainer.querySelector(".project-item-title-container > p").textContent
 			const projectTasks = getTasksFromProject(projectName)
 			updateTaskList(projectTasks)
 
 			const taskListTitle = document.querySelector(".header-container > .title-container > p")
-			taskListTitle.textContent = projectName
+			taskListTitle.value = projectName
 
 			const taskListIcon = document.querySelector(".header-container > i")
 			const projectIcon = projectContainer.querySelector(".project-item-title-container > i")
@@ -62,19 +100,18 @@ function menuEventListeners() {
 		}
 
 		if (btnAddProject) {
-			console.log("BTN CLICKED")
-			// Añadir proyecto a la lista de proyectos
 			const _newProject = "Proyecto"
 			projectList.push(_newProject)
 
-			menu.customProjects(_newProject)
-			currentProjectSelected.classList.remove("selected")
-			const projectListContainer = document.querySelector(".menu-container").lastChild
-			const projectContainer = projectListContainer.lastChild
+			updateProjectList()
+
+			const customProjectsList = document.querySelector(".project-list-container:last-of-type")
+			const projectContainer = customProjectsList.querySelector(".project-item-container:last-of-type")
 			projectContainer.classList.add("selected")
 
 			const projectTasks = getTasksFromProject(_newProject)
 			updateTaskList(projectTasks)
+
 			const taskListTitle = document.querySelector(".header-container > .title-container > p")
 			taskListTitle.textContent = _newProject
 
@@ -87,7 +124,7 @@ function menuEventListeners() {
 	})
 }
 
-function renderTaskList(taskListOrigin = getTasksFromProject()) {
+function renderTaskList(taskListOrigin = getTasksFromProject("Planificado")) {
 	taskListOrigin.forEach((task) => {
 		const taskCard = taskCardUI()
 		const taskCardDOM = taskCard.display()
@@ -205,11 +242,12 @@ function taskPanelEventListeners() {
 			tickIcon.classList.add("fa-regular", "fa-square", "size-16")
 
 			const stepTextDOM = document.createElement("input")
-			stepTextDOM.value = "Nuevo paso añadido"
+			stepTextDOM.placeholder = "Nombre del paso"
 
 			stepContainer.append(tickIcon, stepTextDOM)
 
 			taskStepsContainer.insertBefore(stepContainer, btnAddStep)
+			stepTextDOM.focus()
 		}
 
 		if (btnClosePanel) {
@@ -322,6 +360,7 @@ function addTaskBtnEventListeners() {
 	})
 
 	addTaskElement.addEventListener("keydown", (e) => {
+		// TODO -> Revisar cuando se añade una nueva tarea a un proyecto. Debe aparecer las tareas sólo de ese proyecto.
 		if (e.key !== "Enter") return
 
 		const isCompleted = tickIcon.classList.contains("fa-square-check")
@@ -334,7 +373,13 @@ function addTaskBtnEventListeners() {
 		newTask.properties.isCompleted = isCompleted
 		newTask.properties.isImportant = isImportant
 		newTask.properties.dueDate = hasDueDate ? "Hoy" : ""
-		newTask.properties.project = hasProject ? "Planificado" : ""
+
+		// Get the custom projects
+		const customProjectList = document.querySelector(".project-list-container:last-child")
+		const selectedProjectContainer = customProjectList.querySelector(".selected")
+		const selectedProjectName = selectedProjectContainer.querySelector(".project-item-title-container > p").textContent
+
+		newTask.properties.project = selectedProjectName
 
 		const mainSection = document.getElementById("main-section")
 		const newTaskInputContainer = document.querySelector(".new-task-input-container")
@@ -366,27 +411,6 @@ function addTaskBtnEventListeners() {
 
 		addTaskBtnEventListeners()
 	})
-}
-
-function getTasksFromProject(projectName = "Planificado") {
-	const propertyNames = {
-		planificado: "dueDate",
-		importantes: "isImportant",
-		completados: "isCompleted",
-	}
-
-	const _projectName = projectName.toLowerCase()
-
-	const propertyToFilter = propertyNames[_projectName]
-	const tasksProject = taskList.filter((task) => {
-		if (propertyToFilter === "dueDate") return task[propertyToFilter] !== ""
-		if (propertyToFilter === undefined) return task.project === projectName
-
-		return task[propertyToFilter]
-	})
-
-	const tasks = _projectName === "todos" ? taskList : tasksProject
-	return tasks
 }
 
 // UTILITIES
