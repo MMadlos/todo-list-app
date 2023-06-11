@@ -1,32 +1,50 @@
 import { Logo, IconGenerator, createButton } from "../icons"
 import { el } from "../DOM"
+import { projectList } from "../task"
 
-function headerUI() {
-	const appNameContainer = el("div")
-	const logo = Logo()
-	const appName = el("h1")
+export function menuComponent() {
+	const UI = menuUI()
 
-	appName.id = "app-name"
-	appName.textContent = "Mis tareas"
-	appNameContainer.className = "title-container"
-	appNameContainer.append(logo, appName)
+	function addProjectList(group) {
+		const defaultProjectListContainer = document.querySelector("[default-projects")
+		const customProjectListContainer = document.querySelector("[custom-projects")
 
-	return appNameContainer
-}
+		const defaultProjects = projectList.slice(0, 4)
+		const customProjects = projectList.slice(4)
 
-const iconsForProjects = {
-	Planificado: "clock",
-	Todos: "list",
-	Importantes: "star",
-	Completados: "check",
-	Tutorial: "play",
-	"Nombre por defecto": "bookmark",
+		if (group === "default") {
+			defaultProjects.forEach((project) => {
+				const _project = projectItem(project)
+				defaultProjectListContainer.append(_project)
+			})
+		}
+
+		if (group === "custom") {
+			customProjects.forEach((project) => {
+				const _project = projectItem(project)
+				customProjectListContainer.append(_project)
+			})
+		}
+	}
+
+	return { UI, addProjectList }
 }
 
 function projectItem(projectName) {
 	const projectItemContainer = el("div")
 	const titleContainer = el("div")
-	const icon = IconGenerator(iconsForProjects[projectName], "size-16")
+
+	const iconsForProjects = {
+		Planificado: "clock",
+		Todos: "list",
+		Importantes: "star",
+		Completados: "check",
+		Tutorial: "play",
+	}
+
+	const iconName = iconsForProjects[projectName] ?? "bookmark"
+	const icon = IconGenerator(iconName, "size-16")
+
 	const projectTitle = el("p")
 	const counterContainer = el("div")
 	const counterText = el("p")
@@ -44,28 +62,19 @@ function projectItem(projectName) {
 	return projectItemContainer
 }
 
-function defaultProjectListComponent() {
-	const projectListDefault = el("div")
-	projectListDefault.className = "project-list-container"
-
-	const projectNames = ["Planificado", "Todos", "Importantes", "Completados"]
-
-	projectNames.forEach((project) => {
-		const _project = projectItem(project)
-		projectListDefault.appendChild(_project)
-	})
-
-	return projectListDefault
-}
-
-export function menuComponent() {
+function menuUI() {
 	const menuSection = el("section")
 	const menuContainer = el("div")
 
 	const header = headerUI()
 
-	const projectListDefault = defaultProjectListComponent()
+	const projectListDefault = el("div")
+	projectListDefault.className = "project-list-container"
+	projectListDefault.setAttribute("default-projects", "")
+
 	const projectListCustom = el("div")
+	projectListCustom.className = "project-list-container"
+	projectListCustom.setAttribute("custom-projects", "")
 	const projectSeparator = el("p")
 
 	const btnAddProject = createButton("addProject")
@@ -73,7 +82,6 @@ export function menuComponent() {
 	menuSection.id = "menu"
 	menuContainer.className = "menu-container"
 
-	projectListCustom.className = "project-list-container"
 	projectSeparator.textContent = "Proyectos"
 	projectSeparator.className = "project-list-separator"
 
@@ -81,12 +89,18 @@ export function menuComponent() {
 	menuContainer.append(header, projectListDefault, projectListCustom)
 	menuSection.append(menuContainer, btnAddProject)
 
-	const display = () => menuSection
+	return menuSection
+}
 
-	function addProjectItem(projectName = "Nombre por defecto") {
-		const project = projectItem(projectName)
-		projectListCustom.append(project)
-	}
+function headerUI() {
+	const appNameContainer = el("div")
+	const logo = Logo()
+	const appName = el("h1")
 
-	return { display, addProjectItem }
+	appName.id = "app-name"
+	appName.textContent = "Mis tareas"
+	appNameContainer.className = "title-container"
+	appNameContainer.append(logo, appName)
+
+	return appNameContainer
 }

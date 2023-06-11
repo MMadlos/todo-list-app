@@ -12,104 +12,6 @@ export function UI() {
 	content.append(mainSection)
 }
 
-// export function menuComponent() {
-// 	// Structure and header
-// 	const menu = el("section")
-// 	const menuContainer = el("div")
-// 	menu.id = "menu"
-// 	menuContainer.className = "menu-container"
-// 	menu.appendChild(menuContainer)
-
-// 	const appNameContainer = el("div")
-// 	appNameContainer.className = "title-container"
-// 	menuContainer.appendChild(appNameContainer)
-
-// 	const logo = Logo()
-// 	const appName = el("h1")
-// 	appName.id = "app-name"
-// 	appName.textContent = "Mis tareas"
-// 	appNameContainer.append(logo, appName)
-
-// 	const btnAddProject = createButton("addProject")
-// 	menu.appendChild(btnAddProject)
-
-// 	function display() {
-// 		const content = document.getElementById("content")
-// 		return content.prepend(menu)
-// 	}
-
-// 	//PROJECT LIST
-// 	const projectListDefault = el("div")
-// 	projectListDefault.className = "project-list-container"
-// 	menuContainer.appendChild(projectListDefault)
-
-// 	function fixedProjectList(projectName, numberOfTasks) {
-// 		const projectItemContainer = el("div")
-// 		const titleContainer = el("div")
-
-// 		const iconProjectName = {
-// 			planificado: "clock",
-// 			todos: "list",
-// 			importantes: "star",
-// 			completados: "check",
-// 		}
-
-// 		const iconSelected = iconProjectName[projectName.toLowerCase()]
-
-// 		const icon = IconGenerator(iconSelected, "size-16")
-// 		const projectTitle = el("p")
-// 		const counterContainer = el("div")
-// 		const counterText = el("p")
-
-// 		projectItemContainer.className = "project-item-container"
-// 		titleContainer.className = "project-item-title-container"
-// 		projectTitle.textContent = projectName
-
-// 		counterContainer.className = "project-item-counter-container"
-// 		counterText.textContent = numberOfTasks
-
-// 		counterContainer.appendChild(counterText)
-// 		titleContainer.append(icon, projectTitle)
-// 		projectItemContainer.append(titleContainer, counterContainer)
-
-// 		projectListDefault.appendChild(projectItemContainer)
-// 	}
-
-// 	const projectList = el("div")
-// 	projectList.className = "project-list-container"
-
-// 	const projectSeparator = el("p")
-// 	projectSeparator.textContent = "Proyectos"
-// 	projectSeparator.className = "project-list-separator"
-// 	projectList.append(projectSeparator)
-// 	menuContainer.append(projectList)
-
-// 	function customProjects(projectName, numberOfTasks = "0", iconName = "") {
-// 		const projectItemContainer = el("div")
-// 		const titleContainer = el("div")
-
-// 		const icon = IconGenerator(iconName, "size-16")
-// 		const projectTitle = el("p")
-// 		const counterContainer = el("div")
-// 		const counterText = el("p")
-
-// 		projectItemContainer.className = "project-item-container"
-// 		titleContainer.className = "project-item-title-container"
-// 		projectTitle.textContent = projectName
-
-// 		counterContainer.className = "project-item-counter-container"
-// 		counterText.textContent = numberOfTasks
-
-// 		counterContainer.appendChild(counterText)
-// 		titleContainer.append(icon, projectTitle)
-// 		projectItemContainer.append(titleContainer, counterContainer)
-
-// 		projectList.append(projectItemContainer)
-// 	}
-
-// 	return { display, fixedProjectList, customProjects }
-// }
-
 export function taskPanelComponent() {
 	const taskPanel = el("section")
 	const btnClosePanel = IconGenerator("close", "size-16")
@@ -285,7 +187,7 @@ export function taskPanelComponent() {
 	return { display, taskTitle, tickIcon, isTaskImportant, hasTaskDueDate, project, taskStepsList, file, note }
 }
 
-function mainSectionComponent() {
+export function mainSectionComponent() {
 	const mainSection = el("main")
 	const mainSectionContainer = el("div")
 	mainSection.id = "main-section"

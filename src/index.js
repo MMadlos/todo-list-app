@@ -1,60 +1,50 @@
 import "./styles.css"
-import { UI, taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
+import { taskCardUI, taskPanelComponent, toggleAddTask } from ".//modules/DOM"
 import { menuComponent } from "./modules/DOM/menu"
+import { mainSectionComponent } from "./modules/DOM/main-section"
 import { projectList, taskList, createTask } from "./modules/task.js"
 import { createButton } from "./modules/icons"
 
 const content = document.getElementById("content")
+const mainSection = mainSectionComponent()
 
-// Init app
-;(function initApp() {
-	UI()
-	displayProjectList()
-	menuEventListeners()
-	renderTaskList()
-	cardEventListeners()
-	addTaskBtnEventListeners()
-})()
+content.append(mainSection)
 
-function displayProjectList() {
+displayMenu()
+menuEventListeners()
+renderTaskList()
+cardEventListeners()
+addTaskBtnEventListeners()
+
+function displayMenu() {
 	const menu = menuComponent()
-	const menuSection = menu.display()
-	content.prepend(menuSection)
+	content.prepend(menu.UI)
 
-	const allDefaultProjects = document.querySelectorAll("[project]")
-	allDefaultProjects.forEach((project) => {
-		const taskNumberElement = project.querySelector(".project-item-counter-container > p")
-		const projectName = project.getAttribute("project")
+	menu.addProjectList("default")
+	menu.addProjectList("custom")
 
-		const numberOfTasks = getTasksFromProject(projectName).length
-		taskNumberElement.textContent = numberOfTasks
-	})
-
-	const customProjects = projectList.slice(4)
-	customProjects.forEach((project) => {
-		menu.addProjectItem(project)
-
-		const projectItemContainer = menuSection.querySelector(`[project="${project.toLowerCase()}"]`)
-		const projectName = projectItemContainer.querySelector(".project-item-title-container > p").textContent
-		const taskNumberElement = projectItemContainer.querySelector(".project-item-counter-container > p")
+	const allProjectItems = document.querySelectorAll("[project]")
+	allProjectItems.forEach((project) => {
+		const projectName = project.querySelector("p").textContent
 		const numberOfTasks = getTasksFromProject(projectName).length
 
-		taskNumberElement.textContent = numberOfTasks
+		const counterElement = project.querySelector("div:last-of-type > p")
+		counterElement.textContent = numberOfTasks
 	})
 }
 
 function getTasksFromProject(projectName) {
+	const _projectName = projectName.toLowerCase()
 	const propertyNames = {
 		planificado: "dueDate",
 		importantes: "isImportant",
 		completados: "isCompleted",
 	}
 
-	const _projectName = projectName.toLowerCase()
-	const tasksProject = taskList.filter((task) => {
-		if (_projectName === "todos") return taskList
+	if (_projectName === "todos") return taskList
 
-		const propertyToFilter = propertyNames[_projectName]
+	const propertyToFilter = propertyNames[_projectName]
+	const tasksProject = taskList.filter((task) => {
 		if (propertyToFilter === "dueDate") return task[propertyToFilter] !== ""
 		if (propertyToFilter === undefined) return task.project === projectName
 
@@ -65,35 +55,30 @@ function getTasksFromProject(projectName) {
 }
 
 // TODO --> REVISAR A PARTIR DE AQUÍ
-function updateProjectList() {
-	const projectItemsAll = document.querySelectorAll(".project-item-container")
-	projectItemsAll.forEach((item) => item.remove())
-
-	displayProjectList()
-}
-
 function menuEventListeners() {
-	const menuDOM = document.querySelector("#menu")
+	const menu = document.querySelector("#menu")
 	const defaultProjectSelected = document.querySelector(".project-item-container")
 	defaultProjectSelected.classList.add("selected")
 
-	menuDOM.addEventListener("click", (e) => {
+	menu.addEventListener("click", (e) => {
 		const projectContainer = e.target.closest(".project-item-container")
 		const btnAddProject = e.target.closest("#btn-add-project")
 		const currentProjectSelected = document.querySelector(".project-item-container.selected")
-		currentProjectSelected.classList.remove("selected")
 
 		if (projectContainer) {
+			currentProjectSelected.classList.remove("selected")
 			projectContainer.classList.toggle("selected")
-			const projectName = projectContainer.querySelector(".project-item-title-container > p").textContent
+
+			const projectName = projectContainer.querySelector("p").textContent
 			const projectTasks = getTasksFromProject(projectName)
 			updateTaskList(projectTasks)
 
-			const taskListTitle = document.querySelector(".header-container > .title-container > p")
-			taskListTitle.value = projectName
+			const taskListTitle = document.querySelector(".title-container > p")
+			taskListTitle.textContent = projectName
 
 			const taskListIcon = document.querySelector(".header-container > i")
-			const projectIcon = projectContainer.querySelector(".project-item-title-container > i")
+			const projectIcon = projectContainer.querySelector("i")
+
 			taskListIcon.classList = projectIcon.classList
 			taskListIcon.classList.remove("size-16")
 			taskListIcon.classList.add("size-24")
@@ -122,6 +107,13 @@ function menuEventListeners() {
 			taskListIcon.classList.add("size-24")
 		}
 	})
+}
+
+function updateProjectList() {
+	const projectItemsAll = document.querySelectorAll(".project-item-container")
+	projectItemsAll.forEach((item) => item.remove())
+
+	displayMenu()
 }
 
 function renderTaskList(taskListOrigin = getTasksFromProject("Planificado")) {
