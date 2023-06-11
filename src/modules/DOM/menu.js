@@ -2,32 +2,77 @@ import { Logo, IconGenerator, createButton } from "../icons"
 import { el } from "../DOM"
 import { projectList } from "../task"
 
-export function menuComponent() {
-	const UI = menuUI()
+export function menuUI() {
+	const menuSection = el("section")
+	const menuContainer = el("div")
 
-	function addProjectList(group) {
-		const defaultProjectListContainer = document.querySelector("[default-projects")
-		const customProjectListContainer = document.querySelector("[custom-projects")
+	const header = headerUI()
 
+	const projectListDefault = el("div")
+	projectListDefault.className = "project-list-container"
+	projectListDefault.setAttribute("default-projects", "")
+
+	const projectListCustom = el("div")
+	projectListCustom.className = "project-list-container"
+	projectListCustom.setAttribute("custom-projects", "")
+	const projectSeparator = el("p")
+
+	const btnAddProject = createButton("addProject")
+
+	menuSection.id = "menu"
+	menuContainer.className = "menu-container"
+
+	projectSeparator.textContent = "Proyectos"
+	projectSeparator.className = "project-list-separator"
+
+	menuSection.append(menuContainer, btnAddProject)
+	menuContainer.append(header, projectListDefault, projectListCustom)
+	projectListCustom.append(projectSeparator)
+
+	const display = () => {
+		const content = document.getElementById("content")
+		content.prepend(menuSection)
+	}
+	const addProjectList = () => {
 		const defaultProjects = projectList.slice(0, 4)
 		const customProjects = projectList.slice(4)
 
-		if (group === "default") {
-			defaultProjects.forEach((project) => {
-				const _project = projectItem(project)
-				defaultProjectListContainer.append(_project)
-			})
-		}
+		defaultProjects.forEach((projectName) => {
+			const project = projectItem(projectName)
+			projectListDefault.append(project)
 
-		if (group === "custom") {
-			customProjects.forEach((project) => {
-				const _project = projectItem(project)
-				customProjectListContainer.append(_project)
-			})
-		}
+			if (projectName === "Planificado") project.classList.add("selected")
+		})
+
+		customProjects.forEach((projectName) => {
+			const project = projectItem(projectName)
+			projectListCustom.append(project)
+		})
 	}
 
-	return { UI, addProjectList }
+	const addNewProject = (projectName) => {
+		const currentProjectSelected = menuContainer.querySelector(".selected")
+		currentProjectSelected.classList.remove("selected")
+
+		const project = projectItem(projectName)
+		project.classList.add("selected")
+		projectListCustom.append(project)
+	}
+
+	return { display, addProjectList, addNewProject }
+}
+
+function headerUI() {
+	const appNameContainer = el("div")
+	const logo = Logo()
+	const appName = el("h1")
+
+	appName.id = "app-name"
+	appName.textContent = "Mis tareas"
+	appNameContainer.className = "title-container"
+	appNameContainer.append(logo, appName)
+
+	return appNameContainer
 }
 
 function projectItem(projectName) {
@@ -60,47 +105,4 @@ function projectItem(projectName) {
 	projectItemContainer.append(titleContainer, counterContainer)
 
 	return projectItemContainer
-}
-
-function menuUI() {
-	const menuSection = el("section")
-	const menuContainer = el("div")
-
-	const header = headerUI()
-
-	const projectListDefault = el("div")
-	projectListDefault.className = "project-list-container"
-	projectListDefault.setAttribute("default-projects", "")
-
-	const projectListCustom = el("div")
-	projectListCustom.className = "project-list-container"
-	projectListCustom.setAttribute("custom-projects", "")
-	const projectSeparator = el("p")
-
-	const btnAddProject = createButton("addProject")
-
-	menuSection.id = "menu"
-	menuContainer.className = "menu-container"
-
-	projectSeparator.textContent = "Proyectos"
-	projectSeparator.className = "project-list-separator"
-
-	projectListCustom.append(projectSeparator)
-	menuContainer.append(header, projectListDefault, projectListCustom)
-	menuSection.append(menuContainer, btnAddProject)
-
-	return menuSection
-}
-
-function headerUI() {
-	const appNameContainer = el("div")
-	const logo = Logo()
-	const appName = el("h1")
-
-	appName.id = "app-name"
-	appName.textContent = "Mis tareas"
-	appNameContainer.className = "title-container"
-	appNameContainer.append(logo, appName)
-
-	return appNameContainer
 }
