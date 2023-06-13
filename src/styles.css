@@ -535,17 +535,6 @@ textarea:focus {
 	border-right: 1px solid var(--text-light);
 }
 
-/* .new-task-input-container {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 16px;
-	width: 100%;
-	border: 2px solid var(--stroke-grey-dark);
-	border-radius: 12px;
-	padding: 6px 12px;
-} */
-
 .btn-regular-blue,
 .new-task-input-container {
 	display: flex;
@@ -558,6 +547,14 @@ textarea:focus {
 	padding: 12px;
 }
 
+.new-task-input-container {
+	opacity: 50%;
+}
+
+.new-task-input-container:hover {
+	opacity: 100%;
+}
+
 .new-task-task-container {
 	display: flex;
 	align-items: center;
@@ -566,7 +563,7 @@ textarea:focus {
 }
 
 .new-task-task-container > i {
-	color: var(--tick-grey);
+	color: var(--blue-accent-color);
 }
 
 #new-task {
@@ -585,7 +582,7 @@ textarea:focus {
 }
 
 #new-task::placeholder {
-	color: var(--text-light);
+	color: var(--blue-accent-color);
 }
 
 .new-task-icons-container {

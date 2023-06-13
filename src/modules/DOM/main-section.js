@@ -1,7 +1,7 @@
 import { el } from "../DOM"
-import { IconGenerator, createButton } from "../icons"
+import { IconGenerator } from "../icons"
 
-export function mainSectionComponent() {
+export function mainUI() {
 	const mainSection = el("main")
 	const mainSectionContainer = el("div")
 	mainSection.id = "main-section"
@@ -16,6 +16,17 @@ export function mainSectionComponent() {
 	headerContainer.className = "header-container"
 	titleContainer.className = "title-container"
 	titleText.textContent = "Planificado"
+
+	function editHeader() {
+		const projectSelected = document.querySelector(".selected")
+		const projectTitle = projectSelected.querySelector("p").textContent
+		const _projectIcon = projectSelected.querySelector("i")
+
+		titleText.textContent = projectTitle
+		projectIcon.classList = _projectIcon.classList
+		projectIcon.classList.remove("size-16")
+		projectIcon.classList.add("size-24")
+	}
 
 	titleContainer.appendChild(titleText)
 	headerContainer.append(projectIcon, titleContainer)
@@ -51,9 +62,59 @@ export function mainSectionComponent() {
 	taskGroupContainer.append(taskGroupNameContainer, taskCardListContainer)
 	mainSectionContainer.append(taskListContainer)
 
-	// BTN
-	const btnAddTask = createButton("addTask")
-	mainSection.append(mainSectionContainer, btnAddTask)
+	// NEW BTN
+	// const inputAddTask = newTaskBtn()
+	const newTaskInputContainer = el("div")
+	newTaskInputContainer.className = "new-task-input-container"
+	newTaskInputContainer.setAttribute("state", "inactive")
 
-	return mainSection
+	const newTaskTaskContainer = el("div")
+	newTaskTaskContainer.className = "new-task-task-container"
+
+	const newTaskInputIcon = IconGenerator("add", "size-24")
+	const newTaskInput = el("input")
+	newTaskInput.type = "text"
+	newTaskInput.id = "new-task"
+	newTaskInput.name = "new-task"
+	newTaskInput.placeholder = "Añadir tarea"
+
+	const newTaskIconsContainer = el("div")
+	newTaskIconsContainer.className = "new-task-icons-container"
+	newTaskIconsContainer.classList.toggle("hide")
+
+	const dueDateIcon = IconGenerator("clock", "size-21")
+	const projectFolderIcon = IconGenerator("folder", "size-21")
+	const starIcon = IconGenerator("star", "size-21")
+
+	newTaskIconsContainer.append(dueDateIcon, projectFolderIcon, starIcon)
+	newTaskTaskContainer.append(newTaskInputIcon, newTaskInput)
+	newTaskInputContainer.append(newTaskTaskContainer, newTaskIconsContainer)
+
+	mainSection.append(mainSectionContainer, newTaskInputContainer)
+
+	const display = () => {
+		const content = document.getElementById("content")
+		content.append(mainSection)
+	}
+
+	function toggleTaskBtnTo(state) {
+		if (state === "active") {
+			newTaskInputContainer.setAttribute("state", "active")
+
+			newTaskInputIcon.className = ""
+			newTaskInputIcon.classList.add("fa-regular", "fa-square", "size-24")
+
+			newTaskInput.placeholder = ""
+		}
+		if (state === "inactive") {
+			newTaskInputContainer.setAttribute("state", "inactive")
+
+			newTaskInputIcon.className = ""
+			newTaskInputIcon.classList.add("fa-solid", "fa-plus", "size-24")
+
+			newTaskInput.placeholder = "Añadir tarea"
+		}
+	}
+
+	return { display, editHeader, toggleTaskBtnTo }
 }

@@ -187,7 +187,7 @@ export function taskPanelComponent() {
 	return { display, taskTitle, tickIcon, isTaskImportant, hasTaskDueDate, project, taskStepsList, file, note }
 }
 
-export function mainSectionComponent() {
+function mainSectionComponent() {
 	const mainSection = el("main")
 	const mainSectionContainer = el("div")
 	mainSection.id = "main-section"

@@ -29,25 +29,24 @@ export function menuUI() {
 	menuContainer.append(header, projectListDefault, projectListCustom)
 	projectListCustom.append(projectSeparator)
 
+	const defaultProjects = projectList.slice(0, 4)
+	const customProjects = projectList.slice(4)
+
+	defaultProjects.forEach((projectName) => {
+		const project = projectItem(projectName)
+		projectListDefault.append(project)
+
+		if (projectName === "Planificado") project.classList.add("selected")
+	})
+
+	customProjects.forEach((projectName) => {
+		const project = projectItem(projectName)
+		projectListCustom.append(project)
+	})
+
 	const display = () => {
 		const content = document.getElementById("content")
 		content.prepend(menuSection)
-	}
-	const addProjectList = () => {
-		const defaultProjects = projectList.slice(0, 4)
-		const customProjects = projectList.slice(4)
-
-		defaultProjects.forEach((projectName) => {
-			const project = projectItem(projectName)
-			projectListDefault.append(project)
-
-			if (projectName === "Planificado") project.classList.add("selected")
-		})
-
-		customProjects.forEach((projectName) => {
-			const project = projectItem(projectName)
-			projectListCustom.append(project)
-		})
 	}
 
 	const addNewProject = (projectName) => {
@@ -59,7 +58,7 @@ export function menuUI() {
 		projectListCustom.append(project)
 	}
 
-	return { display, addProjectList, addNewProject }
+	return { display, addNewProject }
 }
 
 function headerUI() {
