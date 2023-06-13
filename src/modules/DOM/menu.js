@@ -93,7 +93,7 @@ function projectItem(projectName) {
 	const counterContainer = el("div")
 	const counterText = el("p")
 
-	projectItemContainer.setAttribute("project", projectName.toLowerCase())
+	projectItemContainer.setAttribute("project", projectName)
 	projectItemContainer.className = "project-item-container"
 	titleContainer.className = "project-item-title-container"
 	projectTitle.textContent = projectName

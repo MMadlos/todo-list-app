@@ -118,3 +118,81 @@ export function mainUI() {
 
 	return { display, editHeader, toggleTaskBtnTo }
 }
+
+export function taskCardUI() {
+	const taskCardContainer = el("div")
+	const taskInfoContainer = el("div")
+	const taskTitleContainer = el("div")
+	const taskTitle = el("p")
+	const taskDetailsContainer = el("div")
+
+	taskCardContainer.className = "task-card-container"
+	taskInfoContainer.className = "task-info-container"
+	taskTitleContainer.className = "task-title-container"
+	taskDetailsContainer.className = "task-details-container"
+
+	taskTitle.textContent = "Título por defecto"
+
+	taskCardContainer.prepend(taskInfoContainer)
+	taskInfoContainer.append(taskTitleContainer)
+	taskTitleContainer.append(taskTitle, taskDetailsContainer)
+
+	const display = () => {
+		const taskListContainer = document.querySelector(".task-card-list-container")
+		return taskListContainer.appendChild(taskCardContainer)
+	}
+
+	function tickIcon(isTaskCompleted) {
+		const tickIcon = isTaskCompleted ? IconGenerator("checkDone", "size-21") : IconGenerator("checkEmpty", "size-21")
+
+		if (isTaskCompleted) taskTitle.classList.add("task-done")
+
+		return taskInfoContainer.prepend(tickIcon)
+	}
+
+	function title(title) {
+		return (taskTitle.textContent = title)
+	}
+
+	function iconImportant(isTaskImportant) {
+		const _icon = isTaskImportant ? IconGenerator("starSolid", "size-21") : IconGenerator("star", "size-21")
+		return taskCardContainer.appendChild(_icon)
+	}
+
+	function addTag(type, taskText) {
+		if (!taskText) return
+
+		const tagContainer = el("div")
+		tagContainer.className = "detail-container"
+
+		const iconName = {
+			date: "clock",
+			project: "folder",
+			file: "clip",
+		}
+
+		const tagIcon = IconGenerator(iconName[type], "size-16")
+		const tagText = el("p")
+		tagText.textContent = taskText === true ? "Archivo adjunto" : taskText
+
+		tagContainer.append(tagIcon, tagText)
+		taskDetailsContainer.appendChild(tagContainer)
+	}
+
+	function tagSeparator() {
+		const detailContainers = taskDetailsContainer.querySelectorAll(".detail-container")
+		const countTags = detailContainers.length
+
+		if (countTags === 0) taskDetailsContainer.remove()
+		if (countTags > 1) {
+			for (let i = 0; i < countTags - 1; i++) {
+				const separator = el("div")
+				separator.className = "task-details-separator"
+
+				detailContainers[i].after(separator)
+			}
+		}
+	}
+
+	return { display, title, tickIcon, iconImportant, addTag, tagSeparator }
+}
