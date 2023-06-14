@@ -442,9 +442,16 @@ textarea:focus {
 	border-radius: 8px;
 }
 
-.header-container > .title-container:hover {
+.header-container > .title-container:hover,
+.title-container.edit {
 	background-color: var(--bg-grey-light);
 	border: 2px solid var(--stroke-grey);
+}
+
+.title-container input {
+	outline: none;
+	color: var(--text-default);
+	border: none;
 }
 
 .task-list-container,

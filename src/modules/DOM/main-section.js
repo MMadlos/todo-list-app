@@ -9,24 +9,14 @@ export function mainUI() {
 
 	// HEADER
 	const headerContainer = el("div")
-	const projectIcon = IconGenerator("clock", "size-24")
 	const titleContainer = el("div")
+
+	const projectIcon = IconGenerator("clock", "size-24")
 	const titleText = el("p")
 
 	headerContainer.className = "header-container"
 	titleContainer.className = "title-container"
 	titleText.textContent = "Planificado"
-
-	function editHeader() {
-		const projectSelected = document.querySelector(".selected")
-		const projectTitle = projectSelected.querySelector("p").textContent
-		const _projectIcon = projectSelected.querySelector("i")
-
-		titleText.textContent = projectTitle
-		projectIcon.classList = _projectIcon.classList
-		projectIcon.classList.remove("size-16")
-		projectIcon.classList.add("size-24")
-	}
 
 	titleContainer.appendChild(titleText)
 	headerContainer.append(projectIcon, titleContainer)
@@ -47,8 +37,9 @@ export function mainUI() {
 	const counterText = el("p")
 
 	taskGroupNameContainer.className = "task-group-name-container"
-	groupName.textContent = "Hoy"
 	groupCounterContainer.className = "group-counter-container"
+
+	groupName.textContent = "Hoy"
 	counterText.textContent = "2"
 
 	taskGroupNameContainer.append(iconChevronDown, groupName, groupCounterContainer)
@@ -63,7 +54,6 @@ export function mainUI() {
 	mainSectionContainer.append(taskListContainer)
 
 	// NEW BTN
-	// const inputAddTask = newTaskBtn()
 	const newTaskInputContainer = el("div")
 	newTaskInputContainer.className = "new-task-input-container"
 	newTaskInputContainer.setAttribute("state", "inactive")
@@ -95,6 +85,17 @@ export function mainUI() {
 	const display = () => {
 		const content = document.getElementById("content")
 		content.append(mainSection)
+	}
+
+	function editHeader() {
+		const projectSelected = document.querySelector(".selected")
+		const projectTitle = projectSelected.querySelector("p").textContent
+		const _projectIcon = projectSelected.querySelector("i")
+
+		titleText.textContent = projectTitle
+		projectIcon.classList = _projectIcon.classList
+		projectIcon.classList.remove("size-16")
+		projectIcon.classList.add("size-24")
 	}
 
 	function toggleTaskBtnTo(state) {

@@ -6,7 +6,7 @@ import { projectList, taskList, createTask } from "./modules/task.js"
 
 const menuDOM = menuUI()
 const mainDOM = mainUI()
-const defaultTaskList = getTasksFromProject("Planificado")
+const defaultTaskList = getTasksFromProject("Tutorial")
 
 initApp()
 
@@ -16,6 +16,7 @@ function initApp() {
 	addNumberOfTasksToCounter()
 	menuEventListeners()
 	renderTaskList()
+	mainDOM.editHeader()
 	cardEventListeners()
 	btnAddTaskEventListeners()
 }
@@ -135,8 +136,79 @@ function btnAddTaskEventListeners() {
 
 		const projectTasks = getTasksFromProject(projectSelected)
 		updateTaskList(projectTasks)
+	})
+}
 
-		console.table(taskList)
+editProjectTitle()
+function editProjectTitle() {
+	// Sólo se puede editar el título si el proyecto seleccionado es custom
+
+	// Al hacer click en el título, el elemento se tiene que convertir en input para poder editarlo.
+	const mainSection = document.getElementById("main-section")
+	const titleContainer = mainSection.querySelector(".title-container")
+	const titleParagraph = titleContainer.querySelector("p")
+
+	const customProjectListContainer = document.querySelector("[custom-projects]")
+
+	//Si el proyecto seleccionado no está dentro de custom projects -> Return
+
+	const input = document.createElement("input")
+	input.classList.add("hide")
+
+	titleContainer.append(input)
+
+	let hasTitleChanged = false
+
+	mainSection.addEventListener("click", (e) => {
+		const selectedProjectContainer = customProjectListContainer.querySelector(".selected")
+
+		if (!customProjectListContainer.contains(selectedProjectContainer)) return
+
+		const isTitleClicked = e.target.closest(".title-container")
+		if (isTitleClicked && !hasTitleChanged) {
+			titleContainer.classList.add("edit")
+			titleParagraph.classList.add("hide")
+			input.removeAttribute("class")
+			input.placeholder = titleParagraph.textContent
+			input.focus()
+
+			hasTitleChanged = true
+		}
+
+		if (!isTitleClicked && hasTitleChanged) {
+			titleContainer.classList.remove("edit")
+			titleParagraph.removeAttribute("class")
+			titleParagraph.textContent = input.value === "" ? input.placeholder : input.value
+			input.classList.add("hide")
+
+			hasTitleChanged = false
+		}
+	})
+
+	input.addEventListener("keydown", (e) => {
+		const selectedProjectContainer = customProjectListContainer.querySelector(".selected")
+		const selectedProjectName = selectedProjectContainer.querySelector("p")
+
+		if (!hasTitleChanged) return
+		if (e.key !== "Enter") return
+
+		titleContainer.classList.remove("edit")
+		titleParagraph.removeAttribute("class")
+		titleParagraph.textContent = input.value === "" ? input.placeholder : input.value
+		input.classList.add("hide")
+
+		hasTitleChanged = false
+
+		// Cambiar en el menú
+		const projectName = selectedProjectName.textContent
+
+		// Cambiar en las tareas asociadas
+		const _taskList = getTasksFromProject(projectName)
+		_taskList.forEach((task) => (task.project = titleParagraph.textContent))
+
+		selectedProjectName.textContent = titleParagraph.textContent
+		updateTaskList(_taskList)
+		input.value = ""
 	})
 }
 
@@ -168,7 +240,6 @@ function renderTaskList(taskListOrigin = defaultTaskList) {
 }
 
 // TODO --> REVISAR A PARTIR DE AQUÍ
-
 function updateTaskList(taskListOrigin) {
 	removeTaskList()
 	renderTaskList(taskListOrigin)

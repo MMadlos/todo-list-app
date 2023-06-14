@@ -36,12 +36,14 @@ export function menuUI() {
 		const project = projectItem(projectName)
 		projectListDefault.append(project)
 
-		if (projectName === "Planificado") project.classList.add("selected")
+		// if (projectName === "Planificado") project.classList.add("selected")
 	})
 
 	customProjects.forEach((projectName) => {
 		const project = projectItem(projectName)
 		projectListCustom.append(project)
+
+		if (projectName === "Tutorial") project.classList.add("selected")
 	})
 
 	const display = () => {
