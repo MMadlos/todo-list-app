@@ -6,12 +6,6 @@ export function el(element) {
 	return document.createElement(element)
 }
 
-export function UI() {
-	const mainSection = mainSectionComponent()
-
-	content.append(mainSection)
-}
-
 export function taskPanelComponent() {
 	const taskPanel = el("section")
 	const btnClosePanel = IconGenerator("close", "size-16")
@@ -32,7 +26,7 @@ export function taskPanelComponent() {
 	const taskTitleContainer = el("div")
 	taskTitleContainer.className = "task-panel-title-container"
 
-	function tickIcon(isCompleted = false) {
+	function checkIcon(isCompleted = false) {
 		const _tickIcon = isCompleted ? IconGenerator("checkDone", "size-24") : IconGenerator("checkEmpty", "size-24")
 
 		if (isCompleted) _taskTitle.classList.add("task-done")
@@ -50,6 +44,7 @@ export function taskPanelComponent() {
 
 	taskStepsContainer.appendChild(taskTitleContainer)
 	taskInfoContainer.appendChild(taskStepsContainer)
+	const btnAddStep = createButton("addStep")
 
 	function taskStepsList(taskStepsList = []) {
 		const stepsList = taskStepsList
@@ -70,8 +65,21 @@ export function taskPanelComponent() {
 			taskStepsContainer.append(stepContainer)
 		})
 
-		const btnAddStep = createButton("addStep")
 		taskStepsContainer.append(btnAddStep)
+	}
+
+	function addNewStep() {
+		const stepContainer = document.createElement("div")
+		stepContainer.className = "task-step-container"
+
+		const tickIcon = document.createElement("i")
+		const stepTextDOM = document.createElement("input")
+
+		tickIcon.classList.add("fa-regular", "fa-square", "size-16")
+		stepTextDOM.placeholder = "Nombre del paso"
+
+		stepContainer.append(tickIcon, stepTextDOM)
+		taskStepsContainer.insertBefore(stepContainer, btnAddStep)
 	}
 
 	const taskDetailsContainer = el("div")
@@ -182,202 +190,10 @@ export function taskPanelComponent() {
 	buttonsContainer.append(btnSave, btnDelete)
 	taskPanelContainer.appendChild(buttonsContainer)
 
-	const display = () => content.appendChild(taskPanel)
-
-	return { display, taskTitle, tickIcon, isTaskImportant, hasTaskDueDate, project, taskStepsList, file, note }
-}
-
-function mainSectionComponent() {
-	const mainSection = el("main")
-	const mainSectionContainer = el("div")
-	mainSection.id = "main-section"
-	mainSectionContainer.className = "main-section-container"
-
-	// HEADER
-	const headerContainer = el("div")
-	const projectIcon = IconGenerator("clock", "size-24")
-	const titleContainer = el("div")
-	const titleText = el("p")
-
-	headerContainer.className = "header-container"
-	titleContainer.className = "title-container"
-	titleText.textContent = "Planificado"
-
-	titleContainer.appendChild(titleText)
-	headerContainer.append(projectIcon, titleContainer)
-	mainSectionContainer.appendChild(headerContainer)
-
-	// TASK LIST (Group + cards)
-	const taskListContainer = el("div")
-	const taskGroupContainer = el("div")
-
-	taskListContainer.className = "task-list-container"
-	taskGroupContainer.className = "task-group-container"
-
-	// -> Group Name elements
-	const taskGroupNameContainer = el("div")
-	const iconChevronDown = IconGenerator("chevronDown", "size-12")
-	const groupName = el("p")
-	const groupCounterContainer = el("div")
-	const counterText = el("p")
-
-	taskGroupNameContainer.className = "task-group-name-container"
-	groupName.textContent = "Hoy"
-	groupCounterContainer.className = "group-counter-container"
-	counterText.textContent = "2"
-
-	taskGroupNameContainer.append(iconChevronDown, groupName, groupCounterContainer)
-	groupCounterContainer.appendChild(counterText)
-
-	// -> Cards
-	const taskCardListContainer = el("div")
-	taskCardListContainer.className = "task-card-list-container"
-
-	taskListContainer.appendChild(taskGroupContainer)
-	taskGroupContainer.append(taskGroupNameContainer, taskCardListContainer)
-	mainSectionContainer.append(taskListContainer)
-
-	// BTN
-	const btnAddTask = createButton("addTask")
-	mainSection.append(mainSectionContainer, btnAddTask)
-
-	return mainSection
-}
-
-export function taskCardUI() {
-	const taskCardContainer = el("div")
-	const taskInfoContainer = el("div")
-	const taskTitleContainer = el("div")
-	const taskTitle = el("p")
-	const taskDetailsContainer = el("div")
-
-	taskCardContainer.className = "task-card-container"
-	taskInfoContainer.className = "task-info-container"
-	taskTitleContainer.className = "task-title-container"
-	taskDetailsContainer.className = "task-details-container"
-
-	taskTitle.textContent = "Título por defecto"
-
-	taskCardContainer.prepend(taskInfoContainer)
-	taskInfoContainer.append(taskTitleContainer)
-	taskTitleContainer.append(taskTitle, taskDetailsContainer)
-
 	const display = () => {
-		const taskListContainer = document.querySelector(".task-card-list-container")
-		return taskListContainer.appendChild(taskCardContainer)
+		const content = document.getElementById("content")
+		content.appendChild(taskPanel)
 	}
 
-	function tickIcon(isTaskCompleted) {
-		const tickIcon = isTaskCompleted ? IconGenerator("checkDone", "size-21") : IconGenerator("checkEmpty", "size-21")
-
-		if (isTaskCompleted) taskTitle.classList.add("task-done")
-
-		return taskInfoContainer.prepend(tickIcon)
-	}
-
-	function title(title) {
-		return (taskTitle.textContent = title)
-	}
-
-	function iconImportant(isTaskImportant) {
-		const _icon = isTaskImportant ? IconGenerator("starSolid", "size-21") : IconGenerator("star", "size-21")
-		return taskCardContainer.appendChild(_icon)
-	}
-
-	const { chipInfo, chipsSeparator } = chipInfoFactory(taskDetailsContainer)
-
-	return { display, title, tickIcon, iconImportant, chipInfo, chipsSeparator }
-}
-
-function chipInfoFactory(containerToAppend) {
-	const chipInfo = (isTrue, type, textContent) => {
-		if (!isTrue) return
-
-		let _chip
-		if (type === "date") _chip = createDetailsChip("Hoy", textContent)
-		if (type === "project") _chip = createDetailsChip("Tutorial", textContent)
-		if (type === "file") _chip = createDetailsChip("Attach")
-
-		containerToAppend.appendChild(_chip)
-	}
-
-	const chipsSeparator = () => {
-		const detailContainers = containerToAppend.querySelectorAll(".detail-container")
-		const chipCount = detailContainers.length
-
-		if (chipCount === 0) containerToAppend.remove()
-		if (chipCount > 1) {
-			for (let i = 0; i < chipCount - 1; i++) {
-				detailContainers[i].after(taskDetailsSeparator())
-			}
-		}
-	}
-
-	return { chipInfo, chipsSeparator }
-}
-
-function createDetailsChip(chipName, textContent = "Archivo adjunto") {
-	const detailContainer = el("div")
-	detailContainer.className = "detail-container"
-
-	const _chipName = {
-		Hoy: "clock",
-		Tutorial: "folder",
-		Attach: "clip",
-	}
-	const iconName = _chipName[chipName]
-
-	const detailIcon = IconGenerator(iconName, "size-16")
-	const detailText = el("p")
-
-	detailText.textContent = textContent
-
-	detailContainer.append(detailIcon, detailText)
-	return detailContainer
-}
-
-function taskDetailsSeparator() {
-	const _separator = el("div")
-	_separator.className = "task-details-separator"
-
-	return _separator
-}
-
-export function toggleAddTask() {
-	const mainSection = document.getElementById("main-section")
-	const addTaskBtn = document.getElementById("btn-add-task")
-
-	addTaskBtn.remove()
-	const newTaskInput = newTaskInputComponent()
-
-	mainSection.appendChild(newTaskInput)
-	return
-}
-
-function newTaskInputComponent() {
-	const newTaskInputContainer = el("div")
-	const newTaskTaskContainer = el("div")
-
-	newTaskInputContainer.className = "new-task-input-container"
-	newTaskTaskContainer.className = "new-task-task-container"
-
-	const newTaskInputIcon = IconGenerator("checkEmpty", "size-24")
-	const newTaskInput = el("input")
-	newTaskInput.type = "text"
-	newTaskInput.id = "new-task"
-	newTaskInput.name = "new-task"
-	newTaskInput.placeholder = "Nombre de la tarea"
-
-	const newTaskIconsContainer = el("div")
-	newTaskIconsContainer.className = "new-task-icons-container"
-
-	const dueDateIcon = IconGenerator("clock", "size-21")
-	const projectFolderIcon = IconGenerator("folder", "size-21")
-	const starIcon = IconGenerator("star", "size-21")
-
-	newTaskIconsContainer.append(dueDateIcon, projectFolderIcon, starIcon)
-	newTaskTaskContainer.append(newTaskInputIcon, newTaskInput)
-	newTaskInputContainer.append(newTaskTaskContainer, newTaskIconsContainer)
-
-	return newTaskInputContainer
+	return { display, taskTitle, addNewStep, checkIcon, isTaskImportant, hasTaskDueDate, project, taskStepsList, file, note }
 }
