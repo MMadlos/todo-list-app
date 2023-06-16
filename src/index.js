@@ -275,14 +275,16 @@ function openTaskPanel() {
 	taskPanelEventListeners()
 }
 
+let taskPanelDOM
 function renderTaskPanel() {
-	const taskPanelDOM = taskPanelComponent()
+	taskPanelDOM = taskPanelComponent()
 
 	const cardSelected = document.querySelector("[card-selected]")
 	const indexCard = cardSelected.dataset.index
-	const taskFromList = taskList[indexCard]
-	const { isCompleted, title, steps, isImportant, dueDate, project, isFileAttached, note } = taskFromList
+	const taskSelected = taskList[indexCard]
+	const { isCompleted, title, steps, isImportant, dueDate, project, isFileAttached, note } = taskSelected
 
+	taskPanelDOM.display()
 	taskPanelDOM.checkIcon(isCompleted)
 	taskPanelDOM.taskTitle(title)
 	taskPanelDOM.taskStepsList(steps)
@@ -291,8 +293,6 @@ function renderTaskPanel() {
 	taskPanelDOM.project(project)
 	taskPanelDOM.file(isFileAttached)
 	taskPanelDOM.note(note)
-
-	taskPanelDOM.display()
 }
 
 function taskPanelEventListeners() {
@@ -328,50 +328,29 @@ function taskPanelEventListeners() {
 		}
 
 		if (btnAddStep) {
-			taskPanelDOM.addNewStep()
-
-			const stepContainer = taskPanel.querySelector(".task-step-container:last-of-type")
+			const stepContainer = taskPanelDOM.addNewStep()
 			const stepInput = stepContainer.querySelector("input")
 			stepInput.focus()
 
 			checkIconEventListeners(stepContainer)
 		}
 
-		// TODO --> REVISAR A PARTIR DE AQUÍ
 		if (taskDetailsContainer) {
 			const itemType = taskDetailsContainer.dataset.itemType
 			const detailsContainer = taskDetailsContainer.querySelector(".task-details-info-container")
 			const isContainerSelected = detailsContainer.classList.contains("selected")
-
-			const taskDetailtext = taskDetailsContainer.querySelector("p")
-			const iconStar = taskDetailsContainer.querySelector(".fa-star")
 			const iconClose = taskDetailsContainer.querySelector(".fa-xmark")
-			const iconChevron = taskDetailsContainer.querySelector(".fa-chevron-down")
-				? taskDetailsContainer.querySelector(".fa-chevron-down")
-				: taskDetailsContainer.querySelector(".fa-chevron-right")
-
-			if (itemType === "project-name") {
-				toggleClasses(iconChevron, "fa-chevron-down", "fa-chevron-right")
-				detailsContainer.classList.toggle("selected")
-				taskDetailtext.textContent = isContainerSelected ? "Seleccionar proyecto" : "Tutorial"
-
-				return
-			}
 
 			if (isContainerSelected && e.target !== iconClose) return
-			if (itemType === "important") toggleClasses(iconStar, "is-important", "fa-solid", "fa-regular")
+			if (itemType === "important") taskPanelDOM.isTaskImportant(!isContainerSelected)
+			if (itemType === "due-date") taskPanelDOM.hasTaskDueDate(!isContainerSelected)
+			if (itemType === "attach-file") taskPanelDOM.file(!isContainerSelected)
 
-			iconClose.classList.toggle("hide")
-			detailsContainer.classList.toggle("selected")
-
-			const _typeText = {
-				important: isContainerSelected ? "Marcar como importante" : "Marcado como importante",
-				"due-date": isContainerSelected ? "Añadir vencimiento" : `Vence el "xxxx"`,
-				"attach-file": isContainerSelected ? "Adjuntar archivo" : `Archivo adjunto`,
-			}
-			taskDetailtext.textContent = _typeText[itemType]
+			// TODO --> REVISAR CÓMO PASAR EL NOMBRE DEL PROYECTO. QUIZÁ SÓLO SEA QUITAR O AÑADIR.
+			if (itemType === "project-name") taskPanelDOM.project(!isContainerSelected)
 		}
 
+		// TODO --> REVISAR: AL HACER CLICK, APARECEN TODAS LAS TAREAS EN LA PANTALLA PRINCIPAL Y NO ESTÁN FILTRADAS
 		if (btnSave) {
 			const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
 			const importanceContainer = taskPanel.querySelector(`[data-item-type="important"] > div`)
@@ -381,27 +360,26 @@ function taskPanelEventListeners() {
 			const noteContainer = taskPanel.querySelector("#add-note-field")
 			const allSteps = document.querySelectorAll(".task-step-container")
 
-			const _taskPanel = {
-				title: taskTitle.value,
-				steps: [],
-				isCompleted: taskTitle.classList.contains("task-done"),
-				isImportant: importanceContainer.classList.contains("selected"),
-				dueDate: dueDateContainer.classList.contains("selected") ? "Hoy" : "",
-				project: projectContainer.classList.contains("selected") ? projectContainer.querySelector(`p`).textContent : "",
-				isFileAttached: fileContainer.classList.contains("selected"),
-				note: noteContainer.value,
-			}
+			const title = taskTitle.value
+			const isCompleted = taskTitle.classList.contains("task-done")
+			const isImportant = importanceContainer.classList.contains("selected")
+			const dueDate = dueDateContainer.classList.contains("selected") ? "Hoy" : ""
+			const project = projectContainer.classList.contains("selected") ? projectContainer.querySelector(`p`).textContent : ""
+			const isFileAttached = fileContainer.classList.contains("selected")
+			const note = noteContainer.value
+			const steps = []
 
 			allSteps.forEach((step) => {
 				const isCompleted = step.querySelector("input").classList.contains("task-done")
 				const stepName = step.querySelector("input").value
 
-				_taskPanel.steps.push({ isCompleted, stepName })
+				steps.push({ isCompleted, stepName })
 			})
 
-			const cardSelectedIndex = document.querySelector("[card-selected]").dataset.index
-			taskList[cardSelectedIndex] = _taskPanel
-			console.log(taskList[cardSelectedIndex])
+			const taskProperties = { title, steps, isCompleted, isImportant, dueDate, project, isFileAttached, note }
+
+			const taskIndexFromCardSelected = document.querySelector("[card-selected]").dataset.index
+			taskList[taskIndexFromCardSelected] = taskProperties
 
 			updateTaskList(taskList)
 			taskPanel.remove()
