@@ -9,7 +9,7 @@ export function Logo() {
 }
 
 // ICONS - FONTAWESOME - Classes
-const iconList = {
+export const iconList = {
 	clock: ["fa-regular", "fa-clock"],
 	add: ["fa-solid", "fa-plus"],
 	list: ["fa-solid", "fa-list"],
@@ -35,6 +35,14 @@ export function IconGenerator(iconName, size) {
 	_icon.classList.add(..._iconClasses, size)
 
 	return _icon
+}
+
+export const iconsForProjects = {
+	Planificado: "clock",
+	Todos: "list",
+	Importantes: "star",
+	Completados: "check",
+	Tutorial: "play",
 }
 
 // Buttons

@@ -79,3 +79,25 @@ const thirdTask = {
 }
 
 taskList.push(firstTask, secondTask, thirdTask)
+
+//
+
+export function getTasksFromProject(projectName) {
+	const propertyNames = {
+		Planificado: "dueDate",
+		Importantes: "isImportant",
+		Completados: "isCompleted",
+	}
+	const propertyToFilter = propertyNames[projectName]
+
+	if (projectName === "Todos") return taskList
+
+	const tasksProject = taskList.filter((task) => {
+		if (projectName === "Planificado") return task[propertyToFilter] !== ""
+		if (propertyToFilter === undefined) return task.project === projectName
+
+		return task[propertyToFilter]
+	})
+
+	return tasksProject
+}

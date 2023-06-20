@@ -454,20 +454,10 @@ textarea:focus {
 	border: none;
 }
 
-.task-list-container,
-.task-group-container,
 .task-card-list-container {
 	display: flex;
 	flex-direction: column;
-}
-
-.task-list-container {
-	gap: 24px;
-}
-
-.task-group-container,
-.task-card-list-container {
-	gap: 16px;
+	gap: 4px;
 }
 
 .task-group-name-container {

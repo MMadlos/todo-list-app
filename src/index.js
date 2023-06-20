@@ -1,100 +1,72 @@
 import "./styles.css"
-import { taskPanelComponent } from ".//modules/DOM"
-import { menuUI } from "./modules/DOM/menu"
-import { mainUI, taskCardUI } from "./modules/DOM/main-section"
-import { projectList, taskList, createTask } from "./modules/task.js"
-
-const menuDOM = menuUI()
-const mainDOM = mainUI()
+import { taskPanelDOM } from "./modules/DOM/taskPanel"
+import { menuDOM } from "./modules/DOM/menu"
+import { mainDOM, taskCardUI } from "./modules/DOM/mainSection"
+import { projectList, taskList, createTask, getTasksFromProject } from "./modules/task.js"
 
 const defaultTaskList = getTasksFromProject("Tutorial")
 
-initApp()
+//Init app:
+displayMenu()
+displayMainSection()
 
-function initApp() {
+function displayMenu() {
 	menuDOM.display()
-	mainDOM.display()
-	addNumberOfTasksToCounter()
 	menuEventListeners()
-	renderTaskList()
-	mainDOM.editHeader()
-	editProjectTitle()
+}
 
+function displayMainSection() {
+	mainDOM.display()
+	renderTaskList()
+	mainDOM.setHeader()
+	editProjectTitle()
 	cardEventListeners()
 	btnAddTaskEventListeners()
 }
 
-function addNumberOfTasksToCounter() {
-	const allProjectItems = document.querySelectorAll("[project]")
-	allProjectItems.forEach((project) => {
-		const projectName = project.querySelector("p").textContent
-		const numberOfTasks = getTasksFromProject(projectName).length
-
-		const counterElement = project.querySelector("div:last-of-type > p")
-		counterElement.textContent = numberOfTasks
-	})
-}
-
-function getTasksFromProject(projectName) {
-	const _projectName = projectName
-	const propertyNames = {
-		Planificado: "dueDate",
-		Importantes: "isImportant",
-		Completados: "isCompleted",
-	}
-
-	if (_projectName === "Todos") return taskList
-
-	const propertyToFilter = propertyNames[_projectName]
-	const tasksProject = taskList.filter((task) => {
-		if (_projectName === "Planificado") return task[propertyToFilter] !== ""
-		if (propertyToFilter === undefined) return task.project === projectName
-
-		return task[propertyToFilter]
-	})
-
-	return tasksProject
-}
-
+// |-- MENU -->
 function menuEventListeners() {
 	const menuElement = document.querySelector("#menu")
 	menuElement.addEventListener("click", (e) => {
-		const projectContainer = e.target.closest(".project-item-container")
-		const btnAddProject = e.target.closest("#btn-add-project")
 		const currentProjectSelected = menuElement.querySelector(".selected")
 
+		const projectContainer = e.target.closest(".project-item-container")
+		const btnAddProject = e.target.closest("#btn-add-project")
+
 		if (!projectContainer && !btnAddProject) return
+		if (projectContainer === currentProjectSelected) return
 
 		let projectName
 		if (projectContainer) {
 			currentProjectSelected.classList.remove("selected")
-			projectContainer.classList.toggle("selected")
+			projectContainer.classList.add("selected")
 
 			projectName = projectContainer.querySelector("p").textContent
 		}
 
 		if (btnAddProject) {
 			projectName = "Nombre por defecto"
-			const isDuplicatedNames = projectList.includes(projectName)
+			const isNameDuplicated = projectList.includes(projectName)
 
-			if (isDuplicatedNames) {
-				const filterDuplicated = projectList.filter((project) => project.includes(projectName))
-				const countDuplicated = filterDuplicated.length
+			if (!isNameDuplicated) return
 
-				projectName = `${projectName} (${countDuplicated})`
-			}
+			const filterDuplicated = projectList.filter((project) => project.includes(projectName))
+			const countDuplicated = filterDuplicated.length
+
+			projectName = `${projectName} (${countDuplicated})`
 
 			projectList.push(projectName)
 			menuDOM.addNewProject(projectName)
-			addNumberOfTasksToCounter()
 		}
 
-		mainDOM.editHeader()
-
+		mainDOM.setHeader()
 		const projectTasks = getTasksFromProject(projectName)
 		updateTaskList(projectTasks)
 	})
 }
+
+// <--- MENU --|
+// |-- MAIN PANEL -->
 
 function btnAddTaskEventListeners() {
 	const content = document.querySelector("#content")
@@ -173,6 +145,7 @@ function editProjectTitle() {
 
 	input.addEventListener("keydown", (e) => {
 		if (hasTitleChanged && e.key === "Enter") updateTitleInAllElements()
+		// TODO -> Hay que cambiar también el nombre en el objeto con todos los nombres de los proyectos.
 	})
 
 	function updateTitleInAllElements() {
@@ -197,37 +170,29 @@ function editProjectTitle() {
 	}
 }
 
-function renderTaskList(taskListOrigin = defaultTaskList) {
-	taskListOrigin.forEach((task) => {
-		const taskCard = taskCardUI()
-		const taskCardDOM = taskCard.display()
-
-		const taskTitle = task.title
-		const isCompleted = task.isCompleted
-		const isImportant = task.isImportant
-
-		const dueDate = task.dueDate
-		const projectName = task.project
-		const hasFileAttached = task.isFileAttached
-
-		taskCard.title(taskTitle)
-		taskCard.tickIcon(isCompleted)
-		taskCard.iconImportant(isImportant)
-
-		taskCard.addTag("date", dueDate)
-		taskCard.addTag("project", projectName)
-		taskCard.addTag("file", hasFileAttached)
-		taskCard.tagSeparator()
-
+function renderTaskList(sortedTaskList = defaultTaskList) {
+	sortedTaskList.forEach((task) => {
+		const { title, isCompleted, isImportant, dueDate, project, isFileAttached } = task
 		const taskIndex = taskList.indexOf(task)
-		taskCardDOM.dataset.index = taskIndex
+		const taskCard = taskCardUI()
+
+		taskCard.display()
+		taskCard.title(title)
+		taskCard.setCheckIcon(isCompleted)
+		taskCard.setStarIcon(isImportant)
+
+		if (dueDate) taskCard.addTag({ dueDate })
+		if (project) taskCard.addTag({ project })
+		if (isFileAttached) taskCard.addTag({ isFileAttached })
+
+		taskCard.addTagDividers()
+		taskCard.addTaskIndex(taskIndex)
 	})
 }
 
-function updateTaskList(taskListOrigin) {
+function updateTaskList(sortedTaskList) {
 	removeTaskList()
-	renderTaskList(taskListOrigin)
-	addNumberOfTasksToCounter()
+	renderTaskList(sortedTaskList)
 	cardEventListeners()
 }
 
@@ -246,14 +211,16 @@ function cardEventListeners() {
 				const taskText = tickIcon.nextElementSibling.querySelector("p")
 				taskText.classList.toggle("task-done")
 				taskFromList.isCompleted = !taskFromList.isCompleted
-				addNumberOfTasksToCounter()
+
+				menuDOM.refreshTaskCounter()
 				return
 			}
 
 			if (starIcon) {
 				toggleClasses(starIcon, "fa-solid", "fa-regular", "is-important")
 				taskFromList.isImportant = !taskFromList.isImportant
-				addNumberOfTasksToCounter()
+
+				menuDOM.refreshTaskCounter()
 				return
 			}
 
@@ -275,9 +242,9 @@ function openTaskPanel() {
 	taskPanelEventListeners()
 }
 
-let taskPanelDOM
+// let taskPanelDOM
 function renderTaskPanel() {
-	taskPanelDOM = taskPanelComponent()
+	// taskPanelDOM = taskPanelComponent()
 
 	const cardSelected = document.querySelector("[card-selected]")
 	const indexCard = cardSelected.dataset.index
@@ -286,7 +253,7 @@ function renderTaskPanel() {
 
 	taskPanelDOM.display()
 	taskPanelDOM.checkIcon(isCompleted)
-	taskPanelDOM.taskTitle(title)
+	taskPanelDOM.setTitle(title)
 	taskPanelDOM.taskStepsList(steps)
 	taskPanelDOM.isTaskImportant(isImportant)
 	taskPanelDOM.hasTaskDueDate(dueDate)
@@ -299,6 +266,7 @@ function taskPanelEventListeners() {
 	const taskPanel = document.getElementById("task-panel")
 	checkIconEventListeners(taskPanel)
 
+	// If the task panel is opened and I click in another project, it will close.
 	const menuSection = document.getElementById("menu")
 	menuSection.addEventListener("click", (e) => {
 		const isTaskPanelOpened = document.getElementById("task-panel") ?? false
@@ -315,10 +283,14 @@ function taskPanelEventListeners() {
 		const taskDetailsContainer = e.target.closest(".task-details-item-container")
 		const btnSave = e.target.closest("#btn-save")
 		const btnAddStep = e.target.closest("#btn-add-step")
+		const btnDelete = e.target.closest("#btn-delete")
+		const selectedCard = document.querySelector("[card-selected]")
+
+		const projectSelected = document.querySelector(".project-item-container.selected")
+		const projectName = projectSelected.querySelector(".project-item-title-container > p").textContent
 
 		if (btnClosePanel) {
 			taskPanel.remove()
-			const selectedCard = document.querySelector("[card-selected]")
 			selectedCard.removeAttribute("card-selected")
 		}
 
@@ -350,38 +322,23 @@ function taskPanelEventListeners() {
 			if (itemType === "project-name") taskPanelDOM.project(!isContainerSelected)
 		}
 
-		// TODO --> REVISAR: AL HACER CLICK, APARECEN TODAS LAS TAREAS EN LA PANTALLA PRINCIPAL Y NO ESTÁN FILTRADAS
 		if (btnSave) {
-			const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
-			const importanceContainer = taskPanel.querySelector(`[data-item-type="important"] > div`)
-			const dueDateContainer = taskPanel.querySelector(`[data-item-type="due-date"] > div`)
-			const projectContainer = taskPanel.querySelector(`[data-item-type="project-name"] > div`)
-			const fileContainer = taskPanel.querySelector(`[data-item-type="attach-file"] > div`)
-			const noteContainer = taskPanel.querySelector("#add-note-field")
-			const allSteps = document.querySelectorAll(".task-step-container")
-
-			const title = taskTitle.value
-			const isCompleted = taskTitle.classList.contains("task-done")
-			const isImportant = importanceContainer.classList.contains("selected")
-			const dueDate = dueDateContainer.classList.contains("selected") ? "Hoy" : ""
-			const project = projectContainer.classList.contains("selected") ? projectContainer.querySelector(`p`).textContent : ""
-			const isFileAttached = fileContainer.classList.contains("selected")
-			const note = noteContainer.value
-			const steps = []
-
-			allSteps.forEach((step) => {
-				const isCompleted = step.querySelector("input").classList.contains("task-done")
-				const stepName = step.querySelector("input").value
-
-				steps.push({ isCompleted, stepName })
-			})
-
-			const taskProperties = { title, steps, isCompleted, isImportant, dueDate, project, isFileAttached, note }
-
 			const taskIndexFromCardSelected = document.querySelector("[card-selected]").dataset.index
+			const taskProperties = getTaskPropertiesFromTaskPanel()
+
 			taskList[taskIndexFromCardSelected] = taskProperties
 
-			updateTaskList(taskList)
+			const taskListFromProject = getTasksFromProject(projectName)
+			updateTaskList(taskListFromProject)
+
+			taskPanel.remove()
+		}
+
+		if (btnDelete) {
+			const taskIndex = selectedCard.dataset.index
+			taskList.splice(taskIndex, 1)
+			const taskListFromProject = getTasksFromProject(projectName)
+			updateTaskList(taskListFromProject)
 			taskPanel.remove()
 		}
 	})
@@ -425,4 +382,35 @@ function updateTaskPanel() {
 	taskPanel.remove()
 
 	openTaskPanel()
+}
+
+function getTaskPropertiesFromTaskPanel() {
+	const taskPanel = document.getElementById("task-panel")
+	const taskTitle = taskPanel.querySelector(".task-panel-title-container > input")
+	const importanceContainer = taskPanel.querySelector(`[data-item-type="important"] > div`)
+	const dueDateContainer = taskPanel.querySelector(`[data-item-type="due-date"] > div`)
+	const projectContainer = taskPanel.querySelector(`[data-item-type="project-name"] > div`)
+	const fileContainer = taskPanel.querySelector(`[data-item-type="attach-file"] > div`)
+	const noteContainer = taskPanel.querySelector("#add-note-field")
+	const allSteps = document.querySelectorAll(".task-step-container")
+
+	const title = taskTitle.value
+	const isCompleted = taskTitle.classList.contains("task-done")
+	const isImportant = importanceContainer.classList.contains("selected")
+	const dueDate = dueDateContainer.classList.contains("selected") ? "Hoy" : ""
+	const project = projectContainer.classList.contains("selected") ? projectContainer.querySelector(`p`).textContent : ""
+	const isFileAttached = fileContainer.classList.contains("selected")
+	const note = noteContainer.value
+	const steps = []
+
+	allSteps.forEach((step) => {
+		const isCompleted = step.querySelector("input").classList.contains("task-done")
+		const stepName = step.querySelector("input").value
+
+		steps.push({ isCompleted, stepName })
+	})
+
+	const taskProperties = { title, steps, isCompleted, isImportant, dueDate, project, isFileAttached, note }
+
+	return taskProperties
 }
