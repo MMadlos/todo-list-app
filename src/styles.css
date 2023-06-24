@@ -75,21 +75,21 @@ button {
 	color: #3e92cc;
 }
 
-/* NEW UI */
+/* LAYOUT */
 
 #content {
 	display: flex;
 	height: 100vh;
 }
 
-#menu,
+#nav,
 #task-panel,
 #main-section {
 	min-width: max-content;
 	width: 100%;
 }
 
-#menu {
+#nav {
 	max-width: 387px;
 }
 
@@ -142,8 +142,8 @@ i.size-12 {
 	opacity: 60%;
 }
 
-/* MENÚ */
-#menu {
+/* NAV */
+#nav {
 	background-color: var(--gr-grey-light);
 	border-right: 2px solid var(--stroke-grey);
 
@@ -153,7 +153,7 @@ i.size-12 {
 	padding: 40px;
 }
 
-.menu-container {
+.nav-container {
 	display: flex;
 	flex-direction: column;
 	gap: 40px;
@@ -170,7 +170,7 @@ i.size-12 {
 	color: var(--blue-accent-color);
 }
 
-.project-list-container {
+.project-list {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -194,19 +194,19 @@ i.size-12 {
 	font-weight: 700;
 }
 
-.title-container {
+header {
 	display: flex;
 	gap: 16px;
 	align-items: center;
 }
 
-.project-item-title-container {
+.project-name-container {
 	display: flex;
 	gap: 16px;
 	align-items: center;
 }
 
-.project-item-counter-container > p {
+.task-counter {
 	padding: 4px 8px;
 	background: var(--stroke-grey);
 	border-radius: 9px;
@@ -225,7 +225,7 @@ i.size-12 {
 
 .btn-solid-blue {
 	display: flex;
-	align-content: center;
+	align-items: center;
 	gap: 16px;
 
 	background-color: var(--blue-accent-color);
@@ -233,6 +233,10 @@ i.size-12 {
 	padding: 12px;
 	border-radius: 7px;
 	font-weight: 700;
+}
+
+.btn-solid-blue:hover {
+	opacity: 50%;
 }
 
 #btn-save,
@@ -429,26 +433,20 @@ textarea:focus {
 	height: 100%;
 }
 
-.header-container {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.title-container {
+.project-name {
 	padding: 8px;
 	font-size: 24px;
 	font-weight: 800;
 	border-radius: 8px;
 }
 
-.header-container > .title-container:hover,
-.title-container.edit {
+/* .project-name:hover, */
+.project-name.edit {
 	background-color: var(--bg-grey-light);
 	border: 2px solid var(--stroke-grey);
 }
 
-.title-container input {
+.project-name {
 	outline: none;
 	color: var(--text-default);
 	border: none;

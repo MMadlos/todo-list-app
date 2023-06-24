@@ -9,18 +9,16 @@ mainSection.id = "main-section"
 mainSectionContainer.className = "main-section-container"
 
 // HEADER
-const headerContainer = el("div")
-const titleContainer = el("div")
+const projectNameContainer = el("div")
+const projectName = el("input")
 
 const projectIcon = IconGenerator("clock", "size-24")
-const titleText = el("p")
 
-headerContainer.className = "header-container"
-titleContainer.className = "title-container"
+projectNameContainer.className = "project-name-container"
+projectName.className = "project-name"
 
-titleContainer.appendChild(titleText)
-headerContainer.append(projectIcon, titleContainer)
-mainSectionContainer.appendChild(headerContainer)
+projectNameContainer.append(projectIcon, projectName)
+mainSectionContainer.appendChild(projectNameContainer)
 
 // TASK LIST
 const taskCardListContainer = el("div")
@@ -60,14 +58,20 @@ mainSection.append(mainSectionContainer, newTaskInputContainer)
 export const mainDOM = {
 	display: () => content.append(mainSection),
 	setHeader: () => {
-		const projectSelected = document.querySelector(".selected")
-		const projectTitle = projectSelected.querySelector("p").textContent
-		const _projectIcon = projectSelected.querySelector("i")
+		const projectSelectedFromNav = document.querySelector(".selected")
+		const projectNameFromNav = projectSelectedFromNav.querySelector("p").textContent
+		const projectIconFromNav = projectSelectedFromNav.querySelector("i")
 
-		titleText.textContent = projectTitle
-		projectIcon.classList = _projectIcon.classList
+		projectName.value = projectNameFromNav
+		projectName.placeholder = projectNameFromNav
+		projectIcon.classList = projectIconFromNav.classList
 		projectIcon.classList.remove("size-16")
 		projectIcon.classList.add("size-24")
+
+		const defaultProjectList = document.querySelectorAll("[default-projects] > li")
+		const isProjectFromDefaultList = Object.values(defaultProjectList).includes(projectSelectedFromNav)
+		if (!isProjectFromDefaultList) projectName.disabled = false
+		if (isProjectFromDefaultList) projectName.disabled = true
 	},
 	toggleTaskBtnTo: (state) => {
 		if (state === "active") {

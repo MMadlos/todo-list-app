@@ -1,6 +1,6 @@
 import "./styles.css"
 import { taskPanelDOM } from "./modules/DOM/taskPanel"
-import { menuDOM } from "./modules/DOM/menu"
+import { navDOM } from "./modules/DOM/nav"
 import { mainDOM, taskCardUI } from "./modules/DOM/mainSection"
 import { projectList, taskList, createTask, getTasksFromProject } from "./modules/task.js"
 
@@ -11,7 +11,7 @@ displayMenu()
 displayMainSection()
 
 function displayMenu() {
-	menuDOM.display()
+	navDOM.display()
 	menuEventListeners()
 }
 
@@ -19,16 +19,17 @@ function displayMainSection() {
 	mainDOM.display()
 	renderTaskList()
 	mainDOM.setHeader()
-	editProjectTitle()
+	mainSectionEventListeners()
 	cardEventListeners()
 	btnAddTaskEventListeners()
 }
 
-// |-- MENU -->
+// MENU
 function menuEventListeners() {
-	const menuElement = document.querySelector("#menu")
-	menuElement.addEventListener("click", (e) => {
-		const currentProjectSelected = menuElement.querySelector(".selected")
+	const nav = document.querySelector("#nav")
+
+	nav.addEventListener("click", (e) => {
+		const currentProjectSelected = nav.querySelector(".selected")
 
 		const projectContainer = e.target.closest(".project-item-container")
 		const btnAddProject = e.target.closest("#btn-add-project")
@@ -42,35 +43,109 @@ function menuEventListeners() {
 			projectContainer.classList.add("selected")
 
 			projectName = projectContainer.querySelector("p").textContent
+
+			mainDOM.setHeader()
+			const projectTasks = getTasksFromProject(projectName)
+			updateTaskList(projectTasks)
 		}
 
 		if (btnAddProject) {
 			projectName = "Nombre por defecto"
 			const isNameDuplicated = projectList.includes(projectName)
 
-			if (!isNameDuplicated) return
+			if (isNameDuplicated) {
+				const filterDuplicated = projectList.filter((project) => project.includes(projectName))
+				const countDuplicated = filterDuplicated.length
 
-			const filterDuplicated = projectList.filter((project) => project.includes(projectName))
-			const countDuplicated = filterDuplicated.length
-
-			projectName = `${projectName} (${countDuplicated})`
+				projectName = `${projectName} (${countDuplicated})`
+			}
 
 			projectList.push(projectName)
-			menuDOM.addNewProject(projectName)
+			navDOM.addNewProject(projectName)
+
+			mainDOM.setHeader()
+			const projectTasks = getTasksFromProject(projectName)
+			updateTaskList(projectTasks)
+
+			// Focus input to change title name
+			const inputProjectName = document.querySelector("input.project-name")
+			inputProjectName.value = ""
+			inputProjectName.focus()
 		}
 
-		mainDOM.setHeader()
-		const projectTasks = getTasksFromProject(projectName)
-		updateTaskList(projectTasks)
+		// mainDOM.setHeader()
+		// const projectTasks = getTasksFromProject(projectName)
+		// updateTaskList(projectTasks)
 	})
 }
 
-// <--- MENU --|
 // |-- MAIN PANEL -->
+function mainSectionEventListeners() {
+	const mainSection = document.getElementById("main-section")
+	const projectName = mainSection.querySelector(".project-name")
+
+	;["mouseenter", "mouseout"].forEach((event) => {
+		projectName.addEventListener(event, () => {
+			if (document.activeElement !== projectName) projectName.classList.toggle("edit", event === "mouseenter")
+		})
+	})
+
+	let wasTitleClicked = false
+	mainSection.addEventListener("click", (e) => {
+		if (projectName.disabled) return
+
+		const targetProjectName = e.target.closest(".project-name")
+		if (!targetProjectName && !wasTitleClicked) return
+		if (!targetProjectName && wasTitleClicked) return editProjectTitle()
+
+		projectName.classList.add("edit")
+		projectName.value = ""
+		wasTitleClicked = true
+	})
+
+	projectName.addEventListener("keydown", (e) => {
+		if (e.key === "Enter") editProjectTitle()
+	})
+
+	function editProjectTitle() {
+		const navProjectSelected = document.querySelector(".selected")
+		const navProjectName = navProjectSelected.querySelector("p").textContent
+
+		const isTitleEdited = navProjectName !== projectName.value ? true : false
+		if (!isTitleEdited) return
+
+		const isDuplicatedName = projectList.some((project) => project === projectName.value)
+		if (isDuplicatedName) {
+			alert("Ya hay un proyecto con el mismo nombre. Por favor, cambia el título.")
+			projectName.value = ""
+			projectName.focus()
+			return
+		}
+
+		if (!isDuplicatedName) {
+			if (projectName.value === "") projectName.value = projectName.placeholder
+			projectName.classList.remove("edit")
+			projectName.placeholder = projectName.value
+			projectName.blur()
+
+			navDOM.editProjectNameSelected(projectName.value)
+
+			const projectTaskList = getTasksFromProject(navProjectName)
+			projectTaskList.forEach((task) => (task.project = projectName.value))
+
+			const indexToReplace = projectList.indexOf(navProjectName)
+			projectList[indexToReplace] = projectName.value
+
+			updateTaskList(projectTaskList)
+
+			wasTitleClicked = false
+		}
+	}
+}
 
 function btnAddTaskEventListeners() {
 	const content = document.querySelector("#content")
-	const menuSection = document.querySelector("#menu")
+	const nav = document.querySelector("#nav")
 	const mainSection = document.querySelector("#main-section")
 
 	const addTaskElement = document.querySelector(".new-task-input-container")
@@ -95,7 +170,7 @@ function btnAddTaskEventListeners() {
 	addTaskElement.addEventListener("keydown", (e) => {
 		if (e.key !== "Enter") return
 		const newTaskTitle = inputElement.value
-		const projectSelected = menuSection.querySelector(".selected").querySelector("p").textContent
+		const projectSelected = nav.querySelector(".selected").querySelector("p").textContent
 
 		const newTask = createTask(newTaskTitle)
 		if (projectSelected === "Planificado") newTask.properties.dueDate = "Hoy"
@@ -112,62 +187,6 @@ function btnAddTaskEventListeners() {
 		const projectTasks = getTasksFromProject(projectSelected)
 		updateTaskList(projectTasks)
 	})
-}
-
-function editProjectTitle() {
-	const mainSection = document.getElementById("main-section")
-	const titleContainer = mainSection.querySelector(".title-container")
-	const titleParagraph = titleContainer.querySelector("p")
-	const customProjectListContainer = document.querySelector("[custom-projects]")
-
-	const input = document.createElement("input")
-	input.classList.add("hide")
-
-	titleContainer.append(input)
-
-	let hasTitleChanged = false
-	mainSection.addEventListener("click", (e) => {
-		if (!customProjectListContainer.contains(customProjectListContainer.querySelector(".selected"))) return
-
-		const isTitleClicked = e.target.closest(".title-container")
-		if (isTitleClicked && !hasTitleChanged) {
-			titleContainer.classList.add("edit")
-			titleParagraph.classList.add("hide")
-			input.removeAttribute("class")
-			input.placeholder = titleParagraph.textContent
-			input.focus()
-
-			hasTitleChanged = true
-		}
-
-		if (!isTitleClicked && hasTitleChanged) updateTitleInAllElements()
-	})
-
-	input.addEventListener("keydown", (e) => {
-		if (hasTitleChanged && e.key === "Enter") updateTitleInAllElements()
-		// TODO -> Hay que cambiar también el nombre en el objeto con todos los nombres de los proyectos.
-	})
-
-	function updateTitleInAllElements() {
-		const selectedProjectContainer = customProjectListContainer.querySelector(".selected")
-		const selectedProjectName = selectedProjectContainer.querySelector("p")
-
-		titleContainer.classList.remove("edit")
-		titleParagraph.removeAttribute("class")
-		titleParagraph.textContent = input.value === "" ? input.placeholder : input.value
-		input.classList.add("hide")
-
-		hasTitleChanged = false
-
-		const projectName = selectedProjectName.textContent
-
-		const _taskList = getTasksFromProject(projectName)
-		_taskList.forEach((task) => (task.project = titleParagraph.textContent))
-
-		selectedProjectName.textContent = titleParagraph.textContent
-		updateTaskList(_taskList)
-		input.value = ""
-	}
 }
 
 function renderTaskList(sortedTaskList = defaultTaskList) {
@@ -212,7 +231,7 @@ function cardEventListeners() {
 				taskText.classList.toggle("task-done")
 				taskFromList.isCompleted = !taskFromList.isCompleted
 
-				menuDOM.refreshTaskCounter()
+				navDOM.refreshTaskCounter()
 				return
 			}
 
@@ -220,7 +239,7 @@ function cardEventListeners() {
 				toggleClasses(starIcon, "fa-solid", "fa-regular", "is-important")
 				taskFromList.isImportant = !taskFromList.isImportant
 
-				menuDOM.refreshTaskCounter()
+				navDOM.refreshTaskCounter()
 				return
 			}
 
@@ -267,8 +286,8 @@ function taskPanelEventListeners() {
 	checkIconEventListeners(taskPanel)
 
 	// If the task panel is opened and I click in another project, it will close.
-	const menuSection = document.getElementById("menu")
-	menuSection.addEventListener("click", (e) => {
+	const nav = document.getElementById("nav")
+	nav.addEventListener("click", (e) => {
 		const isTaskPanelOpened = document.getElementById("task-panel") ?? false
 		const isProjectElement = e.target.closest(".project-item-container")
 		if (isProjectElement && isTaskPanelOpened) {
