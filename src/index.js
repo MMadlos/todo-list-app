@@ -9,6 +9,7 @@ const defaultTaskList = getTasksFromProject("Tutorial")
 //Init app:
 displayMenu()
 displayMainSection()
+displayTaskPanel()
 
 function displayMenu() {
 	navDOM.display()
@@ -20,8 +21,13 @@ function displayMainSection() {
 	renderTaskList()
 	mainDOM.setHeader()
 	projectNameEventListeners()
-	cardEventListeners()
 	btnAddTaskEventListeners()
+	cardEventListeners()
+}
+
+function displayTaskPanel() {
+	taskPanelDOM.display()
+	taskPanelEventListeners()
 }
 
 // MENU
@@ -191,15 +197,12 @@ function cardEventListeners() {
 				return
 			}
 
-			const isAnotherCardSelected = document.querySelector(`[card-selected]`) ? true : false
-			const cardCurrentSelected = document.querySelector(`[card-selected]`) ?? false
+			const currentCardSelected = document.querySelector(`[card-selected]`) ?? false
+			if (currentCardSelected) currentCardSelected.removeAttribute("card-selected")
+
+			taskPanelDOM.show()
 			card.setAttribute("card-selected", "")
-
-			if (!isAnotherCardSelected) return openTaskPanel()
-			if (card === cardCurrentSelected) return
-
-			cardCurrentSelected.removeAttribute("card-selected")
-			updateTaskPanel()
+			setTaskPanelInfoFromTask()
 		})
 	}
 }
@@ -258,14 +261,12 @@ function btnAddTaskEventListeners() {
 	})
 }
 
-// let taskPanelDOM
-function renderTaskPanel() {
+function setTaskPanelInfoFromTask() {
 	const cardSelected = document.querySelector("[card-selected]")
 	const indexCard = cardSelected.dataset.index
 	const taskSelected = taskList[indexCard]
 	const { isCompleted, title, steps, isImportant, dueDate, project, isFileAttached, note } = taskSelected
 
-	taskPanelDOM.display()
 	taskPanelDOM.checkIcon(isCompleted)
 	taskPanelDOM.setTitle(title)
 	taskPanelDOM.taskStepsList(steps)
@@ -278,49 +279,33 @@ function renderTaskPanel() {
 
 function taskPanelEventListeners() {
 	const taskPanel = document.getElementById("task-panel")
-	checkIconEventListeners(taskPanel)
 
-	// If the task panel is opened and I click in another project, it will close.
+	// If the task panel is opened and I click in another project, task panel will close
 	const nav = document.getElementById("nav")
 	nav.addEventListener("click", (e) => {
-		const isTaskPanelOpened = document.getElementById("task-panel") ?? false
+		const isTaskPanelOpened = taskPanel.classList.contains("hide") ? false : true
 		const isProjectElement = e.target.closest(".project-item-container")
+
 		if (isProjectElement && isTaskPanelOpened) {
-			const taskPanel = document.getElementById("task-panel")
-			taskPanel.remove()
+			taskPanelDOM.hide()
 		}
 	})
 
 	taskPanel.addEventListener("click", (e) => {
 		const btnClosePanel = e.target.closest("#btn-close-panel")
-		const checkIcon = e.target.closest("i.fa-square") || e.target.closest("i.fa-square-check")
-		const taskDetailsContainer = e.target.closest(".task-details-item-container")
-		const btnSave = e.target.closest("#btn-save")
-		const btnAddStep = e.target.closest("#btn-add-step")
-		const btnDelete = e.target.closest("#btn-delete")
 		const selectedCard = document.querySelector("[card-selected]")
-
-		const projectSelected = document.querySelector(".project-item-container.selected")
-		const projectName = projectSelected.querySelector(".project-name-container > p").textContent
-
 		if (btnClosePanel) {
-			taskPanel.remove()
+			taskPanelDOM.hide()
 			selectedCard.removeAttribute("card-selected")
 		}
 
-		if (checkIcon) {
-			const checkText = checkIcon.nextElementSibling
-			checkText.classList.toggle("task-done")
-		}
+		const checkIcon = e.target.closest("i.fa-square") || e.target.closest("i.fa-square-check")
+		if (checkIcon) checkIcon.nextElementSibling.classList.toggle("task-done")
 
-		if (btnAddStep) {
-			const stepContainer = taskPanelDOM.addNewStep()
-			const stepInput = stepContainer.querySelector("input")
-			stepInput.focus()
+		const btnAddStep = e.target.closest("#btn-add-step")
+		if (btnAddStep) taskPanelDOM.addNewStep().querySelector("input").focus()
 
-			checkIconEventListeners(stepContainer)
-		}
-
+		const taskDetailsContainer = e.target.closest(".task-details-item-container")
 		if (taskDetailsContainer) {
 			const itemType = taskDetailsContainer.dataset.itemType
 			const detailsContainer = taskDetailsContainer.querySelector(".task-details-info-container")
@@ -336,6 +321,11 @@ function taskPanelEventListeners() {
 			if (itemType === "project-name") taskPanelDOM.project(!isContainerSelected)
 		}
 
+		const btnSave = e.target.closest("#btn-save")
+		const btnDelete = e.target.closest("#btn-delete")
+		const projectSelected = document.querySelector(".project-item-container.selected")
+		const projectName = projectSelected.querySelector(".project-name-container > p").textContent
+
 		if (btnSave) {
 			const taskIndexFromCardSelected = document.querySelector("[card-selected]").dataset.index
 			const taskProperties = getTaskPropertiesFromTaskPanel()
@@ -344,28 +334,26 @@ function taskPanelEventListeners() {
 
 			const taskListFromProject = getTasksFromProject(projectName)
 			updateTaskList(taskListFromProject)
+			navDOM.refreshTaskCounter()
 
-			taskPanel.remove()
+			taskPanelDOM.hide()
 		}
 
 		if (btnDelete) {
+			const selectedCard = document.querySelector("[card-selected]")
 			const taskIndex = selectedCard.dataset.index
+
+			const deleteMessage = "Se eliminará la tarea y no podrás recuperarla. ¿Estás seguro que quieres eliminarla?"
+
+			if (!window.confirm(deleteMessage)) return
+
 			taskList.splice(taskIndex, 1)
 			const taskListFromProject = getTasksFromProject(projectName)
 			updateTaskList(taskListFromProject)
-			taskPanelDOM.remove()
+			navDOM.refreshTaskCounter()
+			taskPanelDOM.hide()
 		}
 	})
-}
-
-function openTaskPanel() {
-	renderTaskPanel()
-	taskPanelEventListeners()
-}
-
-function updateTaskPanel() {
-	taskPanelDOM.remove()
-	openTaskPanel()
 }
 
 // UTILITIES

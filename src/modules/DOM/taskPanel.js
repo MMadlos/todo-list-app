@@ -6,6 +6,7 @@ const content = document.getElementById("content")
 // LAYOUT
 const taskPanel = el("section")
 taskPanel.id = "task-panel"
+taskPanel.classList.add("hide")
 
 const btnClosePanel = IconGenerator("close", "size-16")
 const taskPanelContainer = el("div")
@@ -35,6 +36,7 @@ const taskTitle = el("input")
 const btnAddStep = createButton("addStep")
 
 tickIcon.classList.add("size-24")
+checkIconEventListeners(tickIcon)
 
 taskTitleContainer.append(tickIcon, taskTitle)
 taskStepsContainer.append(taskTitleContainer, btnAddStep)
@@ -138,7 +140,9 @@ buttonsContainer.append(btnSave, btnDelete)
 taskPanelContainer.appendChild(buttonsContainer)
 
 export const taskPanelDOM = {
-	display: () => content.appendChild(taskPanel),
+	display: () => content.append(taskPanel),
+	show: () => taskPanel.classList.remove("hide"),
+	hide: () => taskPanel.classList.add("hide"),
 	remove: () => taskPanel.remove(),
 	checkIcon: (isCompleted) => isCompletedDOM(taskTitleContainer, isCompleted),
 	setTitle: (title) => (taskTitle.value = title),
@@ -200,6 +204,7 @@ function stepUI(isStepCompleted = false) {
 	taskStepsContainer.append(stepContainer)
 	stepContainer.append(checkIcon, stepInput)
 
+	checkIconEventListeners(checkIcon)
 	isCompletedDOM(stepContainer, isStepCompleted)
 
 	return stepContainer
@@ -221,4 +226,19 @@ function isCompletedDOM(parentElement, isCompleted) {
 	icon.classList.toggle("fa-square", !isCompleted)
 
 	input.classList.toggle("task-done", isCompleted)
+}
+
+function checkIconEventListeners(iconElement) {
+	;["mouseover", "mouseout"].forEach((event) => {
+		iconElement.addEventListener(event, () => {
+			iconElement.classList.toggle("fa-square")
+			iconElement.classList.toggle("fa-square-check")
+		})
+	})
+	iconElement.addEventListener("click", () => {
+		iconElement.classList.toggle("fa-solid")
+		iconElement.classList.toggle("fa-regular")
+		iconElement.classList.toggle("fa-square")
+		iconElement.classList.toggle("fa-square-check")
+	})
 }
