@@ -73,7 +73,7 @@ export const navDOM = {
 			const projectName = project.querySelector("p").textContent
 			const numberOfTasks = getTasksFromProject(projectName).length
 
-			const counterElement = project.querySelector("div:last-of-type > p")
+			const counterElement = project.querySelector(".task-counter")
 			counterElement.textContent = numberOfTasks
 		})
 	},

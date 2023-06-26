@@ -19,7 +19,7 @@ function displayMainSection() {
 	mainDOM.display()
 	renderTaskList()
 	mainDOM.setHeader()
-	mainSectionEventListeners()
+	projectNameEventListeners()
 	cardEventListeners()
 	btnAddTaskEventListeners()
 }
@@ -80,7 +80,7 @@ function menuEventListeners() {
 }
 
 // |-- MAIN PANEL -->
-function mainSectionEventListeners() {
+function projectNameEventListeners() {
 	const mainSection = document.getElementById("main-section")
 	const projectName = mainSection.querySelector(".project-name")
 
@@ -143,52 +143,6 @@ function mainSectionEventListeners() {
 	}
 }
 
-function btnAddTaskEventListeners() {
-	const content = document.querySelector("#content")
-	const nav = document.querySelector("#nav")
-	const mainSection = document.querySelector("#main-section")
-
-	const addTaskElement = document.querySelector(".new-task-input-container")
-	const inputElement = mainSection.querySelector("#new-task")
-	content.addEventListener("click", (e) => {
-		const addTaskState = addTaskElement.getAttribute("state")
-
-		const isBtnActive = addTaskState === "active"
-		const isBtnClicked = e.target.closest(".new-task-input-container")
-
-		if (!isBtnActive && isBtnClicked) {
-			mainDOM.toggleTaskBtnTo("active")
-			inputElement.focus()
-		}
-
-		if (isBtnActive && !isBtnClicked) {
-			if (inputElement.value) return
-			if (!inputElement.value) mainDOM.toggleTaskBtnTo("inactive")
-		}
-	})
-
-	addTaskElement.addEventListener("keydown", (e) => {
-		if (e.key !== "Enter") return
-		const newTaskTitle = inputElement.value
-		const projectSelected = nav.querySelector(".selected").querySelector("p").textContent
-
-		const newTask = createTask(newTaskTitle)
-		if (projectSelected === "Planificado") newTask.properties.dueDate = "Hoy"
-		if (projectSelected === "Importantes") newTask.properties.isImportant = true
-		if (projectSelected === "Completados") newTask.properties.isCompleted = true
-		if (projectSelected !== "Completados" && projectSelected !== "Importantes" && projectSelected !== "Planificado" && projectSelected !== "Todos") {
-			newTask.properties.project = projectSelected
-		}
-
-		mainDOM.toggleTaskBtnTo("inactive")
-		inputElement.value = ""
-		inputElement.blur()
-
-		const projectTasks = getTasksFromProject(projectSelected)
-		updateTaskList(projectTasks)
-	})
-}
-
 function renderTaskList(sortedTaskList = defaultTaskList) {
 	sortedTaskList.forEach((task) => {
 		const { title, isCompleted, isImportant, dueDate, project, isFileAttached } = task
@@ -207,12 +161,6 @@ function renderTaskList(sortedTaskList = defaultTaskList) {
 		taskCard.addTagDividers()
 		taskCard.addTaskIndex(taskIndex)
 	})
-}
-
-function updateTaskList(sortedTaskList) {
-	removeTaskList()
-	renderTaskList(sortedTaskList)
-	cardEventListeners()
 }
 
 function cardEventListeners() {
@@ -256,15 +204,62 @@ function cardEventListeners() {
 	}
 }
 
-function openTaskPanel() {
-	renderTaskPanel()
-	taskPanelEventListeners()
+function updateTaskList(sortedTaskList) {
+	removeTaskList()
+	renderTaskList(sortedTaskList)
+	cardEventListeners()
+}
+
+function btnAddTaskEventListeners() {
+	const content = document.querySelector("#content")
+	const nav = document.querySelector("#nav")
+	const mainSection = document.querySelector("#main-section")
+
+	const addTaskElement = document.querySelector(".new-task-input-container")
+	const inputElement = mainSection.querySelector("#new-task")
+
+	content.addEventListener("click", (e) => {
+		const addTaskState = addTaskElement.getAttribute("state")
+
+		const isBtnActive = addTaskState === "active"
+		const isBtnClicked = e.target.closest(".new-task-input-container")
+
+		if (isBtnClicked && !isBtnActive) {
+			mainDOM.toggleTaskBtnTo("active")
+			inputElement.focus()
+		}
+
+		if (!isBtnClicked && isBtnActive) {
+			if (inputElement.value) return
+			if (!inputElement.value) mainDOM.toggleTaskBtnTo("inactive")
+		}
+	})
+
+	addTaskElement.addEventListener("keydown", (e) => {
+		if (e.key !== "Enter") return
+
+		const newTaskTitle = inputElement.value
+		const projectSelected = nav.querySelector(".selected").querySelector("p").textContent
+
+		const newTask = createTask(newTaskTitle)
+		if (projectSelected === "Planificado") newTask.properties.dueDate = "Hoy"
+		if (projectSelected === "Importantes") newTask.properties.isImportant = true
+		if (projectSelected === "Completados") newTask.properties.isCompleted = true
+		if (projectSelected !== "Completados" && projectSelected !== "Importantes" && projectSelected !== "Planificado" && projectSelected !== "Todos") {
+			newTask.properties.project = projectSelected
+		}
+
+		mainDOM.toggleTaskBtnTo("inactive")
+		inputElement.value = ""
+		inputElement.blur()
+
+		const projectTasks = getTasksFromProject(projectSelected)
+		updateTaskList(projectTasks)
+	})
 }
 
 // let taskPanelDOM
 function renderTaskPanel() {
-	// taskPanelDOM = taskPanelComponent()
-
 	const cardSelected = document.querySelector("[card-selected]")
 	const indexCard = cardSelected.dataset.index
 	const taskSelected = taskList[indexCard]
@@ -306,7 +301,7 @@ function taskPanelEventListeners() {
 		const selectedCard = document.querySelector("[card-selected]")
 
 		const projectSelected = document.querySelector(".project-item-container.selected")
-		const projectName = projectSelected.querySelector(".project-item-title-container > p").textContent
+		const projectName = projectSelected.querySelector(".project-name-container > p").textContent
 
 		if (btnClosePanel) {
 			taskPanel.remove()
@@ -358,9 +353,19 @@ function taskPanelEventListeners() {
 			taskList.splice(taskIndex, 1)
 			const taskListFromProject = getTasksFromProject(projectName)
 			updateTaskList(taskListFromProject)
-			taskPanel.remove()
+			taskPanelDOM.remove()
 		}
 	})
+}
+
+function openTaskPanel() {
+	renderTaskPanel()
+	taskPanelEventListeners()
+}
+
+function updateTaskPanel() {
+	taskPanelDOM.remove()
+	openTaskPanel()
 }
 
 // UTILITIES
@@ -394,13 +399,6 @@ function removeTaskList() {
 	document.querySelectorAll(".task-card-container").forEach((card) => {
 		card.remove()
 	})
-}
-
-function updateTaskPanel() {
-	const taskPanel = document.getElementById("task-panel")
-	taskPanel.remove()
-
-	openTaskPanel()
 }
 
 function getTaskPropertiesFromTaskPanel() {

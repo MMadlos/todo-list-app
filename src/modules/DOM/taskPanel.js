@@ -139,9 +139,13 @@ taskPanelContainer.appendChild(buttonsContainer)
 
 export const taskPanelDOM = {
 	display: () => content.appendChild(taskPanel),
+	remove: () => taskPanel.remove(),
 	checkIcon: (isCompleted) => isCompletedDOM(taskTitleContainer, isCompleted),
 	setTitle: (title) => (taskTitle.value = title),
 	taskStepsList: (taskStepsList = []) => {
+		const allSteps = document.querySelectorAll(".task-step-container")
+		allSteps.forEach((step) => step.remove())
+
 		taskStepsList.forEach((step) => {
 			const { isCompleted, stepName } = step
 
