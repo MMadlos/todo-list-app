@@ -494,6 +494,10 @@ textarea:focus {
 	color: var(--text-light) !important;
 }
 
+input:focus {
+	color: var(--text-default) !important;
+}
+
 .task-info-container {
 	display: flex;
 	gap: 16px;
@@ -597,5 +601,12 @@ textarea:focus {
 }
 
 .new-task-icons-container > i.selected {
+	color: var(--blue-accent-color);
+}
+
+/* Date input */
+#task-date {
+	outline: none;
+	border: none;
 	color: var(--blue-accent-color);
 }

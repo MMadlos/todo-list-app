@@ -3,6 +3,7 @@ import { taskPanelDOM } from "./modules/DOM/taskPanel"
 import { navDOM } from "./modules/DOM/nav"
 import { mainDOM, taskCardUI } from "./modules/DOM/mainSection"
 import { projectList, taskList, createTask, getTasksFromProject } from "./modules/task.js"
+import { getDate } from "date-fns"
 
 const defaultTaskList = getTasksFromProject("Tutorial")
 
@@ -10,6 +11,12 @@ const defaultTaskList = getTasksFromProject("Tutorial")
 displayMenu()
 displayMainSection()
 displayTaskPanel()
+
+//! TESTING PURPOSES -> Show taskPanel
+const selectedCard = document.querySelector(`[data-index="1"]`)
+selectedCard.setAttribute("card-selected", "")
+setTaskPanelInfoFromTask()
+taskPanelDOM.show()
 
 function displayMenu() {
 	navDOM.display()
@@ -207,12 +214,6 @@ function cardEventListeners() {
 	}
 }
 
-function updateTaskList(sortedTaskList) {
-	removeTaskList()
-	renderTaskList(sortedTaskList)
-	cardEventListeners()
-}
-
 function btnAddTaskEventListeners() {
 	const content = document.querySelector("#content")
 	const nav = document.querySelector("#nav")
@@ -314,7 +315,15 @@ function taskPanelEventListeners() {
 
 			if (isContainerSelected && e.target !== iconClose) return
 			if (itemType === "important") taskPanelDOM.isTaskImportant(!isContainerSelected)
-			if (itemType === "due-date") taskPanelDOM.hasTaskDueDate(!isContainerSelected)
+			if (itemType === "due-date") {
+				if (e.target === iconClose) {
+					taskPanelDOM.hideDateInput()
+					taskPanelDOM.toggleDueDateClasses(false)
+					return
+				}
+				taskPanelDOM.showDateInput()
+				taskPanelDOM.toggleDueDateClasses(true)
+			}
 			if (itemType === "attach-file") taskPanelDOM.file(!isContainerSelected)
 
 			// TODO --> REVISAR CÓMO PASAR EL NOMBRE DEL PROYECTO. QUIZÁ SÓLO SEA QUITAR O AÑADIR.
@@ -356,7 +365,12 @@ function taskPanelEventListeners() {
 	})
 }
 
-// UTILITIES
+function updateTaskList(sortedTaskList) {
+	removeTaskList()
+	renderTaskList(sortedTaskList)
+	cardEventListeners()
+}
+
 function toggleClasses(element, ...classes) {
 	const _element = element
 	const _classes = [...classes]
@@ -402,7 +416,7 @@ function getTaskPropertiesFromTaskPanel() {
 	const title = taskTitle.value
 	const isCompleted = taskTitle.classList.contains("task-done")
 	const isImportant = importanceContainer.classList.contains("selected")
-	const dueDate = dueDateContainer.classList.contains("selected") ? "Hoy" : ""
+	const dueDate = dueDateContainer.classList.contains("selected") ? taskPanelDOM.getDate() : ""
 	const project = projectContainer.classList.contains("selected") ? projectContainer.querySelector(`p`).textContent : ""
 	const isFileAttached = fileContainer.classList.contains("selected")
 	const note = noteContainer.value

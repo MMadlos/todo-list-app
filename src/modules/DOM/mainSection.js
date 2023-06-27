@@ -1,3 +1,5 @@
+import { format } from "date-fns"
+import es from "date-fns/locale/es"
 import { IconGenerator } from "../icons"
 const el = (element) => document.createElement(element)
 const content = document.getElementById("content")
@@ -137,7 +139,7 @@ export function taskCardUI() {
 	}
 
 	const addTag = (propertyFromTask) => {
-		const propertyName = Object.keys(propertyFromTask)
+		const propertyName = Object.keys(propertyFromTask)[0]
 		const propertyText = Object.values(propertyFromTask)[0]
 
 		const icons = {
@@ -151,7 +153,19 @@ export function taskCardUI() {
 		const tagText = el("p")
 
 		tagContainer.className = "detail-container"
-		tagText.textContent = propertyText === true ? "Archivo adjunto" : propertyText
+
+		if (propertyName === "dueDate") {
+			const day = propertyText.slice(0, 2)
+			const month = propertyText.slice(3, 5)
+			const year = propertyText.slice(6)
+
+			const stringToDate = new Date(`${year}, ${month}, ${day}`)
+			const dateFormatted = format(stringToDate, "dd MMMM", { locale: es })
+
+			tagText.textContent = dateFormatted
+		}
+		if (propertyName === "project") tagText.textContent = propertyText
+		if (propertyName === "isFileAttached") tagText.textContent = propertyName ? "Archivo adjunto" : propertyText
 
 		tagContainer.append(tagIcon, tagText)
 		taskDetailsContainer.appendChild(tagContainer)

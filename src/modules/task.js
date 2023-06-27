@@ -1,3 +1,5 @@
+import { addDays, format } from "date-fns"
+
 // El menú de la izquierda mostrará los proyectos que pongamos en projectList
 export const projectList = [
 	// Default FIX project list
@@ -32,36 +34,43 @@ export function createTask(taskTitle) {
 }
 
 // Default tasks
+const today = new Date()
+const todayFormat = format(today, "dd/MM/yyyy")
+const tomorrow = addDays(today, 1)
+const tomorrowFormat = format(tomorrow, "dd/MM/yyyy")
+
 const firstTask = {
 	title: "First Task",
 	steps: [],
 	isCompleted: false,
 	isImportant: false,
-	dueDate: "",
+	dueDate: todayFormat,
 	project: "",
 	isFileAttached: false,
 	note: "",
 }
 
+const secondTaskSteps = [
+	{
+		isCompleted: true,
+		stepName: "Primer paso",
+	},
+	{
+		isCompleted: true,
+		stepName: "Segundo paso",
+	},
+	{
+		isCompleted: false,
+		stepName: "Tercer paso",
+	},
+]
+
 const secondTask = {
 	title: "Second Task",
-	steps: [
-		{
-			isCompleted: true,
-			stepName: "Primer paso",
-		},
-		{
-			isCompleted: true,
-			stepName: "Segundo paso",
-		},
-		{
-			isCompleted: false,
-			stepName: "Tercer paso",
-		},
-	],
+	steps: secondTaskSteps,
 	isCompleted: true,
 	isImportant: true,
-	dueDate: "Hoy",
+	dueDate: todayFormat,
 	project: "Tutorial",
 	isFileAttached: true,
 	note: "Esto es una nota por defecto",
@@ -72,7 +81,7 @@ const thirdTask = {
 	steps: [],
 	isCompleted: false,
 	isImportant: true,
-	dueDate: "Mañana",
+	dueDate: tomorrowFormat,
 	project: "Nombre por defecto",
 	isFileAttached: false,
 	note: "",

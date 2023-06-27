@@ -1,4 +1,5 @@
 import { IconGenerator, createButton, iconList } from "../icons"
+import { format } from "date-fns"
 export const el = (element) => document.createElement(element)
 
 const content = document.getElementById("content")
@@ -38,6 +39,8 @@ const btnAddStep = createButton("addStep")
 tickIcon.classList.add("size-24")
 checkIconEventListeners(tickIcon)
 
+taskTitle.type = "text"
+
 taskTitleContainer.append(tickIcon, taskTitle)
 taskStepsContainer.append(taskTitleContainer, btnAddStep)
 taskInfoContainer.appendChild(taskStepsContainer)
@@ -71,6 +74,13 @@ const dueDateIcon = el("i")
 const dueDateText = el("p")
 const dueDateCloseIcon = el("i")
 
+const dateInput = el("input")
+dateInput.classList.add("hide")
+dateInput.type = "date"
+dateInput.id = "task-date"
+dateInput.min = "2023-01-01"
+dateInput.max = "2050-12-31"
+
 dueDateContainer.dataset.itemType = "due-date"
 dueDateContainer.className = "task-details-item-container"
 dueDateContentContainer.className = "task-details-info-container"
@@ -79,7 +89,7 @@ dueDateIcon.classList.add(...iconList.clock, "size-21")
 dueDateCloseIcon.classList.add(...iconList.close, "size-21")
 
 dueDateContainer.append(dueDateContentContainer, dueDateCloseIcon)
-dueDateContentContainer.append(dueDateIcon, dueDateText)
+dueDateContentContainer.append(dueDateIcon, dueDateText, dateInput)
 
 // Project component
 const projectContainer = el("div")
@@ -170,11 +180,37 @@ export const taskPanelDOM = {
 		importantIcon.classList.toggle("fa-regular", !isImportant)
 		importantCloseIcon.classList.toggle("hide", !isImportant)
 	},
-	hasTaskDueDate: (dueDate) => {
-		dueDateText.textContent = dueDate ? "Vence hoy" : "Añadir vencimiento"
+	showDateInput: () => {
+		dueDateText.textContent = "Vence el"
+		dateInput.classList.remove("hide")
 
-		dueDateContentContainer.classList.toggle("selected", dueDate)
-		dueDateCloseIcon.classList.toggle("hide", !dueDate)
+		const today = format(new Date(), "yyyy-MM-dd")
+		dateInput.value = today
+	},
+	hideDateInput: () => {
+		dueDateText.classList.remove("hide")
+		dueDateText.textContent = "Añadir vencimiento"
+
+		dateInput.value = ""
+		dateInput.classList.add("hide")
+	},
+	toggleDueDateClasses: (isSelected) => {
+		dueDateContentContainer.classList.toggle("selected", isSelected)
+		dueDateCloseIcon.classList.toggle("hide", !isSelected)
+	},
+	getDate: () => {
+		const date = dateInput.value
+		return date
+	},
+	hasTaskDueDate: (dueDate) => {
+		if (dueDate === "") {
+			taskPanelDOM.hideDateInput()
+			taskPanelDOM.toggleDueDateClasses(false)
+		}
+		if (dueDate !== "") {
+			taskPanelDOM.showDateInput()
+			taskPanelDOM.toggleDueDateClasses(true)
+		}
 	},
 	project: (projectName) => {
 		const hasProjectName = projectName !== "" ? true : false
