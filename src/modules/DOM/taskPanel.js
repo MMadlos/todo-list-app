@@ -78,8 +78,9 @@ const dateInput = el("input")
 dateInput.classList.add("hide")
 dateInput.type = "date"
 dateInput.id = "task-date"
-dateInput.min = "2023-01-01"
-dateInput.max = "2050-12-31"
+dateInput.placeholder = "dd-mm-yyyy"
+dateInput.min = "01-01-2023"
+dateInput.max = "31-12-2050"
 
 dueDateContainer.dataset.itemType = "due-date"
 dueDateContainer.className = "task-details-item-container"
@@ -163,6 +164,8 @@ export const taskPanelDOM = {
 		taskStepsList.forEach((step) => {
 			const { isCompleted, stepName } = step
 
+			if (stepName === "") return
+
 			const stepContainer = stepUI(isCompleted)
 			const stepInput = stepContainer.querySelector("input")
 			stepInput.value = stepName
@@ -203,14 +206,9 @@ export const taskPanelDOM = {
 		return date
 	},
 	hasTaskDueDate: (dueDate) => {
-		if (dueDate === "") {
-			taskPanelDOM.hideDateInput()
-			taskPanelDOM.toggleDueDateClasses(false)
-		}
-		if (dueDate !== "") {
-			taskPanelDOM.showDateInput()
-			taskPanelDOM.toggleDueDateClasses(true)
-		}
+		const hasDueDate = dueDate === "" ? false : true
+		hasDueDate ? taskPanelDOM.showDateInput() : taskPanelDOM.hideDateInput()
+		taskPanelDOM.toggleDueDateClasses(hasDueDate)
 	},
 	project: (projectName) => {
 		const hasProjectName = projectName !== "" ? true : false

@@ -337,12 +337,21 @@ header {
 	border: none;
 }
 
+.task-panel-title-container > input:hover:not(:focus),
+.task-step-container > input:hover:not(:focus) {
+	opacity: 50%;
+}
+
 .btn-add-step {
 	display: flex;
 	gap: 16px;
 
 	padding: 8px;
 	color: var(--blue-accent-color);
+}
+
+.btn-add-step:hover {
+	opacity: 50%;
 }
 
 /* TASK PANEL */
@@ -609,4 +618,16 @@ input:focus {
 	outline: none;
 	border: none;
 	color: var(--blue-accent-color);
+	background-color: transparent;
+	font-size: 16px;
+}
+
+#task-date:hover {
+	cursor: pointer;
+}
+
+#task-date::-webkit-calendar-picker-indicator:hover {
+	background-color: var(--blue-accent-color);
+	border-radius: 4px;
+	cursor: pointer;
 }

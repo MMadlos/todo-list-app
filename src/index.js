@@ -436,13 +436,12 @@ function getTaskPropertiesFromTaskPanel() {
 	allSteps.forEach((step) => {
 		const isCompleted = step.querySelector("input").classList.contains("task-done")
 		const stepName = step.querySelector("input").value
+		if (stepName === "") return
 
 		steps.push({ isCompleted, stepName })
 	})
 
 	const taskProperties = { title, steps, isCompleted, isImportant, dueDate, project, isFileAttached, note }
-
-	console.table(taskProperties)
 
 	return taskProperties
 }
