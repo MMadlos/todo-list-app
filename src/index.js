@@ -3,7 +3,7 @@ import { taskPanelDOM } from "./modules/DOM/taskPanel"
 import { navDOM } from "./modules/DOM/nav"
 import { mainDOM, taskCardUI } from "./modules/DOM/mainSection"
 import { projectList, taskList, createTask, getTasksFromProject } from "./modules/task.js"
-import { getDate } from "date-fns"
+import { format } from "date-fns"
 
 const defaultTaskList = getTasksFromProject("Tutorial")
 
@@ -416,7 +416,18 @@ function getTaskPropertiesFromTaskPanel() {
 	const title = taskTitle.value
 	const isCompleted = taskTitle.classList.contains("task-done")
 	const isImportant = importanceContainer.classList.contains("selected")
-	const dueDate = dueDateContainer.classList.contains("selected") ? taskPanelDOM.getDate() : ""
+
+	const isDueDate = dueDateContainer.classList.contains("selected") ? taskPanelDOM.getDate() : ""
+
+	let dueDate = ""
+	if (isDueDate) {
+		const year = isDueDate.slice(0, 4)
+		const month = isDueDate.slice(5, 7)
+		const day = isDueDate.slice(8, 10)
+
+		dueDate = format(new Date(`${year}/${month}/${day}`), "dd/MM/yyy")
+	}
+
 	const project = projectContainer.classList.contains("selected") ? projectContainer.querySelector(`p`).textContent : ""
 	const isFileAttached = fileContainer.classList.contains("selected")
 	const note = noteContainer.value
@@ -430,6 +441,8 @@ function getTaskPropertiesFromTaskPanel() {
 	})
 
 	const taskProperties = { title, steps, isCompleted, isImportant, dueDate, project, isFileAttached, note }
+
+	console.table(taskProperties)
 
 	return taskProperties
 }
