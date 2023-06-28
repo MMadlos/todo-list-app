@@ -1,37 +1,45 @@
 import { addDays, format } from "date-fns"
 
-// El menú de la izquierda mostrará los proyectos que pongamos en projectList
-export const projectList = [
-	// Default FIX project list
-	"Planificado",
-	"Todos",
-	"Importantes",
-	"Completados",
+// // El menú de la izquierda mostrará los proyectos que pongamos en projectList
+// export const projectList = [
+// 	// Default FIX project list
+// 	"Planificado",
+// 	"Todos",
+// 	"Importantes",
+// 	"Completados",
 
-	// Default CUSTOM project list
-	"Tutorial",
-	"Nombre por defecto",
-]
+// 	// Default CUSTOM project list
+// 	"Tutorial",
+// 	"Nombre por defecto",
+// ]
+
+// STORAGE --> Load
+// Check if the taskList has been saved in the storage
+let projectList
+const isProjectListInStorage = localStorage.getItem("projectList") ? true : false
+if (!isProjectListInStorage) {
+	projectList = [
+		// Default FIX project list
+		"Planificado",
+		"Todos",
+		"Importantes",
+		"Completados",
+
+		// Default CUSTOM project list
+		"Tutorial",
+		"Nombre por defecto",
+	]
+
+	localStorage.setItem("projectList", JSON.stringify(projectList))
+} else {
+	const projectListStorage = localStorage.getItem("projectList")
+	projectList = JSON.parse(projectListStorage)
+}
+
+export { projectList }
 
 // El main section mostrará las taskList que pongamos aquí en función del proyecto
-export const taskList = []
-
-export function createTask(taskTitle) {
-	const properties = {
-		title: taskTitle,
-		steps: [],
-		isCompleted: false,
-		isImportant: false,
-		dueDate: "",
-		project: "",
-		isFileAttached: false,
-		note: "",
-	}
-
-	taskList.push(properties)
-
-	return { properties }
-}
+// export const taskList = []
 
 // Default tasks
 const today = new Date()
@@ -87,7 +95,38 @@ const thirdTask = {
 	note: "",
 }
 
-taskList.push(firstTask, secondTask, thirdTask)
+// STORAGE --> Load
+// Check if the taskList has been saved in the storage
+let taskList
+const isTaskListInStorage = localStorage.getItem("taskList") ? true : false
+if (!isTaskListInStorage) {
+	taskList = []
+	taskList.push(firstTask, secondTask, thirdTask)
+
+	localStorage.setItem("taskList", JSON.stringify(taskList))
+} else {
+	const taskListStorage = localStorage.getItem("taskList")
+	taskList = JSON.parse(taskListStorage)
+}
+
+export { taskList }
+
+export function createTask(taskTitle) {
+	const properties = {
+		title: taskTitle,
+		steps: [],
+		isCompleted: false,
+		isImportant: false,
+		dueDate: "",
+		project: "",
+		isFileAttached: false,
+		note: "",
+	}
+
+	taskList.push(properties)
+
+	return { properties }
+}
 
 //
 

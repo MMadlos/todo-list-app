@@ -12,11 +12,11 @@ displayMenu()
 displayMainSection()
 displayTaskPanel()
 
-//! TESTING PURPOSES -> Show taskPanel
-const selectedCard = document.querySelector(`[data-index="1"]`)
-selectedCard.setAttribute("card-selected", "")
-setTaskPanelInfoFromTask()
-taskPanelDOM.show()
+// //! TESTING PURPOSES -> Show taskPanel
+// const selectedCard = document.querySelector(`[data-index="1"]`)
+// selectedCard.setAttribute("card-selected", "")
+// setTaskPanelInfoFromTask()
+// taskPanelDOM.show()
 
 function displayMenu() {
 	navDOM.display()
@@ -84,6 +84,8 @@ function menuEventListeners() {
 			const inputProjectName = document.querySelector("input.project-name")
 			inputProjectName.value = ""
 			inputProjectName.focus()
+
+			localStorage.setItem("projectList", JSON.stringify(projectList))
 		}
 
 		// mainDOM.setHeader()
@@ -150,8 +152,9 @@ function projectNameEventListeners() {
 			projectList[indexToReplace] = projectName.value
 
 			updateTaskList(projectTaskList)
-
 			wasTitleClicked = false
+
+			localStorage.setItem("projectList", JSON.stringify(projectList))
 		}
 	}
 }
@@ -193,6 +196,8 @@ function cardEventListeners() {
 				taskFromList.isCompleted = !taskFromList.isCompleted
 
 				navDOM.refreshTaskCounter()
+				localStorage.setItem("taskList", JSON.stringify(taskList))
+
 				return
 			}
 
@@ -201,6 +206,8 @@ function cardEventListeners() {
 				taskFromList.isImportant = !taskFromList.isImportant
 
 				navDOM.refreshTaskCounter()
+				localStorage.setItem("taskList", JSON.stringify(taskList))
+
 				return
 			}
 
@@ -245,6 +252,14 @@ function btnAddTaskEventListeners() {
 		const newTaskTitle = inputElement.value
 		const projectSelected = nav.querySelector(".selected").querySelector("p").textContent
 
+		const removeDuplicatedChars = new Set(newTaskTitle)
+		const checkNewTaskTitle = Array.from(removeDuplicatedChars).toString()
+
+		if (checkNewTaskTitle === "" || checkNewTaskTitle === " ") {
+			alert("El nombre de la tarea no puede estar en blanco")
+			return
+		}
+
 		const newTask = createTask(newTaskTitle)
 		if (projectSelected === "Planificado") newTask.properties.dueDate = "Hoy"
 		if (projectSelected === "Importantes") newTask.properties.isImportant = true
@@ -253,12 +268,16 @@ function btnAddTaskEventListeners() {
 			newTask.properties.project = projectSelected
 		}
 
+		navDOM.refreshTaskCounter()
+
 		mainDOM.toggleTaskBtnTo("inactive")
 		inputElement.value = ""
 		inputElement.blur()
 
 		const projectTasks = getTasksFromProject(projectSelected)
 		updateTaskList(projectTasks)
+
+		localStorage.setItem("taskList", JSON.stringify(taskList))
 	})
 }
 
@@ -346,6 +365,7 @@ function taskPanelEventListeners() {
 			navDOM.refreshTaskCounter()
 
 			taskPanelDOM.hide()
+			localStorage.setItem("taskList", JSON.stringify(taskList))
 		}
 
 		if (btnDelete) {
@@ -361,6 +381,7 @@ function taskPanelEventListeners() {
 			updateTaskList(taskListFromProject)
 			navDOM.refreshTaskCounter()
 			taskPanelDOM.hide()
+			localStorage.setItem("taskList", JSON.stringify(taskList))
 		}
 	})
 }

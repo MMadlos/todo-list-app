@@ -59,7 +59,7 @@ export const navDOM = {
 		})
 		content.prepend(nav)
 	},
-	addNewProject: () => {
+	addNewProject: (projectName) => {
 		const currentProjectSelected = navContainer.querySelector(".selected")
 		currentProjectSelected.classList.remove("selected")
 

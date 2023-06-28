@@ -164,8 +164,6 @@ export const taskPanelDOM = {
 		taskStepsList.forEach((step) => {
 			const { isCompleted, stepName } = step
 
-			if (stepName === "") return
-
 			const stepContainer = stepUI(isCompleted)
 			const stepInput = stepContainer.querySelector("input")
 			stepInput.value = stepName
